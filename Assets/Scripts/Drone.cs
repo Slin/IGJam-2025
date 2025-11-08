@@ -21,6 +21,10 @@ public class Drone : MonoBehaviour
     public float laserWidth = 0.08f;
     public float laserDuration = 0.2f;
 
+    [Header("Separation Settings")]
+    public float separationRadius = 0.5f; // How close before pushing away
+    public float separationForce = 1.5f; // Strength of separation
+
     [Header("Health Bar")]
     public bool showHealthBar = true;
     public Vector3 healthBarOffset = new Vector3(0, 0.6f, 0);
@@ -120,11 +124,16 @@ public class Drone : MonoBehaviour
         if (distanceToTarget > attackRange)
         {
             Vector3 direction = (_currentTarget.transform.position - transform.position).normalized;
-            transform.position += direction * moveSpeed * Time.deltaTime;
+            Vector3 separationOffset = CalculateSeparation();
+            Vector3 movement = (direction + separationOffset * 0.5f).normalized * moveSpeed * Time.deltaTime;
+            transform.position += movement;
         }
         else
         {
-            // In range - attack
+            // In range - attack (still apply separation to avoid clustering)
+            Vector3 separationOffset = CalculateSeparation();
+            transform.position += separationOffset * moveSpeed * 0.2f * Time.deltaTime;
+            
             if (_attackCooldown <= 0)
             {
                 PerformAttack();
@@ -159,8 +168,49 @@ public class Drone : MonoBehaviour
         if (distanceToFactory > factoryReturnDistance)
         {
             Vector3 direction = (factoryPos - transform.position).normalized;
-            transform.position += direction * moveSpeed * Time.deltaTime;
+            Vector3 separationOffset = CalculateSeparation();
+            Vector3 movement = (direction + separationOffset * 0.5f).normalized * moveSpeed * Time.deltaTime;
+            transform.position += movement;
         }
+        else
+        {
+            // Near factory - still apply separation
+            Vector3 separationOffset = CalculateSeparation();
+            transform.position += separationOffset * moveSpeed * 0.15f * Time.deltaTime;
+        }
+    }
+
+    Vector3 CalculateSeparation()
+    {
+        Vector3 separation = Vector3.zero;
+        int neighborCount = 0;
+
+        // Check separation from other drones
+        if (DroneManager.Instance != null)
+        {
+            foreach (var otherDrone in DroneManager.Instance.AllDrones)
+            {
+                if (otherDrone == null || otherDrone == this || otherDrone.IsDead) continue;
+
+                Vector3 offset = transform.position - otherDrone.Position;
+                float distance = offset.magnitude;
+
+                if (distance < separationRadius && distance > 0.01f)
+                {
+                    // Push away with smooth falloff
+                    float strength = 1.0f - (distance / separationRadius);
+                    separation += offset.normalized * strength * separationForce;
+                    neighborCount++;
+                }
+            }
+        }
+
+        if (neighborCount > 0)
+        {
+            separation /= neighborCount;
+        }
+
+        return separation;
     }
 
     void InitializeHealthBar()

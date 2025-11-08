@@ -22,6 +22,10 @@ public class Enemy : MonoBehaviour
     public float attackDelay = 1.5f;
     public bool stopToAttack = false; // If true, enemy stops moving while attacking
 
+    [Header("Separation Settings")]
+    public float separationRadius = 0.75f; // How close before pushing away
+    public float separationForce = 1f; // Strength of separation
+
     [Header("Events")]
     public UnityEvent onArrived;
     public UnityEvent onDeath;
@@ -150,16 +154,57 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        // Continue moving towards target
+        // Continue moving towards target with separation
         Vector3 current = transform.position;
+        Vector3 direction = (targetPosition - current).normalized;
+        Vector3 separationOffset = CalculateSeparation();
+        
+        // Combine movement direction with separation smoothly
+        Vector3 combinedDirection = (direction + separationOffset * 0.3f).normalized;
         float step = moveSpeed * Time.deltaTime;
-        Vector3 next = Vector3.MoveTowards(current, targetPosition, step);
+        Vector3 next = current + combinedDirection * step;
+        
         transform.position = next;
 
         if ((next - targetPosition).sqrMagnitude <= (arrivalDistance * arrivalDistance))
         {
             HandleArrived();
         }
+    }
+
+    Vector3 CalculateSeparation()
+    {
+        Vector3 separation = Vector3.zero;
+        int neighborCount = 0;
+
+        // Check separation from other enemies
+        if (SpawnerManager.Instance != null)
+        {
+            // Get all active enemies (we need a method for this)
+            var allEnemies = FindObjectsOfType<Enemy>();
+            foreach (var otherEnemy in allEnemies)
+            {
+                if (otherEnemy == null || otherEnemy == this || otherEnemy.IsDead) continue;
+
+                Vector3 offset = transform.position - otherEnemy.transform.position;
+                float distance = offset.magnitude;
+
+                if (distance < separationRadius && distance > 0.01f)
+                {
+                    // Push away with smooth falloff
+                    float strength = 1.0f - (distance / separationRadius);
+                    separation += offset.normalized * strength * separationForce;
+                    neighborCount++;
+                }
+            }
+        }
+
+        if (neighborCount > 0)
+        {
+            separation /= neighborCount;
+        }
+
+        return separation;
     }
 
     void AttackBuilding(Building building)

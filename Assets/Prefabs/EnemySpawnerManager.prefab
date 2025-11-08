@@ -49,7 +49,9 @@ MonoBehaviour:
   fastEnemyPrefab: {fileID: 4580924380053316161, guid: 75e89d01fdc25bd4f9e89d0baded1443, type: 3}
   armoredEnemyPrefab: {fileID: 4580924380053316161, guid: 0140e73b0a537564db40a5a7207543ec, type: 3}
   bossEnemyPrefab: {fileID: 4580924380053316161, guid: a061ddf5ca02a2a42a6c1bc651e7751f, type: 3}
+  attackEnemyPrefab: {fileID: 4580924380053316161, guid: 23c037453d9c9a64291988511db36b0e, type: 3}
   newSpawnerCircleRadius: 18
   fastEnemyChance: 0.2
   armoredEnemyChance: 0.15
   bossEnemyChance: 0.05
+  attackEnemyChance: 0.25

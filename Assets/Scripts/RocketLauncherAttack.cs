@@ -18,6 +18,7 @@ public class RocketLauncherAttack : BuildingAttackBehavior
         // Create rocket projectile
         if (rocketPrefab != null)
         {
+            Debug.Log("RocketLauncherAttack: Creating rocket projectile");
             Vector3 spawnPos = transform.position + launchOffset;
             GameObject rocketObj = Instantiate(rocketPrefab, spawnPos, Quaternion.identity);
 
@@ -28,6 +29,9 @@ public class RocketLauncherAttack : BuildingAttackBehavior
             }
 
             rocket.Initialize(target, EffectiveAttackDamage, rocketSpeed, rocketTurnSpeed);
+			// Launch with random initial rotation; rocket will home afterwards
+			float randomAngle = Random.Range(0f, 360f);
+			rocket.transform.rotation = Quaternion.Euler(0f, 0f, randomAngle);
         }
         else
         {

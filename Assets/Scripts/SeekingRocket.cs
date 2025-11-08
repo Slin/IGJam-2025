@@ -10,6 +10,7 @@ public class SeekingRocket : MonoBehaviour
     float _speed;
     float _turnSpeed;
     float _lifetime = 10f; // Auto-destroy after this time
+	bool _outbound; // when true, fly straight until offscreen then disappear
 
     public void Initialize(Enemy target, float damage, float speed, float turnSpeed)
     {
@@ -30,12 +31,38 @@ public class SeekingRocket : MonoBehaviour
             return;
         }
 
-        // Check if target is valid
-        if (_target == null || _target.IsDead)
+		// If we lost target, try to retarget once
+		if (!_outbound && (_target == null || _target.IsDead))
         {
-            Destroy(gameObject);
-            return;
+			var next = SpawnerManager.Instance != null
+				? SpawnerManager.Instance.GetClosestEnemy(transform.position, Mathf.Infinity)
+				: null;
+			if (next != null && !next.IsDead)
+			{
+				_target = next;
+			}
+			else
+			{
+				_outbound = true;
+			}
         }
+
+		// Outbound mode: fly straight until offscreen then destroy
+		if (_outbound)
+		{
+			transform.position += transform.right * _speed * Time.deltaTime;
+			var cam = Camera.main;
+			if (cam != null)
+			{
+				var vp = cam.WorldToViewportPoint(transform.position);
+				if (vp.z > 0 && (vp.x < -0.1f || vp.x > 1.1f || vp.y < -0.1f || vp.y > 1.1f))
+				{
+					Destroy(gameObject);
+					return;
+				}
+			}
+			return;
+		}
 
         // Move towards target
         Vector3 direction = (_target.transform.position - transform.position).normalized;

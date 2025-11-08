@@ -37,6 +37,8 @@ public class BuildingManager : MonoBehaviour
     public IReadOnlyList<Building> Bases => _bases;
     public bool IsPlacingBuilding => _isPlacingBuilding;
     public bool HasBase => _bases.Count > 0 && _bases.Any(b => !b.IsDead);
+	public BuildingType? SelectedBuildingType => _isPlacingBuilding ? _selectedBuildingType : (BuildingType?)null;
+	public bool IsPlacingBuildingOfType(BuildingType type) => _isPlacingBuilding && _selectedBuildingType == type;
 
     void Awake()
     {
@@ -105,10 +107,7 @@ public class BuildingManager : MonoBehaviour
 
         _selectedBuildingType = type;
         _isPlacingBuilding = true;
-        
-        // Create preview building
-        _previewBuilding = Instantiate(prefab, Vector3.zero, Quaternion.identity);
-        _previewBuilding.SetPreviewMode(true);
+		CreatePreviewForType(_selectedBuildingType);
 
         try
         {
@@ -118,6 +117,14 @@ public class BuildingManager : MonoBehaviour
 
         AudioManager.Instance?.PlaySFX("select");
     }
+
+	void CreatePreviewForType(BuildingType type)
+	{
+		var prefab = GetBuildingPrefab(type);
+		if (prefab == null) return;
+		_previewBuilding = Instantiate(prefab, Vector3.zero, Quaternion.identity);
+		_previewBuilding.SetPreviewMode(true);
+	}
 
     public void UpdateBuildingPreview(Vector3 worldPosition)
     {
@@ -166,8 +173,21 @@ public class BuildingManager : MonoBehaviour
 
         AudioManager.Instance?.PlaySFX("build");
 
-        _previewBuilding = null;
-        _isPlacingBuilding = false;
+		// Prepare next preview of the same type if player can afford another one
+		var nextPrefab = GetBuildingPrefab(_selectedBuildingType);
+		bool canPlaceAnother = nextPrefab != null && PlayerStatsManager.Instance.CanAfford(nextPrefab.tritiumCost);
+		if (canPlaceAnother)
+		{
+			CreatePreviewForType(_selectedBuildingType);
+			// Start the preview at the last placed position; it will snap on hover
+			_previewBuilding.transform.position = worldPosition;
+			_isPlacingBuilding = true;
+		}
+		else
+		{
+			_previewBuilding = null;
+			_isPlacingBuilding = false;
+		}
 
         return true;
     }

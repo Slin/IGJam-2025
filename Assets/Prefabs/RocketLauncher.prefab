@@ -104,7 +104,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd6bde3d49806bb49a5c96bf3aca1c1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Building
-  buildingType: 2
+  buildingType: 1
   maxHealth: 500
   tritiumCost: 500
   isMultiTile: 1
@@ -132,8 +132,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RocketLauncherAttack
   attackRange: 10
   attackDamage: 500
-  attackDelay: 10
+  attackDelay: 3
   rocketPrefab: {fileID: 6415429859441681765, guid: 8f4c810ae6bd8e34897a34485ecca7df, type: 3}
-  rocketSpeed: 15
+  rocketSpeed: 10
   rocketTurnSpeed: 200
   launchOffset: {x: 0, y: 0.5, z: 0}

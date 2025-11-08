@@ -19,27 +19,42 @@ public class UIActions : MonoBehaviour
 	// Canvas Buttons: Select Building for placement
 	public void SelectBase()
 	{
-		BuildingManager.Instance?.StartBuildingPlacement(BuildingType.Base);
+		var bm = BuildingManager.Instance;
+		if (bm == null) return;
+		if (bm.IsPlacingBuildingOfType(BuildingType.Base)) bm.CancelBuildingPlacement();
+		else bm.StartBuildingPlacement(BuildingType.Base);
 	}
 
 	public void SelectRocketLauncher()
 	{
-		BuildingManager.Instance?.StartBuildingPlacement(BuildingType.RocketLauncher);
+		var bm = BuildingManager.Instance;
+		if (bm == null) return;
+		if (bm.IsPlacingBuildingOfType(BuildingType.RocketLauncher)) bm.CancelBuildingPlacement();
+		else bm.StartBuildingPlacement(BuildingType.RocketLauncher);
 	}
 
 	public void SelectLaserTower()
 	{
-		BuildingManager.Instance?.StartBuildingPlacement(BuildingType.LaserTower);
+		var bm = BuildingManager.Instance;
+		if (bm == null) return;
+		if (bm.IsPlacingBuildingOfType(BuildingType.LaserTower)) bm.CancelBuildingPlacement();
+		else bm.StartBuildingPlacement(BuildingType.LaserTower);
 	}
 
 	public void SelectBoostBuilding()
 	{
-		BuildingManager.Instance?.StartBuildingPlacement(BuildingType.BoostBuilding);
+		var bm = BuildingManager.Instance;
+		if (bm == null) return;
+		if (bm.IsPlacingBuildingOfType(BuildingType.BoostBuilding)) bm.CancelBuildingPlacement();
+		else bm.StartBuildingPlacement(BuildingType.BoostBuilding);
 	}
 
 	public void SelectDroneFactory()
 	{
-		BuildingManager.Instance?.StartBuildingPlacement(BuildingType.DroneFactory);
+		var bm = BuildingManager.Instance;
+		if (bm == null) return;
+		if (bm.IsPlacingBuildingOfType(BuildingType.DroneFactory)) bm.CancelBuildingPlacement();
+		else bm.StartBuildingPlacement(BuildingType.DroneFactory);
 	}
 
 	public void CancelPlacement()

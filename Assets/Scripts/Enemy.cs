@@ -16,6 +16,12 @@ public class Enemy : MonoBehaviour
     public float arrivalDistance = 0.05f;
     public Vector3 targetPosition = Vector3.zero;
 
+    [Header("Attack Settings")]
+    public float attackRange = 50f;
+    public float attackDamage = 15f;
+    public float attackDelay = 1.5f;
+    public bool stopToAttack = false; // If true, enemy stops moving while attacking
+
     [Header("Events")]
     public UnityEvent onArrived;
     public UnityEvent onDeath;
@@ -29,6 +35,7 @@ public class Enemy : MonoBehaviour
     bool _arrived;
     float _currentHealth;
     HealthBar _healthBar;
+    float _attackCooldown;
 
     public float CurrentHealth => _currentHealth;
     public bool IsDead => _currentHealth <= 0;
@@ -84,6 +91,22 @@ public class Enemy : MonoBehaviour
     {
         if (_arrived) return;
 
+        // Check for nearby buildings to attack (excluding center base)
+        Building nearbyBuilding = SpawnerManager.Instance?.GetClosestBuildingExcludingCenterBase(transform.position, attackRange);
+        
+        if (nearbyBuilding != null)
+        {
+            // Attack the building
+            AttackBuilding(nearbyBuilding);
+            
+            // If stopToAttack is true, don't move this frame
+            if (stopToAttack)
+            {
+                return;
+            }
+        }
+
+        // Continue moving towards target
         Vector3 current = transform.position;
         float step = moveSpeed * Time.deltaTime;
         Vector3 next = Vector3.MoveTowards(current, targetPosition, step);
@@ -92,6 +115,29 @@ public class Enemy : MonoBehaviour
         if ((next - targetPosition).sqrMagnitude <= (arrivalDistance * arrivalDistance))
         {
             HandleArrived();
+        }
+    }
+
+    void AttackBuilding(Building building)
+    {
+        if (building == null || building.IsDead) return;
+
+        // Update cooldown
+        _attackCooldown -= Time.deltaTime;
+
+        if (_attackCooldown <= 0)
+        {
+            // Perform attack
+            building.TakeDamage(attackDamage);
+            
+            // Create laser visual effect
+            LaserBeam.Create(transform.position, building.transform.position, Color.red, 0.1f, 0.2f);
+            
+            // Play attack sound
+            AudioManager.Instance?.PlaySFX("enemy_attack");
+
+            // Reset cooldown
+            _attackCooldown = attackDelay;
         }
     }
 

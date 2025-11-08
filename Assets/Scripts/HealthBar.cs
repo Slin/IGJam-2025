@@ -134,7 +134,7 @@ public class HealthBar : MonoBehaviour
         if (maxHealth <= 0) return;
 
         _currentHealthPercent = Mathf.Clamp01(currentHealth / maxHealth);
-        
+
         if (_fillImage != null)
         {
             _fillImage.fillAmount = _currentHealthPercent;
@@ -212,7 +212,7 @@ public class HealthBar : MonoBehaviour
         Texture2D texture = new Texture2D(1, 1);
         texture.SetPixel(0, 0, Color.white);
         texture.Apply();
-        
+
         return Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f));
     }
 }

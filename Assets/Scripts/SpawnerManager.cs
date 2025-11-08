@@ -7,7 +7,7 @@ public class SpawnerManager : MonoBehaviour
 {
     public static SpawnerManager Instance { get; private set; }
 
-    [Header("Prefabs")] 
+    [Header("Prefabs")]
     public EnemySpawner spawnerPrefab;
     public Enemy regularEnemyPrefab;
     public Enemy fastEnemyPrefab;
@@ -16,7 +16,8 @@ public class SpawnerManager : MonoBehaviour
 
     [Header("Spawner Movement")] public float newSpawnerCircleRadius = 18.0f;
 
-    [Header("Enemy Type Distribution")] [Range(0f, 1f)]
+    [Header("Enemy Type Distribution")]
+    [Range(0f, 1f)]
     public float fastEnemyChance = 0.2f;
 
     [Range(0f, 1f)] public float armoredEnemyChance = 0.15f;
@@ -152,7 +153,7 @@ public class SpawnerManager : MonoBehaviour
         Vector3 spawnPos = _activeSpawner.transform.position;
         Vector2 randomOffset = Random.insideUnitCircle.normalized * Random.Range(0f, _activeSpawner.spawnRadius);
         spawnPos += new Vector3(randomOffset.x, randomOffset.y, 0f);
-        
+
         Enemy enemy = Instantiate(prefab, spawnPos, Quaternion.identity);
 
         // Initialize enemy to move towards base (center)
@@ -267,25 +268,57 @@ public class SpawnerManager : MonoBehaviour
         _activeSpawner = InstantiateSpawner(position);
     }
 
-	public Enemy GetClosestEnemy(Vector3 position, float maxRange = Mathf.Infinity)
-	{
-		Enemy closest = null;
-		float bestSqr = maxRange * maxRange;
-		for(int i = _activeEnemies.Count - 1; i >= 0; i--)
-		{
-			var e = _activeEnemies[i];
-			if(e == null)
-			{
-				_activeEnemies.RemoveAt(i);
-				continue;
-			}
-			float d2 = (e.transform.position - position).sqrMagnitude;
-			if(d2 < bestSqr)
-			{
-				bestSqr = d2;
-				closest = e;
-			}
-		}
-		return closest;
-	}
+    public Enemy GetClosestEnemy(Vector3 position, float maxRange = Mathf.Infinity)
+    {
+        Enemy closest = null;
+        float bestSqr = maxRange * maxRange;
+        for (int i = _activeEnemies.Count - 1; i >= 0; i--)
+        {
+            var e = _activeEnemies[i];
+            if (e == null)
+            {
+                _activeEnemies.RemoveAt(i);
+                continue;
+            }
+            float d2 = (e.transform.position - position).sqrMagnitude;
+            if (d2 < bestSqr)
+            {
+                bestSqr = d2;
+                closest = e;
+            }
+        }
+        return closest;
+    }
+
+    /// <summary>
+    /// Gets the closest building to the specified position, excluding the center base.
+    /// </summary>
+    /// <param name="position">Position to check from</param>
+    /// <param name="maxRange">Maximum range to search within</param>
+    /// <returns>Closest non-center-base building, or null if none found</returns>
+    public Building GetClosestBuildingExcludingCenterBase(Vector3 position, float maxRange = Mathf.Infinity)
+    {
+        if (BuildingManager.Instance == null) return null;
+
+        Building closestBuilding = null;
+        float closestDistSqr = maxRange * maxRange;
+
+        foreach (var building in BuildingManager.Instance.AllBuildings)
+        {
+            if (building == null || building.IsDead) continue;
+            
+            // Skip bases that are at the center (or very close to center)
+            if (building.buildingType == BuildingType.Base && building.transform.position.sqrMagnitude < 0.1f)
+                continue;
+
+            float distSqr = (building.transform.position - position).sqrMagnitude;
+            if (distSqr < closestDistSqr)
+            {
+                closestDistSqr = distSqr;
+                closestBuilding = building;
+            }
+        }
+
+        return closestBuilding;
+    }
 }

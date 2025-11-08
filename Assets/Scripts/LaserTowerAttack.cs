@@ -15,7 +15,7 @@ public class LaserTowerAttack : BuildingAttackBehavior
         if (target == null || target.IsDead) return;
 
         // Deal damage instantly
-        target.TakeDamage(attackDamage);
+        target.TakeDamage(EffectiveAttackDamage);
 
         // Create laser visual effect
         LaserBeam.Create(transform.position, target.transform.position, laserColor, laserWidth, laserDuration);

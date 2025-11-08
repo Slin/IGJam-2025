@@ -8,7 +8,8 @@ public enum EnemyType
     Regular,
     Fast,
     Armored,
-    Boss
+    Boss,
+    Attack
 }
 
 /// <summary>

@@ -13,6 +13,7 @@ public class SpawnerManager : MonoBehaviour
     public Enemy fastEnemyPrefab;
     public Enemy armoredEnemyPrefab;
     public Enemy bossEnemyPrefab;
+    public Enemy attackEnemyPrefab;
 
     [Header("Spawner Movement")] public float newSpawnerCircleRadius = 18.0f;
 
@@ -22,6 +23,7 @@ public class SpawnerManager : MonoBehaviour
 
     [Range(0f, 1f)] public float armoredEnemyChance = 0.15f;
     [Range(0f, 1f)] public float bossEnemyChance = 0.05f;
+    [Range(0f, 1f)] public float attackEnemyChance = 0.25f;
 
     EnemySpawner _activeSpawner;
     int _currentRound;
@@ -122,6 +124,7 @@ public class SpawnerManager : MonoBehaviour
         bool canSpawnFast = GameManager.Instance?.ShouldSpawnEnemyType(EnemyType.Fast, round) ?? false;
         bool canSpawnArmored = GameManager.Instance?.ShouldSpawnEnemyType(EnemyType.Armored, round) ?? false;
         bool canSpawnBoss = GameManager.Instance?.ShouldSpawnEnemyType(EnemyType.Boss, round) ?? false;
+        bool canSpawnAttack = GameManager.Instance?.ShouldSpawnEnemyType(EnemyType.Attack, round) ?? false;
 
         // Roll for special enemy types
         float roll = Random.value;
@@ -132,6 +135,10 @@ public class SpawnerManager : MonoBehaviour
         roll = Random.value;
         if (canSpawnArmored && roll < armoredEnemyChance)
             return EnemyType.Armored;
+
+        roll = Random.value;
+        if (canSpawnAttack && roll < attackEnemyChance)
+            return EnemyType.Attack;
 
         roll = Random.value;
         if (canSpawnFast && roll < fastEnemyChance)
@@ -249,6 +256,7 @@ public class SpawnerManager : MonoBehaviour
             EnemyType.Fast => fastEnemyPrefab,
             EnemyType.Armored => armoredEnemyPrefab,
             EnemyType.Boss => bossEnemyPrefab,
+            EnemyType.Attack => attackEnemyPrefab,
             _ => null
         };
     }

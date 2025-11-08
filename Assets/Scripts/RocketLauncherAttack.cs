@@ -27,12 +27,12 @@ public class RocketLauncherAttack : BuildingAttackBehavior
                 rocket = rocketObj.AddComponent<SeekingRocket>();
             }
 
-            rocket.Initialize(target, attackDamage, rocketSpeed, rocketTurnSpeed);
+            rocket.Initialize(target, EffectiveAttackDamage, rocketSpeed, rocketTurnSpeed);
         }
         else
         {
             // Fallback: instant damage if no prefab
-            target.TakeDamage(attackDamage);
+            target.TakeDamage(EffectiveAttackDamage);
         }
 
         // Play attack sound

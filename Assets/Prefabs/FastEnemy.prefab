@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1757928882030393242}
   - component: {fileID: 4580924380053316161}
   m_Layer: 0
-  m_Name: 'FastEnemy '
+  m_Name: FastEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -52,9 +52,9 @@ MonoBehaviour:
   moveSpeed: 3
   arrivalDistance: 0.05
   targetPosition: {x: 0, y: 0, z: 0}
-  attackRange: 2
+  attackRange: 4
   attackDamage: 20
-  attackDelay: 3
+  attackDelay: 0.5
   stopToAttack: 0
   onArrived:
     m_PersistentCalls:

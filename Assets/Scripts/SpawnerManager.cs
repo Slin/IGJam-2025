@@ -192,7 +192,7 @@ public class SpawnerManager : MonoBehaviour
         var targetBuilding = BuildingManager.Instance?.GetNearestBuilding(enemy.transform.position, BuildingType.Base);
         if (targetBuilding != null && !targetBuilding.IsDead)
         {
-            targetBuilding.TakeDamage(10f); // Default damage, can be configured per enemy
+            targetBuilding.TakeDamage(enemy.baseDamage);
             AudioManager.Instance?.PlaySFX("enemy_attack");
         }
 

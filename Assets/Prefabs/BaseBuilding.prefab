@@ -114,3 +114,6 @@ MonoBehaviour:
   onDamaged:
     m_PersistentCalls:
       m_Calls: []
+  showHealthBar: 1
+  healthBarOffset: {x: 0, y: 0.7, z: 0}
+  healthBarSize: {x: 1.2, y: 0.15}

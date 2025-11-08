@@ -45,12 +45,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd19a20ae6f2c423996ed948da940ba9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
+  enemyType: 0
+  maxHealth: 100
+  tritiumReward: 10
   moveSpeed: 2
   arrivalDistance: 0.05
   targetPosition: {x: 0, y: 0, z: 0}
   onArrived:
     m_PersistentCalls:
       m_Calls: []
+  onDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  showHealthBar: 1
+  healthBarOffset: {x: 0, y: 0.4, z: 0}
+  healthBarSize: {x: 0.8, y: 0.12}
 --- !u!1 &7449361229019044406
 GameObject:
   m_ObjectHideFlags: 0

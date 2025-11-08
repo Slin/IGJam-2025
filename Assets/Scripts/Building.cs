@@ -10,7 +10,7 @@ public class Building : MonoBehaviour
     public BuildingType buildingType = BuildingType.RocketLauncher;
     public float maxHealth = 200f;
     public int tritiumCost = 50;
-    
+
     [Header("Placement")]
     public bool isMultiTile = false; // true for Base which occupies 2 rings
     public List<HexTile> occupiedTiles = new List<HexTile>();
@@ -19,9 +19,15 @@ public class Building : MonoBehaviour
     public UnityEvent onDestroyed;
     public UnityEvent<float> onDamaged;
 
+    [Header("Health Bar")]
+    public bool showHealthBar = true;
+    public Vector3 healthBarOffset = new Vector3(0, 1.5f, 0);
+    public Vector2 healthBarSize = new Vector2(1.2f, 0.15f);
+
     float _currentHealth;
     bool _isPlaced = false;
     bool _isPreview = false;
+    HealthBar _healthBar;
 
     public float CurrentHealth => _currentHealth;
     public bool IsDead => _currentHealth <= 0;
@@ -31,6 +37,7 @@ public class Building : MonoBehaviour
     void Awake()
     {
         _currentHealth = maxHealth;
+        InitializeHealthBar();
     }
 
     public void Initialize(BuildingType type, int cost, float health, bool multiTile = false)
@@ -40,12 +47,13 @@ public class Building : MonoBehaviour
         maxHealth = health;
         _currentHealth = health;
         isMultiTile = multiTile;
+        UpdateHealthBar();
     }
 
     public void SetPreviewMode(bool preview)
     {
         _isPreview = preview;
-        
+
         // Optional: Visual feedback for preview mode
         // Can be implemented with material changes, transparency, etc.
         var renderers = GetComponentsInChildren<Renderer>();
@@ -73,10 +81,13 @@ public class Building : MonoBehaviour
         _isPlaced = true;
         _isPreview = false;
         occupiedTiles = new List<HexTile>(tiles);
-        
+
         // Restore visuals to normal
         SetPreviewMode(false);
-        
+
+        // Show health bar when placed
+        UpdateHealthBar();
+
         // Register with BuildingManager
         BuildingManager.Instance?.OnBuildingPlaced(this);
     }
@@ -87,6 +98,8 @@ public class Building : MonoBehaviour
 
         _currentHealth -= damage;
         _currentHealth = Mathf.Max(0, _currentHealth);
+
+        UpdateHealthBar();
 
         try
         {
@@ -123,13 +136,32 @@ public class Building : MonoBehaviour
     public void Repair(float amount)
     {
         if (IsDead || !_isPlaced) return;
-        
+
         _currentHealth = Mathf.Min(_currentHealth + amount, maxHealth);
+        UpdateHealthBar();
     }
 
     public float GetHealthPercentage()
     {
         if (maxHealth <= 0) return 0;
         return _currentHealth / maxHealth;
+    }
+
+    void InitializeHealthBar()
+    {
+        if (!showHealthBar) return;
+
+        _healthBar = gameObject.AddComponent<HealthBar>();
+        _healthBar.SetOffset(healthBarOffset);
+        _healthBar.SetSize(healthBarSize);
+        UpdateHealthBar();
+    }
+
+    void UpdateHealthBar()
+    {
+        if (_healthBar != null && showHealthBar)
+        {
+            _healthBar.UpdateHealth(_currentHealth, maxHealth);
+        }
     }
 }

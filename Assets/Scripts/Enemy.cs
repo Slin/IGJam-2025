@@ -9,6 +9,7 @@ public class Enemy : MonoBehaviour
     public EnemyType enemyType = EnemyType.Regular;
     public float maxHealth = 100f;
     public int tritiumReward = 10;
+    public float baseDamage = 50f;
 
     [Header("Movement")]
     public float moveSpeed = 2f;
@@ -19,9 +20,15 @@ public class Enemy : MonoBehaviour
     public UnityEvent onArrived;
     public UnityEvent onDeath;
 
+    [Header("Health Bar")]
+    public bool showHealthBar = true;
+    public Vector3 healthBarOffset = new Vector3(0, 0.8f, 0);
+    public Vector2 healthBarSize = new Vector2(0.8f, 0.12f);
+
     Action<Enemy> _arrivedCallback;
     bool _arrived;
     float _currentHealth;
+    HealthBar _healthBar;
 
     public float CurrentHealth => _currentHealth;
     public bool IsDead => _currentHealth <= 0;
@@ -29,6 +36,7 @@ public class Enemy : MonoBehaviour
     void Awake()
     {
         _currentHealth = maxHealth;
+        InitializeHealthBar();
     }
 
     public void Initialize(Vector3 target, Action<Enemy> onArrivedCallback = null)
@@ -37,6 +45,7 @@ public class Enemy : MonoBehaviour
         _arrivedCallback = onArrivedCallback;
         _currentHealth = maxHealth;
         _arrived = false;
+        UpdateHealthBar();
     }
 
     public void TakeDamage(float damage)
@@ -45,6 +54,8 @@ public class Enemy : MonoBehaviour
 
         _currentHealth -= damage;
         _currentHealth = Mathf.Max(0, _currentHealth);
+
+        UpdateHealthBar();
 
         if (IsDead)
         {
@@ -86,7 +97,7 @@ public class Enemy : MonoBehaviour
 
     void HandleArrived()
     {
-        if(_arrived) return;
+        if (_arrived) return;
         _arrived = true;
 
         try
@@ -97,7 +108,7 @@ public class Enemy : MonoBehaviour
 
         try
         {
-            if(_arrivedCallback != null)
+            if (_arrivedCallback != null)
             {
                 _arrivedCallback.Invoke(this);
             }
@@ -108,6 +119,28 @@ public class Enemy : MonoBehaviour
         }
         catch (Exception) { /* ignore callbacks if none registered */ }
     }
+
+    void InitializeHealthBar()
+    {
+        if (!showHealthBar) return;
+
+        _healthBar = gameObject.AddComponent<HealthBar>();
+        _healthBar.SetOffset(healthBarOffset);
+        _healthBar.SetSize(healthBarSize);
+        _healthBar.hideWhenFull = false; // Always show for enemies
+        _healthBar.alwaysShow = true;
+        UpdateHealthBar();
+    }
+
+    void UpdateHealthBar()
+    {
+        if (_healthBar != null && showHealthBar)
+        {
+            _healthBar.UpdateHealth(_currentHealth, maxHealth);
+        }
+    }
 }
+
+
 
 

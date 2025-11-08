@@ -247,8 +247,10 @@ public class BuildingManager : MonoBehaviour
             float distance = Vector3.Distance(position, existingBuilding.transform.position);
 
             // Buildings overlap if distance is less than sum of their radii
+            // Add small epsilon to account for floating point precision errors
             float minDistance = buildingRadius + existingRadius;
-            if (distance < minDistance)
+            const float epsilon = 0.001f;
+            if (distance < minDistance - epsilon)
             {
                 return false;
             }

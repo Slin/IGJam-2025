@@ -15,15 +15,8 @@ public class SpawnerManager : MonoBehaviour
     public Enemy bossEnemyPrefab;
     public Enemy attackEnemyPrefab;
 
-    [Header("Spawner Movement")] public float newSpawnerCircleRadius = 18.0f;
-
-    [Header("Enemy Type Distribution")]
-    [Range(0f, 1f)]
-    public float fastEnemyChance = 0.2f;
-
-    [Range(0f, 1f)] public float armoredEnemyChance = 0.15f;
-    [Range(0f, 1f)] public float bossEnemyChance = 0.05f;
-    [Range(0f, 1f)] public float attackEnemyChance = 0.25f;
+    [Header("Spawner Movement")] 
+    public float newSpawnerCircleRadius = 18.0f;
 
     EnemySpawner _activeSpawner;
     int _currentRound;
@@ -85,10 +78,9 @@ public class SpawnerManager : MonoBehaviour
         return spawner;
     }
 
-    public void StartRound(int enemyCount, int roundNumber)
+    public void StartRound(int roundMoneyValue, int roundNumber)
     {
         _currentRound = roundNumber;
-        _remainingInRound = enemyCount;
         _activeEnemies.Clear();
 
         // Create or reuse spawner
@@ -103,48 +95,154 @@ public class SpawnerManager : MonoBehaviour
             return;
         }
 
-        Debug.Log($"SpawnerManager: Starting round {_currentRound} with {_remainingInRound} enemies");
+        Debug.Log($"SpawnerManager: Starting round {_currentRound} with money value {roundMoneyValue}");
 
-        // Spawn enemies with variety based on round
-        SpawnRoundEnemies(enemyCount, roundNumber);
+        // Spawn enemies based on money value and bosses
+        SpawnRoundEnemies(roundMoneyValue, roundNumber);
     }
 
-    void SpawnRoundEnemies(int count, int round)
+    void SpawnRoundEnemies(int roundMoneyValue, int round)
     {
-        for (int i = 0; i < count; i++)
+        List<EnemyType> enemiesToSpawn = new List<EnemyType>();
+
+        // First, add bosses if this is a boss round (every 5th round)
+        int bossCount = GameManager.Instance?.GetBossCountForRound(round) ?? 0;
+        for (int i = 0; i < bossCount; i++)
         {
-            EnemyType type = SelectEnemyType(round);
+            enemiesToSpawn.Add(EnemyType.Boss);
+        }
+
+        // Get list of unlocked enemy types (excluding bosses which are handled separately)
+        List<EnemyType> unlockedTypes = GetUnlockedEnemyTypes(round);
+
+        // Spend the money value to buy enemies
+        int remainingMoney = roundMoneyValue;
+        int maxEnemies = GameManager.Instance?.maxEnemiesPerRound ?? 50;
+
+        while (remainingMoney > 0 && enemiesToSpawn.Count < maxEnemies)
+        {
+            // Try to pick a random enemy we can afford
+            List<EnemyType> affordableTypes = new List<EnemyType>();
+            
+            foreach (var type in unlockedTypes)
+            {
+                int enemyCost = GetEnemyRewardValue(type);
+                if (enemyCost <= remainingMoney)
+                {
+                    affordableTypes.Add(type);
+                }
+            }
+
+            // If we can't afford any enemy, break
+            if (affordableTypes.Count == 0)
+                break;
+
+            // Pick a random affordable enemy
+            EnemyType selectedType = affordableTypes[Random.Range(0, affordableTypes.Count)];
+            int cost = GetEnemyRewardValue(selectedType);
+            
+            enemiesToSpawn.Add(selectedType);
+            remainingMoney -= cost;
+        }
+
+        // If we're at the enemy cap and still have money, replace cheaper enemies with stronger ones
+        if (enemiesToSpawn.Count >= maxEnemies && remainingMoney > 0)
+        {
+            ReplaceWeakerEnemiesWithStronger(enemiesToSpawn, unlockedTypes, remainingMoney);
+        }
+
+        // Now spawn all the enemies
+        _remainingInRound = enemiesToSpawn.Count;
+        Debug.Log($"SpawnerManager: Spawning {_remainingInRound} enemies (including {bossCount} bosses)");
+
+        foreach (var type in enemiesToSpawn)
+        {
             SpawnEnemyOfType(type);
         }
     }
 
-    EnemyType SelectEnemyType(int round)
+    List<EnemyType> GetUnlockedEnemyTypes(int round)
     {
-        // Determine which enemy types are available this round
-        bool canSpawnFast = GameManager.Instance?.ShouldSpawnEnemyType(EnemyType.Fast, round) ?? false;
-        bool canSpawnArmored = GameManager.Instance?.ShouldSpawnEnemyType(EnemyType.Armored, round) ?? false;
-        bool canSpawnBoss = GameManager.Instance?.ShouldSpawnEnemyType(EnemyType.Boss, round) ?? false;
-        bool canSpawnAttack = GameManager.Instance?.ShouldSpawnEnemyType(EnemyType.Attack, round) ?? false;
+        List<EnemyType> types = new List<EnemyType>();
+        
+        // Always have Regular
+        types.Add(EnemyType.Regular);
+        
+        if (GameManager.Instance?.ShouldSpawnEnemyType(EnemyType.Fast, round) ?? false)
+            types.Add(EnemyType.Fast);
+        
+        if (GameManager.Instance?.ShouldSpawnEnemyType(EnemyType.Armored, round) ?? false)
+            types.Add(EnemyType.Armored);
+        
+        if (GameManager.Instance?.ShouldSpawnEnemyType(EnemyType.Attack, round) ?? false)
+            types.Add(EnemyType.Attack);
+        
+        // Note: Boss is handled separately, not in the random pool
+        
+        return types;
+    }
 
-        // Roll for special enemy types
-        float roll = Random.value;
+    int GetEnemyRewardValue(EnemyType type)
+    {
+        Enemy prefab = GetEnemyPrefab(type);
+        if (prefab == null)
+            return 10; // Default value
+        
+        return prefab.tritiumReward;
+    }
 
-        if (canSpawnBoss && roll < bossEnemyChance)
-            return EnemyType.Boss;
+    void ReplaceWeakerEnemiesWithStronger(List<EnemyType> enemies, List<EnemyType> unlockedTypes, int remainingMoney)
+    {
+        // Sort unlocked types by reward value (stronger = higher reward)
+        List<EnemyType> sortedTypes = new List<EnemyType>(unlockedTypes);
+        sortedTypes.Sort((a, b) => GetEnemyRewardValue(b).CompareTo(GetEnemyRewardValue(a)));
 
-        roll = Random.value;
-        if (canSpawnArmored && roll < armoredEnemyChance)
-            return EnemyType.Armored;
+        if (sortedTypes.Count == 0)
+            return;
 
-        roll = Random.value;
-        if (canSpawnAttack && roll < attackEnemyChance)
-            return EnemyType.Attack;
+        // Keep trying to upgrade while we have money
+        while (remainingMoney > 0)
+        {
+            // Find the weakest non-boss enemy
+            int weakestIndex = -1;
+            int weakestValue = int.MaxValue;
 
-        roll = Random.value;
-        if (canSpawnFast && roll < fastEnemyChance)
-            return EnemyType.Fast;
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                if (enemies[i] == EnemyType.Boss)
+                    continue;
 
-        return EnemyType.Regular;
+                int value = GetEnemyRewardValue(enemies[i]);
+                if (value < weakestValue)
+                {
+                    weakestValue = value;
+                    weakestIndex = i;
+                }
+            }
+
+            if (weakestIndex == -1)
+                break; // No non-boss enemies to replace
+
+            // Find a stronger enemy we can afford to upgrade to
+            bool upgraded = false;
+            foreach (var strongerType in sortedTypes)
+            {
+                int strongerValue = GetEnemyRewardValue(strongerType);
+                int upgradeCost = strongerValue - weakestValue;
+
+                if (upgradeCost > 0 && upgradeCost <= remainingMoney)
+                {
+                    // Do the upgrade
+                    enemies[weakestIndex] = strongerType;
+                    remainingMoney -= upgradeCost;
+                    upgraded = true;
+                    break;
+                }
+            }
+
+            if (!upgraded)
+                break; // Can't afford any more upgrades
+        }
     }
 
     void SpawnEnemyOfType(EnemyType type)

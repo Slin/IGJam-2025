@@ -47,15 +47,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   enemyType: 0
   maxHealth: 100
-  tritiumReward: 10
+  tritiumReward: 20
   baseDamage: 50
   moveSpeed: 2
   arrivalDistance: 0.05
   targetPosition: {x: 0, y: 0, z: 0}
   attackRange: 3
-  attackDamage: 50
+  attackDamage: 25
   attackDelay: 1.5
   stopToAttack: 0
+  separationRadius: 0.5
+  separationForce: 2
   onArrived:
     m_PersistentCalls:
       m_Calls: []

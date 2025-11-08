@@ -48,13 +48,15 @@ MonoBehaviour:
   maxHealth: 50
   moveSpeed: 2
   detectionRange: 15
-  factoryReturnDistance: 1.5
+  factoryReturnDistance: 1
   attackRange: 2
   attackDamage: 10
   attackDelay: 0.5
   laserColor: {r: 0, g: 1, b: 0.9893317, a: 1}
   laserWidth: 0.08
   laserDuration: 0.2
+  separationRadius: 0.5
+  separationForce: 1.5
   showHealthBar: 1
   healthBarOffset: {x: 0, y: 0.5, z: 0}
   healthBarSize: {x: 0.6, y: 0.1}

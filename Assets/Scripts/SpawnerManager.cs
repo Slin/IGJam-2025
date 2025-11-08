@@ -266,4 +266,26 @@ public class SpawnerManager : MonoBehaviour
             Mathf.Sin(angle) * newSpawnerCircleRadius, 0f);
         _activeSpawner = InstantiateSpawner(position);
     }
+
+	public Enemy GetClosestEnemy(Vector3 position, float maxRange = Mathf.Infinity)
+	{
+		Enemy closest = null;
+		float bestSqr = maxRange * maxRange;
+		for(int i = _activeEnemies.Count - 1; i >= 0; i--)
+		{
+			var e = _activeEnemies[i];
+			if(e == null)
+			{
+				_activeEnemies.RemoveAt(i);
+				continue;
+			}
+			float d2 = (e.transform.position - position).sqrMagnitude;
+			if(d2 < bestSqr)
+			{
+				bestSqr = d2;
+				closest = e;
+			}
+		}
+		return closest;
+	}
 }

@@ -31,6 +31,9 @@ public class GameManager : MonoBehaviour
     [Header("UI")]
     public GameObject readyButton; // Optional: assign in Inspector; otherwise found by name "ReadyButton"
 
+    [Header("VFX Prefabs")]
+    public LaserBeam laserBeamPrefab;
+
     GameState _currentState = GameState.NotStarted;
     GamePhase _currentPhase = GamePhase.Building;
     float _buildPhaseStartTime;

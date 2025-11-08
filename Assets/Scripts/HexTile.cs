@@ -14,6 +14,14 @@ public class HexTile : MonoBehaviour
    private int _baseSortingLayerId;
    private int _baseSortingOrder;
    private bool _isHighlighted;
+   private bool _isOccupied = false;
+
+    public bool IsOccupied => _isOccupied;
+
+    public void SetOccupied(bool occupied)
+    {
+        _isOccupied = occupied;
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

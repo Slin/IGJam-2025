@@ -5,6 +5,11 @@ using UnityEngine.Events;
 [DisallowMultipleComponent]
 public class Enemy : MonoBehaviour
 {
+    [Header("Enemy Properties")]
+    public EnemyType enemyType = EnemyType.Regular;
+    public float maxHealth = 100f;
+    public int tritiumReward = 10;
+
     [Header("Movement")]
     public float moveSpeed = 2f;
     public float arrivalDistance = 0.05f;
@@ -12,14 +17,56 @@ public class Enemy : MonoBehaviour
 
     [Header("Events")]
     public UnityEvent onArrived;
+    public UnityEvent onDeath;
 
     Action<Enemy> _arrivedCallback;
     bool _arrived;
+    float _currentHealth;
+
+    public float CurrentHealth => _currentHealth;
+    public bool IsDead => _currentHealth <= 0;
+
+    void Awake()
+    {
+        _currentHealth = maxHealth;
+    }
 
     public void Initialize(Vector3 target, Action<Enemy> onArrivedCallback = null)
     {
         targetPosition = target;
         _arrivedCallback = onArrivedCallback;
+        _currentHealth = maxHealth;
+        _arrived = false;
+    }
+
+    public void TakeDamage(float damage)
+    {
+        if (IsDead) return;
+
+        _currentHealth -= damage;
+        _currentHealth = Mathf.Max(0, _currentHealth);
+
+        if (IsDead)
+        {
+            HandleDeath();
+        }
+    }
+
+    void HandleDeath()
+    {
+        try
+        {
+            onDeath?.Invoke();
+        }
+        catch (Exception) { /* ignore user event exceptions */ }
+
+        try
+        {
+            PlayerStatsManager.Instance?.OnEnemyKilled(this);
+        }
+        catch (Exception) { /* ignore if manager not available */ }
+
+        Destroy(gameObject);
     }
 
     void Update()

@@ -303,6 +303,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemySpawnerManager
       objectReference: {fileID: 0}
+    - target: {fileID: 4676504926305827266, guid: 9a557ceb814264059af9331259a9793d, type: 3}
+      propertyPath: bossEnemyPrefab
+      value: 
+      objectReference: {fileID: 4580924380053316161, guid: a061ddf5ca02a2a42a6c1bc651e7751f, type: 3}
+    - target: {fileID: 4676504926305827266, guid: 9a557ceb814264059af9331259a9793d, type: 3}
+      propertyPath: fastEnemyPrefab
+      value: 
+      objectReference: {fileID: 4580924380053316161, guid: 75e89d01fdc25bd4f9e89d0baded1443, type: 3}
     - target: {fileID: 4897490179481173062, guid: 9a557ceb814264059af9331259a9793d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

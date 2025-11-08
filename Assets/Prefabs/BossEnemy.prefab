@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1757928882030393242}
   - component: {fileID: 4580924380053316161}
   m_Layer: 0
-  m_Name: ArmoredEnemy
+  m_Name: BossEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,14 +46,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   enemyType: 0
-  maxHealth: 500
-  tritiumReward: 75
+  maxHealth: 10000
+  tritiumReward: 500
   baseDamage: 100
-  moveSpeed: 0.5
+  moveSpeed: 1
   arrivalDistance: 0.05
   targetPosition: {x: 0, y: 0, z: 0}
-  attackRange: 3
-  attackDamage: 50
+  attackRange: 5
+  attackDamage: 20
   attackDelay: 3
   stopToAttack: 0
   onArrived:
@@ -144,7 +144,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1656902183667216909, guid: 1db4db2d6313e2d4ca665b656072c3b1, type: 3}
+  m_Sprite: {fileID: -4467275502600760408, guid: 71cd6b851f4b1924d9f0ff83f5ea6fe0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

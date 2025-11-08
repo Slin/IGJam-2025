@@ -93,12 +93,12 @@ public class Enemy : MonoBehaviour
 
         // Check for nearby buildings to attack (excluding center base)
         Building nearbyBuilding = SpawnerManager.Instance?.GetClosestBuildingExcludingCenterBase(transform.position, attackRange);
-        
+
         if (nearbyBuilding != null)
         {
             // Attack the building
             AttackBuilding(nearbyBuilding);
-            
+
             // If stopToAttack is true, don't move this frame
             if (stopToAttack)
             {
@@ -129,10 +129,10 @@ public class Enemy : MonoBehaviour
         {
             // Perform attack
             building.TakeDamage(attackDamage);
-            
+
             // Create laser visual effect
             LaserBeam.Create(transform.position, building.transform.position, Color.red, 0.1f, 0.2f);
-            
+
             // Play attack sound
             AudioManager.Instance?.PlaySFX("enemy_attack");
 

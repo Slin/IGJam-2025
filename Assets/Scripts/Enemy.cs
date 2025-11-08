@@ -72,6 +72,10 @@ public class Enemy : MonoBehaviour
 
     void HandleDeath()
     {
+        // If enemy already arrived at base, don't process death
+        // (it was already handled by OnEnemyArrived)
+        if (_arrived) return;
+
         try
         {
             onDeath?.Invoke();
@@ -84,12 +88,18 @@ public class Enemy : MonoBehaviour
         }
         catch (Exception) { /* ignore if manager not available */ }
 
+        try
+        {
+            SpawnerManager.Instance?.OnEnemyKilled(this);
+        }
+        catch (Exception) { /* ignore if manager not available */ }
+
         Destroy(gameObject);
     }
 
     void Update()
     {
-        if (_arrived) return;
+        if (_arrived || IsDead) return;
 
         // Check for nearby buildings to attack (excluding center base)
         Building nearbyBuilding = SpawnerManager.Instance?.GetClosestBuildingExcludingCenterBase(transform.position, attackRange);

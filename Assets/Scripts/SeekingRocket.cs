@@ -22,7 +22,7 @@ public class SeekingRocket : MonoBehaviour
     void Update()
     {
         _lifetime -= Time.deltaTime;
-        
+
         // Destroy if lifetime expired
         if (_lifetime <= 0)
         {
@@ -39,7 +39,7 @@ public class SeekingRocket : MonoBehaviour
 
         // Move towards target
         Vector3 direction = (_target.transform.position - transform.position).normalized;
-        
+
         // Rotate towards target
         if (direction != Vector3.zero)
         {
@@ -57,10 +57,10 @@ public class SeekingRocket : MonoBehaviour
         {
             // Hit the target
             _target.TakeDamage(_damage);
-            
+
             // Play impact effect/sound
             AudioManager.Instance?.PlaySFX("explosion");
-            
+
             // Destroy rocket
             Destroy(gameObject);
         }

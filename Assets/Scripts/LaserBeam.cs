@@ -23,18 +23,18 @@ public class LaserBeam : MonoBehaviour
     void InitializeSpriteRenderer()
     {
         if (_initialized) return;
-        
+
         _spriteRenderer = GetComponent<SpriteRenderer>();
-        
+
         // Create a simple sprite
         Texture2D texture = new Texture2D(1, 1);
         texture.SetPixel(0, 0, Color.white);
         texture.Apply();
-        
+
         Sprite sprite = Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1);
         _spriteRenderer.sprite = sprite;
         _spriteRenderer.color = laserColor;
-        
+
         _initialized = true;
     }
 
@@ -55,13 +55,13 @@ public class LaserBeam : MonoBehaviour
     public void Setup(Vector3 start, Vector3 end)
     {
         InitializeSpriteRenderer();
-        
+
         // Update color in case it was changed before Awake
         if (_spriteRenderer != null)
         {
             _spriteRenderer.color = laserColor;
         }
-        
+
         _timeRemaining = duration;
 
         // Position at midpoint
@@ -85,16 +85,16 @@ public class LaserBeam : MonoBehaviour
     {
         GameObject obj = new GameObject("LaserBeam");
         LaserBeam laser = obj.AddComponent<LaserBeam>();
-        
+
         if (color.HasValue)
         {
             laser.laserColor = color.Value;
         }
         laser.width = width;
         laser.duration = duration;
-        
+
         laser.Setup(start, end);
-        
+
         return laser;
     }
 }

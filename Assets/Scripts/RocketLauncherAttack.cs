@@ -20,13 +20,13 @@ public class RocketLauncherAttack : BuildingAttackBehavior
         {
             Vector3 spawnPos = transform.position + launchOffset;
             GameObject rocketObj = Instantiate(rocketPrefab, spawnPos, Quaternion.identity);
-            
+
             SeekingRocket rocket = rocketObj.GetComponent<SeekingRocket>();
             if (rocket == null)
             {
                 rocket = rocketObj.AddComponent<SeekingRocket>();
             }
-            
+
             rocket.Initialize(target, attackDamage, rocketSpeed, rocketTurnSpeed);
         }
         else

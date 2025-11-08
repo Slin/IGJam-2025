@@ -56,7 +56,7 @@ public class GameManager : MonoBehaviour
             droneManagerObj.AddComponent<DroneManager>();
             Debug.Log("GameManager: Created DroneManager");
         }
-        
+
         // Auto-start the game when the scene loads
         StartNewGame();
     }
@@ -197,7 +197,7 @@ public class GameManager : MonoBehaviour
 
         // Prepare next spawner so players can see where enemies will come from
         SpawnerManager.Instance?.EndRound();
-        
+
         // Notify DroneManager that round ended (drones persist)
         DroneManager.Instance?.OnRoundEnd();
 
@@ -244,6 +244,15 @@ public class GameManager : MonoBehaviour
         {
             /* ignore event exceptions */
         }
+
+        // Load game over scene after a short delay
+        StartCoroutine(LoadGameOverSceneAfterDelay());
+    }
+
+    IEnumerator LoadGameOverSceneAfterDelay()
+    {
+        yield return new WaitForSeconds(2f); // Wait 2 seconds before transitioning
+        UnityEngine.SceneManagement.SceneManager.LoadScene("GameOverScene");
     }
 
     public void RestartGame()

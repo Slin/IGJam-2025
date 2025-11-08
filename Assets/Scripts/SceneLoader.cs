@@ -19,4 +19,9 @@ public class SceneLoader : MonoBehaviour
     {
         SceneManager.LoadScene("GameplayScene");
     }
+
+    public void LoadGameOverScene()
+    {
+        SceneManager.LoadScene("GameOverScene");
+    }
 }

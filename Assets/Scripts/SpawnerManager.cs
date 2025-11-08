@@ -163,12 +163,12 @@ public class SpawnerManager : MonoBehaviour
 
         Enemy enemy = Instantiate(prefab, spawnPos, Quaternion.identity);
 
-        // Initialize enemy to move towards base (center)
+        // Initialize enemy to move towards the closest base from spawn position
         Vector3 targetPos = Vector3.zero;
-        var mainBase = BuildingManager.Instance?.GetNearestBuilding(Vector3.zero, BuildingType.Base);
-        if (mainBase != null)
+        var closestBase = BuildingManager.Instance?.GetNearestBuilding(spawnPos, BuildingType.Base);
+        if (closestBase != null)
         {
-            targetPos = mainBase.transform.position;
+            targetPos = closestBase.transform.position;
         }
 
         enemy.Initialize(targetPos, OnEnemyArrived);
@@ -196,11 +196,11 @@ public class SpawnerManager : MonoBehaviour
 
         _activeEnemies.Remove(enemy);
 
-        // Enemy reached the base - deal damage
-        var targetBuilding = BuildingManager.Instance?.GetNearestBuilding(enemy.transform.position, BuildingType.Base);
-        if (targetBuilding != null && !targetBuilding.IsDead)
+        // Enemy reached a base - deal damage to the closest base
+        var closestBase = BuildingManager.Instance?.GetNearestBuilding(enemy.transform.position, BuildingType.Base);
+        if (closestBase != null && !closestBase.IsDead)
         {
-            targetBuilding.TakeDamage(enemy.baseDamage);
+            closestBase.TakeDamage(enemy.baseDamage);
             AudioManager.Instance?.PlaySFX("enemy_attack");
         }
 

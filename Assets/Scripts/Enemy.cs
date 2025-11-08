@@ -40,6 +40,8 @@ public class Enemy : MonoBehaviour
     float _currentHealth;
     HealthBar _healthBar;
     float _attackCooldown;
+    float _retargetTimer;
+    const float RETARGET_INTERVAL = 1f; // Recalculate closest base every second
 
     public float CurrentHealth => _currentHealth;
     public bool IsDead => _currentHealth <= 0;
@@ -56,7 +58,19 @@ public class Enemy : MonoBehaviour
         _arrivedCallback = onArrivedCallback;
         _currentHealth = maxHealth;
         _arrived = false;
+        _retargetTimer = RETARGET_INTERVAL; // Start with full interval
         UpdateHealthBar();
+    }
+
+    void UpdateTargetToClosestBase()
+    {
+        if (BuildingManager.Instance == null) return;
+
+        Building closestBase = BuildingManager.Instance.GetNearestBuilding(transform.position, BuildingType.Base);
+        if (closestBase != null && !closestBase.IsDead)
+        {
+            targetPosition = closestBase.transform.position;
+        }
     }
 
     public void TakeDamage(float damage)
@@ -105,10 +119,18 @@ public class Enemy : MonoBehaviour
     {
         if (_arrived || IsDead) return;
 
+        // Periodically update target to closest base
+        _retargetTimer -= Time.deltaTime;
+        if (_retargetTimer <= 0)
+        {
+            _retargetTimer = RETARGET_INTERVAL;
+            UpdateTargetToClosestBase();
+        }
+
         // Find closest targets of each type
         Drone nearbyDrone = DroneManager.Instance?.GetClosestDrone(transform.position, attackRange);
         Building nearbyBuilding = SpawnerManager.Instance?.GetClosestBuildingExcludingCenterBase(transform.position, attackRange);
-        
+
         // Debug logging
         if (nearbyDrone != null)
         {
@@ -158,12 +180,12 @@ public class Enemy : MonoBehaviour
         Vector3 current = transform.position;
         Vector3 direction = (targetPosition - current).normalized;
         Vector3 separationOffset = CalculateSeparation();
-        
+
         // Combine movement direction with separation smoothly
         Vector3 combinedDirection = (direction + separationOffset * 0.3f).normalized;
         float step = moveSpeed * Time.deltaTime;
         Vector3 next = current + combinedDirection * step;
-        
+
         transform.position = next;
 
         if ((next - targetPosition).sqrMagnitude <= (arrivalDistance * arrivalDistance))

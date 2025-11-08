@@ -180,7 +180,7 @@ public class BuildingTooltip : MonoBehaviour
                 int currentDrones = droneFactory.GetActiveDroneCount();
                 int maxDrones = droneFactory.EffectiveDroneLimit;
                 int boostCount = droneFactory.GetActiveBoostCount();
-                
+
                 tooltip += $"\nDrones: {currentDrones}/{maxDrones}";
                 if (boostCount > 0)
                 {

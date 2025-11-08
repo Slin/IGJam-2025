@@ -78,8 +78,14 @@ public class CameraPanZoom2D : MonoBehaviour
             if (scrollY != 0)
             {
                 float sign = invertScroll ? -1f : 1f;
+                Vector2 screenPos = mouse.position.ReadValue();
+                Vector3 worldBefore = _camera.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, 0));
                 _camera.orthographicSize -= scrollY * mouseWheelZoomSpeed * sign;
                 ClampZoom();
+                Vector3 worldAfter = _camera.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, 0));
+                Vector3 delta = worldBefore - worldAfter;
+                transform.position += new Vector3(delta.x, delta.y, 0f);
+                _velocity = Vector3.zero;
             }
 
             if (rightMouseDragToPan && mouse.rightButton.isPressed)
@@ -108,8 +114,14 @@ public class CameraPanZoom2D : MonoBehaviour
         if (scrollY != 0)
         {
             float sign = invertScroll ? -1f : 1f;
+            Vector2 screenPos = Input.mousePosition;
+            Vector3 worldBefore = _camera.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, 0));
             _camera.orthographicSize -= scrollY * mouseWheelZoomSpeed * sign;
             ClampZoom();
+            Vector3 worldAfter = _camera.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, 0));
+            Vector3 delta = worldBefore - worldAfter;
+            transform.position += new Vector3(delta.x, delta.y, 0f);
+            _velocity = Vector3.zero;
         }
 
         if (rightMouseDragToPan && Input.GetMouseButton(1))
@@ -160,12 +172,17 @@ public class CameraPanZoom2D : MonoBehaviour
             float currDist = (t0.screenPosition - t1.screenPosition).magnitude;
             float distDelta = currDist - prevDist;
 
+            Vector2 prevMid = (prev0 + prev1) * 0.5f;
+            Vector2 currMid = (t0.screenPosition + t1.screenPosition) * 0.5f;
+            Vector3 worldBefore = _camera.ScreenToWorldPoint(new Vector3(prevMid.x, prevMid.y, 0));
+
             _camera.orthographicSize -= distDelta * pinchZoomSpeed;
             ClampZoom();
 
-            Vector2 prevMid = (prev0 + prev1) * 0.5f;
-            Vector2 currMid = (t0.screenPosition + t1.screenPosition) * 0.5f;
-            PanByScreenDelta(currMid - prevMid);
+            Vector3 worldAfter = _camera.ScreenToWorldPoint(new Vector3(currMid.x, currMid.y, 0));
+            Vector3 delta = worldBefore - worldAfter;
+            transform.position += new Vector3(delta.x, delta.y, 0f);
+            _velocity = Vector3.zero;
         }
 #else
         // Legacy Input touch handling
@@ -190,12 +207,17 @@ public class CameraPanZoom2D : MonoBehaviour
             float currDist = (t0.position - t1.position).magnitude;
             float distDelta = currDist - prevDist;
 
+            Vector2 prevMid = (prev0 + prev1) * 0.5f;
+            Vector2 currMid = (t0.position + t1.position) * 0.5f;
+            Vector3 worldBefore = _camera.ScreenToWorldPoint(new Vector3(prevMid.x, prevMid.y, 0));
+
             _camera.orthographicSize -= distDelta * pinchZoomSpeed;
             ClampZoom();
 
-            Vector2 prevMid = (prev0 + prev1) * 0.5f;
-            Vector2 currMid = (t0.position + t1.position) * 0.5f;
-            PanByScreenDelta(currMid - prevMid);
+            Vector3 worldAfter = _camera.ScreenToWorldPoint(new Vector3(currMid.x, currMid.y, 0));
+            Vector3 delta = worldBefore - worldAfter;
+            transform.position += new Vector3(delta.x, delta.y, 0f);
+            _velocity = Vector3.zero;
         }
 #endif
     }

@@ -1679,9 +1679,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9146ff8b97ef84797ae3bef52c458474, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TritiumCounterUI
-  uiText: {fileID: 0}
   tmpText: {fileID: 0}
-  format: 'Tritium: {0}'
 --- !u!1 &2897480232324192877
 GameObject:
   m_ObjectHideFlags: 0
@@ -1829,6 +1827,7 @@ GameObject:
   - component: {fileID: 5582513973516953036}
   - component: {fileID: 1879104655908377174}
   - component: {fileID: 169015053288340553}
+  - component: {fileID: 3846949122748405170}
   m_Layer: 5
   m_Name: RoundCounter
   m_TagString: Untagged
@@ -1954,6 +1953,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3846949122748405170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3013851841088888825}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6154d94aea4f740c6b38b44aa49e561f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoundCounterUI
+  tmpText: {fileID: 0}
 --- !u!1 &3203233805765719420
 GameObject:
   m_ObjectHideFlags: 0

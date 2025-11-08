@@ -619,6 +619,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   readyButton: {fileID: 0}
+  laserBeamPrefab: {fileID: 3614747911103135761, guid: 47680ed4a3d234e4cb8c1fb2cfafdd31, type: 3}
 --- !u!4 &1673550299
 Transform:
   m_ObjectHideFlags: 0

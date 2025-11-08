@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 public class HexTile : MonoBehaviour
 {
@@ -76,9 +77,10 @@ public class HexTile : MonoBehaviour
 				// Snap preview to this tile's center
 				bm.UpdateBuildingPreview(transform.position);
 
-				// Place on click
+				// Place on click (ignore clicks over UI)
 				var mouse = Mouse.current;
-				if (mouse != null && mouse.leftButton.wasPressedThisFrame)
+				bool overUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+				if (mouse != null && mouse.leftButton.wasPressedThisFrame && !overUI)
 				{
 					bm.TryPlaceBuilding(transform.position, this);
 				}

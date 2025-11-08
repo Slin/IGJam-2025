@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
     public UnityEvent<int> onRoundStarted;
     public UnityEvent<int> onRoundCompleted;
 
-    GameState _currentState = GameState.Playing;
+    GameState _currentState = GameState.NotStarted;
     GamePhase _currentPhase = GamePhase.Building;
     float _buildPhaseStartTime;
 
@@ -46,7 +46,8 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        // Don't auto-start, wait for explicit call
+        // Auto-start the game when the scene loads
+        StartNewGame();
     }
 
     public void StartNewGame()
@@ -65,6 +66,7 @@ public class GameManager : MonoBehaviour
         // Initialize all managers
         PlayerStatsManager.Instance?.InitializeNewGame();
         BuildingManager.Instance?.InitializeNewGame();
+        SpawnerManager.Instance?.InitializeNewGame();
 
         // Play building phase music
         AudioManager.Instance?.PlayBuildingPhaseMusic();
@@ -163,6 +165,9 @@ public class GameManager : MonoBehaviour
         Debug.Log("GameManager: Returning to building phase");
         _currentPhase = GamePhase.Building;
         _buildPhaseStartTime = Time.time;
+
+        // Prepare next spawner so players can see where enemies will come from
+        SpawnerManager.Instance?.EndRound();
 
         // Play building music
         AudioManager.Instance?.PlayBuildingPhaseMusic();

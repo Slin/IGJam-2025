@@ -38,6 +38,22 @@ public class SpawnerManager : MonoBehaviour
         Instance = this;
     }
 
+    public void InitializeNewGame()
+    {
+        // Clear any existing spawner
+        if (_activeSpawner != null)
+        {
+            Destroy(_activeSpawner.gameObject);
+            _activeSpawner = null;
+        }
+
+        // Clear enemies
+        ClearAllEnemies();
+
+        // Create initial spawner for first building phase
+        CreateNewSpawner();
+    }
+
     void Update()
     {
         // Debug: Press Space to start defense phase (can be removed once UI is ready)
@@ -163,6 +179,7 @@ public class SpawnerManager : MonoBehaviour
             Mathf.Sin(angle) * newSpawnerCircleRadius, 0f);
 
         _activeSpawner = InstantiateSpawner(position);
+        Debug.Log("New spawner created");
     }
 
     public void OnEnemyArrived(Enemy enemy)

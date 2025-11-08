@@ -205,10 +205,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb078a2beba06144698edf8f41bf3fd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStatsManager
-  startingTritium: 3000
+  startingTritium: 500
   tritiumPerRound: 100
   _tritium: 0
-  _currentRound: 8
+  _currentRound: 0
   _enemiesKilled: 0
   onTritiumChanged:
     m_PersistentCalls:

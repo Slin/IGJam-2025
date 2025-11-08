@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -21,6 +23,7 @@ public class Enemy : MonoBehaviour
     public float attackDamage = 15f;
     public float attackDelay = 1.5f;
     public bool stopToAttack = false; // If true, enemy stops moving while attacking
+    public int maxAttackTargets = 1; // How many drones/buildings can be attacked simultaneously
 
     [Header("Separation Settings")]
     public float separationRadius = 0.75f; // How close before pushing away
@@ -127,47 +130,74 @@ public class Enemy : MonoBehaviour
             UpdateTargetToClosestBase();
         }
 
-        // Find closest targets of each type
-        Drone nearbyDrone = DroneManager.Instance?.GetClosestDrone(transform.position, attackRange);
-        Building nearbyBuilding = SpawnerManager.Instance?.GetClosestBuildingExcludingCenterBase(transform.position, attackRange);
+        // Update attack cooldown
+        _attackCooldown -= Time.deltaTime;
 
-        // Debug logging
-        if (nearbyDrone != null)
+        // Find all potential targets within range and sort by distance
+        List<(object target, float distance)> potentialTargets = new List<(object, float)>();
+
+        // Collect drones within range
+        if (DroneManager.Instance != null)
         {
-            Debug.Log($"Enemy found nearby drone at distance {Vector3.Distance(transform.position, nearbyDrone.Position)}");
+            foreach (var drone in DroneManager.Instance.AllDrones)
+            {
+                if (drone == null || drone.IsDead) continue;
+                float distance = Vector3.Distance(transform.position, drone.Position);
+                if (distance <= attackRange)
+                {
+                    potentialTargets.Add((drone, distance));
+                }
+            }
         }
 
-        // Determine which target to attack (prioritize closer one)
+        // Collect buildings within range (excluding center base)
+        if (BuildingManager.Instance != null)
+        {
+            foreach (var building in BuildingManager.Instance.AllBuildings)
+            {
+                if (building == null || building.IsDead) continue;
+                
+                // Skip bases that are at the center (or very close to center)
+                if (building.buildingType == BuildingType.Base && building.transform.position.sqrMagnitude < 0.1f)
+                    continue;
+
+                float distance = Vector3.Distance(transform.position, building.transform.position);
+                if (distance <= attackRange)
+                {
+                    potentialTargets.Add((building, distance));
+                }
+            }
+        }
+
+        // Sort by distance and attack up to maxAttackTargets
         bool shouldAttack = false;
+        if (potentialTargets.Count > 0 && _attackCooldown <= 0)
+        {
+            // Sort by distance (closest first)
+            potentialTargets.Sort((a, b) => a.distance.CompareTo(b.distance));
 
-        if (nearbyDrone != null && nearbyBuilding != null)
-        {
-            // Both available - attack the closer one
-            float droneDist = Vector3.Distance(transform.position, nearbyDrone.Position);
-            float buildingDist = Vector3.Distance(transform.position, nearbyBuilding.transform.position);
+            // Attack up to maxAttackTargets
+            int targetsToAttack = Mathf.Min(maxAttackTargets, potentialTargets.Count);
+            for (int i = 0; i < targetsToAttack; i++)
+            {
+                var target = potentialTargets[i].target;
+                if (target is Drone drone)
+                {
+                    AttackDrone(drone);
+                    shouldAttack = true;
+                }
+                else if (target is Building building)
+                {
+                    AttackBuilding(building);
+                    shouldAttack = true;
+                }
+            }
 
-            if (droneDist <= buildingDist)
+            // Reset cooldown after attacking
+            if (shouldAttack)
             {
-                AttackDrone(nearbyDrone);
-                shouldAttack = true;
+                _attackCooldown = attackDelay;
             }
-            else
-            {
-                AttackBuilding(nearbyBuilding);
-                shouldAttack = true;
-            }
-        }
-        else if (nearbyDrone != null)
-        {
-            // Only drone available
-            AttackDrone(nearbyDrone);
-            shouldAttack = true;
-        }
-        else if (nearbyBuilding != null)
-        {
-            // Only building available
-            AttackBuilding(nearbyBuilding);
-            shouldAttack = true;
         }
 
         // If stopToAttack is true and we're attacking, don't move this frame
@@ -233,46 +263,28 @@ public class Enemy : MonoBehaviour
     {
         if (building == null || building.IsDead) return;
 
-        // Update cooldown
-        _attackCooldown -= Time.deltaTime;
+        // Perform attack
+        building.TakeDamage(attackDamage);
 
-        if (_attackCooldown <= 0)
-        {
-            // Perform attack
-            building.TakeDamage(attackDamage);
+        // Create laser visual effect
+        LaserBeam.Create(transform.position, building.transform.position, Color.red, 0.1f, 0.2f);
 
-            // Create laser visual effect
-            LaserBeam.Create(transform.position, building.transform.position, Color.red, 0.1f, 0.2f);
-
-            // Play attack sound
-            AudioManager.Instance?.PlaySFX("enemy_attack");
-
-            // Reset cooldown
-            _attackCooldown = attackDelay;
-        }
+        // Play attack sound
+        AudioManager.Instance?.PlaySFX("enemy_attack");
     }
 
     void AttackDrone(Drone drone)
     {
         if (drone == null || drone.IsDead) return;
 
-        // Update cooldown
-        _attackCooldown -= Time.deltaTime;
+        // Perform attack
+        drone.TakeDamage(attackDamage);
 
-        if (_attackCooldown <= 0)
-        {
-            // Perform attack
-            drone.TakeDamage(attackDamage);
+        // Create laser visual effect
+        LaserBeam.Create(transform.position, drone.transform.position, Color.red, 0.1f, 0.2f);
 
-            // Create laser visual effect
-            LaserBeam.Create(transform.position, drone.transform.position, Color.red, 0.1f, 0.2f);
-
-            // Play attack sound
-            AudioManager.Instance?.PlaySFX("enemy_attack");
-
-            // Reset cooldown
-            _attackCooldown = attackDelay;
-        }
+        // Play attack sound
+        AudioManager.Instance?.PlaySFX("enemy_attack");
     }
 
     void HandleArrived()

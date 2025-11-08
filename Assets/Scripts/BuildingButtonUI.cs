@@ -54,7 +54,7 @@ public class BuildingButtonUI : MonoBehaviour
 
         // Only mark as subscribed if we successfully subscribe to both
         bool canSubscribe = buildingManager != null && playerStats != null;
-        
+
         if (!canSubscribe) return;
 
         buildingManager.onBuildingPlaced.AddListener(OnBuildingPlaced);
@@ -145,7 +145,7 @@ public class BuildingButtonUI : MonoBehaviour
 
         // Ensure we're subscribed
         TrySubscribeToEvents();
-        
+
         // Force an update after subscription
         UpdateCostDisplay();
     }

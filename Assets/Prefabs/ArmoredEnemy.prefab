@@ -56,6 +56,7 @@ MonoBehaviour:
   attackDamage: 50
   attackDelay: 3
   stopToAttack: 0
+  maxAttackTargets: 1
   separationRadius: 0.5
   separationForce: 2
   onArrived:
@@ -151,7 +152,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.9375, y: 0.6875}
+  m_Size: {x: 0.32, y: 0.32}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

@@ -48,7 +48,7 @@ MonoBehaviour:
   enemyType: 0
   maxHealth: 10000
   tritiumReward: 500
-  baseDamage: 100
+  baseDamage: 500
   moveSpeed: 0.3
   arrivalDistance: 0.05
   targetPosition: {x: 0, y: 0, z: 0}
@@ -56,6 +56,9 @@ MonoBehaviour:
   attackDamage: 20
   attackDelay: 3
   stopToAttack: 0
+  maxAttackTargets: 1
+  separationRadius: 0.75
+  separationForce: 1
   onArrived:
     m_PersistentCalls:
       m_Calls: []

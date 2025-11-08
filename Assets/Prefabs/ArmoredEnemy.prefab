@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1757928882030393242}
   - component: {fileID: 4580924380053316161}
   m_Layer: 0
-  m_Name: Enemy
+  m_Name: ArmoredEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45,10 +45,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd19a20ae6f2c423996ed948da940ba9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  moveSpeed: 2
+  enemyType: 0
+  maxHealth: 500
+  tritiumReward: 10
+  moveSpeed: 0.5
   arrivalDistance: 0.05
   targetPosition: {x: 0, y: 0, z: 0}
   onArrived:
+    m_PersistentCalls:
+      m_Calls: []
+  onDeath:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &7449361229019044406
@@ -130,7 +136,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 5695514253672248436, guid: e9fc766843d0b4e85944057be8729ba5, type: 3}
+  m_Sprite: {fileID: -1656902183667216909, guid: 1db4db2d6313e2d4ca665b656072c3b1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

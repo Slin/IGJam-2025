@@ -25,6 +25,9 @@ public class HexTile : MonoBehaviour
             _baseSortingLayerId = _renderer.sortingLayerID;
             _baseSortingOrder = _renderer.sortingOrder;
         }
+
+        _isHighlighted = true;
+        SetHighlight(false);
     }
 
     bool IsPointInHexagon(Vector2 point)
@@ -54,39 +57,27 @@ public class HexTile : MonoBehaviour
         var cam = Camera.main;
         Vector3 world = cam.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, Mathf.Abs(cam.transform.position.z - transform.position.z)));
         bool inside = IsPointInHexagon(new Vector2(world.x, world.y));
-        if(inside)
-        {
-            if (_renderer != null)
-            {
-                if (_renderer.material.color != _highlightColor)
-                    _renderer.material.color = _highlightColor;
-            }
-            if (!_isHighlighted) { SetHighlighted(true); }
-        }
-        else
-        {
-            if (_renderer != null)
-            {
-                if (_renderer.material.color != _baseColor)
-                    _renderer.material.color = _baseColor;
-            }
-            if (_isHighlighted) { SetHighlighted(false); }
-        }
+        SetHighlight(inside);
     }
 
-    void SetHighlighted(bool on)
+    void SetHighlight(bool on)
     {
+        if(_isHighlighted == on) return;
         _isHighlighted = on;
-        if (_renderer == null) return;
-        if (on)
+        if(_renderer == null) return;
+        if(on)
         {
             _renderer.sortingLayerID = _baseSortingLayerId;
             _renderer.sortingOrder = _baseSortingOrder + highlightOrderOffset;
+            if (_renderer.material.color != _highlightColor)
+                _renderer.material.color = _highlightColor;
         }
         else
         {
             _renderer.sortingLayerID = _baseSortingLayerId;
             _renderer.sortingOrder = _baseSortingOrder;
+            if (_renderer.material.color != _baseColor)
+                _renderer.material.color = _baseColor;
         }
     }
 }

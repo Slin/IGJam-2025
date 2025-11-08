@@ -101,19 +101,53 @@ public class Enemy : MonoBehaviour
     {
         if (_arrived || IsDead) return;
 
-        // Check for nearby buildings to attack (excluding center base)
+        // Find closest targets of each type
+        Drone nearbyDrone = DroneManager.Instance?.GetClosestDrone(transform.position, attackRange);
         Building nearbyBuilding = SpawnerManager.Instance?.GetClosestBuildingExcludingCenterBase(transform.position, attackRange);
-
-        if (nearbyBuilding != null)
+        
+        // Debug logging
+        if (nearbyDrone != null)
         {
-            // Attack the building
-            AttackBuilding(nearbyBuilding);
+            Debug.Log($"Enemy found nearby drone at distance {Vector3.Distance(transform.position, nearbyDrone.Position)}");
+        }
 
-            // If stopToAttack is true, don't move this frame
-            if (stopToAttack)
+        // Determine which target to attack (prioritize closer one)
+        bool shouldAttack = false;
+
+        if (nearbyDrone != null && nearbyBuilding != null)
+        {
+            // Both available - attack the closer one
+            float droneDist = Vector3.Distance(transform.position, nearbyDrone.Position);
+            float buildingDist = Vector3.Distance(transform.position, nearbyBuilding.transform.position);
+
+            if (droneDist <= buildingDist)
             {
-                return;
+                AttackDrone(nearbyDrone);
+                shouldAttack = true;
             }
+            else
+            {
+                AttackBuilding(nearbyBuilding);
+                shouldAttack = true;
+            }
+        }
+        else if (nearbyDrone != null)
+        {
+            // Only drone available
+            AttackDrone(nearbyDrone);
+            shouldAttack = true;
+        }
+        else if (nearbyBuilding != null)
+        {
+            // Only building available
+            AttackBuilding(nearbyBuilding);
+            shouldAttack = true;
+        }
+
+        // If stopToAttack is true and we're attacking, don't move this frame
+        if (shouldAttack && stopToAttack)
+        {
+            return;
         }
 
         // Continue moving towards target
@@ -142,6 +176,29 @@ public class Enemy : MonoBehaviour
 
             // Create laser visual effect
             LaserBeam.Create(transform.position, building.transform.position, Color.red, 0.1f, 0.2f);
+
+            // Play attack sound
+            AudioManager.Instance?.PlaySFX("enemy_attack");
+
+            // Reset cooldown
+            _attackCooldown = attackDelay;
+        }
+    }
+
+    void AttackDrone(Drone drone)
+    {
+        if (drone == null || drone.IsDead) return;
+
+        // Update cooldown
+        _attackCooldown -= Time.deltaTime;
+
+        if (_attackCooldown <= 0)
+        {
+            // Perform attack
+            drone.TakeDamage(attackDamage);
+
+            // Create laser visual effect
+            LaserBeam.Create(transform.position, drone.transform.position, Color.red, 0.1f, 0.2f);
 
             // Play attack sound
             AudioManager.Instance?.PlaySFX("enemy_attack");

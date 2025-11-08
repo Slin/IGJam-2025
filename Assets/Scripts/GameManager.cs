@@ -49,6 +49,14 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        // Ensure DroneManager exists
+        if (DroneManager.Instance == null)
+        {
+            GameObject droneManagerObj = new GameObject("DroneManager");
+            droneManagerObj.AddComponent<DroneManager>();
+            Debug.Log("GameManager: Created DroneManager");
+        }
+        
         // Auto-start the game when the scene loads
         StartNewGame();
     }
@@ -70,6 +78,7 @@ public class GameManager : MonoBehaviour
         PlayerStatsManager.Instance?.InitializeNewGame();
         BuildingManager.Instance?.InitializeNewGame();
         SpawnerManager.Instance?.InitializeNewGame();
+        DroneManager.Instance?.ClearAllDrones();
 
         // Play building phase music
         AudioManager.Instance?.PlayBuildingPhaseMusic();
@@ -188,6 +197,9 @@ public class GameManager : MonoBehaviour
 
         // Prepare next spawner so players can see where enemies will come from
         SpawnerManager.Instance?.EndRound();
+        
+        // Notify DroneManager that round ended (drones persist)
+        DroneManager.Instance?.OnRoundEnd();
 
         // Play building music
         AudioManager.Instance?.PlayBuildingPhaseMusic();

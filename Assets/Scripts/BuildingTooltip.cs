@@ -173,14 +173,15 @@ public class BuildingTooltip : MonoBehaviour
         // Add damage info for attack buildings
         if (_attackBehavior != null)
         {
-            float baseDamage = _attackBehavior.attackDamage;
-            float effectiveDamage = _attackBehavior.EffectiveAttackDamage;
-            float boostPercent = ((effectiveDamage / baseDamage) - 1f) * 100f;
-
-            if (boostPercent > 0.01f)
+            // Special handling for DroneFactory
+            var droneFactory = _attackBehavior as DroneFactoryAttackBehavior;
+            if (droneFactory != null)
             {
-                int boostCount = _attackBehavior.GetActiveBoostCount();
-                tooltip += $"\nDamage: {effectiveDamage:F1} (+{boostPercent:F0}%)";
+                int currentDrones = droneFactory.GetActiveDroneCount();
+                int maxDrones = droneFactory.EffectiveDroneLimit;
+                int boostCount = droneFactory.GetActiveBoostCount();
+                
+                tooltip += $"\nDrones: {currentDrones}/{maxDrones}";
                 if (boostCount > 0)
                 {
                     tooltip += $"\n[{boostCount} Booster{(boostCount > 1 ? "s" : "")}]";
@@ -188,7 +189,24 @@ public class BuildingTooltip : MonoBehaviour
             }
             else
             {
-                tooltip += $"\nDamage: {effectiveDamage:F1}";
+                // Regular attack buildings show damage
+                float baseDamage = _attackBehavior.attackDamage;
+                float effectiveDamage = _attackBehavior.EffectiveAttackDamage;
+                float boostPercent = ((effectiveDamage / baseDamage) - 1f) * 100f;
+
+                if (boostPercent > 0.01f)
+                {
+                    int boostCount = _attackBehavior.GetActiveBoostCount();
+                    tooltip += $"\nDamage: {effectiveDamage:F1} (+{boostPercent:F0}%)";
+                    if (boostCount > 0)
+                    {
+                        tooltip += $"\n[{boostCount} Booster{(boostCount > 1 ? "s" : "")}]";
+                    }
+                }
+                else
+                {
+                    tooltip += $"\nDamage: {effectiveDamage:F1}";
+                }
             }
         }
 

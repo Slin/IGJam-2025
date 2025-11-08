@@ -15,7 +15,7 @@ public class SpawnerManager : MonoBehaviour
     public Enemy bossEnemyPrefab;
     public Enemy attackEnemyPrefab;
 
-    [Header("Spawner Movement")] 
+    [Header("Spawner Movement")]
     public float newSpawnerCircleRadius = 18.0f;
 
     EnemySpawner _activeSpawner;
@@ -123,7 +123,7 @@ public class SpawnerManager : MonoBehaviour
         {
             // Try to pick a random enemy we can afford
             List<EnemyType> affordableTypes = new List<EnemyType>();
-            
+
             foreach (var type in unlockedTypes)
             {
                 int enemyCost = GetEnemyRewardValue(type);
@@ -140,7 +140,7 @@ public class SpawnerManager : MonoBehaviour
             // Pick a random affordable enemy
             EnemyType selectedType = affordableTypes[Random.Range(0, affordableTypes.Count)];
             int cost = GetEnemyRewardValue(selectedType);
-            
+
             enemiesToSpawn.Add(selectedType);
             remainingMoney -= cost;
         }
@@ -164,21 +164,21 @@ public class SpawnerManager : MonoBehaviour
     List<EnemyType> GetUnlockedEnemyTypes(int round)
     {
         List<EnemyType> types = new List<EnemyType>();
-        
+
         // Always have Regular
         types.Add(EnemyType.Regular);
-        
+
         if (GameManager.Instance?.ShouldSpawnEnemyType(EnemyType.Fast, round) ?? false)
             types.Add(EnemyType.Fast);
-        
+
         if (GameManager.Instance?.ShouldSpawnEnemyType(EnemyType.Armored, round) ?? false)
             types.Add(EnemyType.Armored);
-        
+
         if (GameManager.Instance?.ShouldSpawnEnemyType(EnemyType.Attack, round) ?? false)
             types.Add(EnemyType.Attack);
-        
+
         // Note: Boss is handled separately, not in the random pool
-        
+
         return types;
     }
 
@@ -187,7 +187,7 @@ public class SpawnerManager : MonoBehaviour
         Enemy prefab = GetEnemyPrefab(type);
         if (prefab == null)
             return 10; // Default value
-        
+
         return prefab.tritiumReward;
     }
 

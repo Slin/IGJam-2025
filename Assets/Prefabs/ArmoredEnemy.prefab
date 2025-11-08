@@ -49,7 +49,7 @@ MonoBehaviour:
   maxHealth: 500
   tritiumReward: 60
   baseDamage: 100
-  moveSpeed: 0.5
+  moveSpeed: 1
   arrivalDistance: 0.05
   targetPosition: {x: 0, y: 0, z: 0}
   attackRange: 3

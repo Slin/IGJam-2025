@@ -105,8 +105,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Building
   buildingType: 1
-  maxHealth: 500
-  tritiumCost: 500
+  maxHealth: 250
+  tritiumCost: 1000
   size: 1
   occupiedTiles: []
   onDestroyed:
@@ -131,7 +131,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RocketLauncherAttack
   attackRange: 10
-  attackDamage: 300
+  attackDamage: 250
   attackDelay: 5
   rocketPrefab: {fileID: 6415429859441681765, guid: 8f4c810ae6bd8e34897a34485ecca7df, type: 3}
   rocketSpeed: 10

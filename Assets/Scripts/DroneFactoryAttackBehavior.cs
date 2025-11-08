@@ -147,11 +147,25 @@ public class DroneFactoryAttackBehavior : BuildingAttackBehavior
         }
 
         // Check if we should spawn a new drone
-        // We use FindTarget to check if there are enemies nearby and we need more drones
         if (CanSpawnDrone())
         {
-            Enemy target = FindTarget();
-            if (target != null)
+            // During defense phase, always spawn drones up to the limit
+            // During building phase, only spawn if there are enemies nearby
+            bool shouldSpawn = false;
+
+            if (GameManager.Instance != null && GameManager.Instance.CurrentPhase == GamePhase.Defense)
+            {
+                // Defense phase - spawn drones regardless of enemies
+                shouldSpawn = true;
+            }
+            else
+            {
+                // Building phase - only spawn if enemies are nearby
+                Enemy target = FindTarget();
+                shouldSpawn = target != null;
+            }
+
+            if (shouldSpawn)
             {
                 SpawnDrone();
                 _attackCooldown = attackDelay;

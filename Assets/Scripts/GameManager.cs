@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
 
     public float defensePhaseEndDelay = 2f; // Delay after all enemies defeated before returning to build phase
 
-    [Header("Difficulty Scaling")] 
+    [Header("Difficulty Scaling")]
     public int initialRoundMoneyValue = 50;
     public int roundMoneyIncrement = 20;
     public int roundsUntilFastEnemies = 2;

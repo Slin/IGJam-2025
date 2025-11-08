@@ -106,7 +106,9 @@ public class Drone : MonoBehaviour
         else
         {
             _currentTarget = null;
-            ReturnToFactory();
+            // Don't return to factory during building phase or when no enemies are close
+            // Just stay in place with separation
+            IdleWithSeparation();
         }
     }
 
@@ -133,7 +135,7 @@ public class Drone : MonoBehaviour
             // In range - attack (still apply separation to avoid clustering)
             Vector3 separationOffset = CalculateSeparation();
             transform.position += separationOffset * moveSpeed * 0.2f * Time.deltaTime;
-            
+
             if (_attackCooldown <= 0)
             {
                 PerformAttack();
@@ -156,8 +158,16 @@ public class Drone : MonoBehaviour
         AudioManager.Instance?.PlaySFX("laser_fire");
     }
 
+    void IdleWithSeparation()
+    {
+        // Stay in place but apply separation to avoid clustering
+        Vector3 separationOffset = CalculateSeparation();
+        transform.position += separationOffset * moveSpeed * 0.15f * Time.deltaTime;
+    }
+
     void ReturnToFactory()
     {
+        // This method is no longer used, but keeping it for backward compatibility
         // If no factory, stay in place
         if (_factory == null) return;
 

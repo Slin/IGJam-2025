@@ -10,6 +10,7 @@ public class Building : MonoBehaviour
     public BuildingType buildingType = BuildingType.RocketLauncher;
     public float maxHealth = 200f;
     public int tritiumCost = 50;
+    public int costIncrement = 10; // Cost increase per purchase
 
     [Header("Placement")]
     public int size = 1; // 1 = single tile, 2 = center + 1 ring, 3 = center + 2 rings, etc.
@@ -33,6 +34,14 @@ public class Building : MonoBehaviour
     public bool IsDead => _currentHealth <= 0;
     public bool IsPlaced => _isPlaced;
     public bool IsPreview => _isPreview;
+
+    /// <summary>
+    /// Get the current cost for this building type based on how many have been purchased
+    /// </summary>
+    public int GetCurrentCost(int purchaseCount)
+    {
+        return tritiumCost + (costIncrement * purchaseCount);
+    }
 
     void Awake()
     {

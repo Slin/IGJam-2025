@@ -106,8 +106,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Building
   buildingType: 3
   maxHealth: 2000
-  tritiumCost: 500
-  isMultiTile: 1
+  tritiumCost: 250
+  costIncrement: 250
+  size: 1
   occupiedTiles: []
   onDestroyed:
     m_PersistentCalls:

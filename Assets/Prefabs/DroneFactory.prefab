@@ -107,6 +107,7 @@ MonoBehaviour:
   buildingType: 4
   maxHealth: 2000
   tritiumCost: 300
+  costIncrement: 100
   size: 1
   occupiedTiles: []
   onDestroyed:

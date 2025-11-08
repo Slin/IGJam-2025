@@ -32,6 +32,7 @@ public class BuildingManager : MonoBehaviour
     Building _previewBuilding;
     BuildingType _selectedBuildingType;
     bool _isPlacingBuilding;
+    Dictionary<BuildingType, int> _buildingPurchaseCounts = new Dictionary<BuildingType, int>();
 
     public IReadOnlyList<Building> AllBuildings => _allBuildings;
     public IReadOnlyList<Building> Bases => _bases;
@@ -73,6 +74,7 @@ public class BuildingManager : MonoBehaviour
         }
         _allBuildings.Clear();
         _bases.Clear();
+        _buildingPurchaseCounts.Clear();
 
         // Place initial base at center
         PlaceBaseAtCenter();
@@ -130,10 +132,14 @@ public class BuildingManager : MonoBehaviour
             return;
         }
 
+        // Get current purchase count for this building type
+        int purchaseCount = GetPurchaseCount(type);
+        int currentCost = prefab.GetCurrentCost(purchaseCount);
+
         // Check if player can afford it
-        if (!PlayerStatsManager.Instance.CanAfford(prefab.tritiumCost))
+        if (!PlayerStatsManager.Instance.CanAfford(currentCost))
         {
-            Debug.LogWarning($"BuildingManager: Cannot afford {type}. Cost: {prefab.tritiumCost}");
+            Debug.LogWarning($"BuildingManager: Cannot afford {type}. Cost: {currentCost}");
             AudioManager.Instance?.PlaySFX("error");
             return;
         }
@@ -177,12 +183,19 @@ public class BuildingManager : MonoBehaviour
             return false;
         }
 
+        // Calculate current cost based on purchase count
+        int purchaseCount = GetPurchaseCount(_selectedBuildingType);
+        int currentCost = _previewBuilding.GetCurrentCost(purchaseCount);
+
         // Spend tritium
-        if (!PlayerStatsManager.Instance.TrySpendTritium(_previewBuilding.tritiumCost))
+        if (!PlayerStatsManager.Instance.TrySpendTritium(currentCost))
         {
             AudioManager.Instance?.PlaySFX("error");
             return false;
         }
+
+        // Increment purchase count for this building type
+        IncrementPurchaseCount(_selectedBuildingType);
 
         // Place the building
         List<HexTile> occupiedTiles = new List<HexTile>();
@@ -339,5 +352,44 @@ public class BuildingManager : MonoBehaviour
     public List<Building> GetBuildingsOfType(BuildingType type)
     {
         return _allBuildings.Where(b => b != null && !b.IsDead && b.buildingType == type).ToList();
+    }
+
+    /// <summary>
+    /// Get the number of times a building type has been purchased
+    /// </summary>
+    public int GetPurchaseCount(BuildingType type)
+    {
+        if (_buildingPurchaseCounts.TryGetValue(type, out int count))
+        {
+            return count;
+        }
+        return 0;
+    }
+
+    /// <summary>
+    /// Increment the purchase count for a building type
+    /// </summary>
+    void IncrementPurchaseCount(BuildingType type)
+    {
+        if (_buildingPurchaseCounts.ContainsKey(type))
+        {
+            _buildingPurchaseCounts[type]++;
+        }
+        else
+        {
+            _buildingPurchaseCounts[type] = 1;
+        }
+    }
+
+    /// <summary>
+    /// Get the current cost for a building type based on purchase count
+    /// </summary>
+    public int GetCurrentBuildingCost(BuildingType type)
+    {
+        Building prefab = GetBuildingPrefab(type);
+        if (prefab == null) return 0;
+
+        int purchaseCount = GetPurchaseCount(type);
+        return prefab.GetCurrentCost(purchaseCount);
     }
 }

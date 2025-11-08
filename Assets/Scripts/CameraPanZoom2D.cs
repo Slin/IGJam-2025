@@ -1,9 +1,7 @@
 using UnityEngine;
-#if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.EnhancedTouch;
 using ETouch = UnityEngine.InputSystem.EnhancedTouch.Touch;
-#endif
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Camera))]
@@ -48,7 +46,6 @@ public class CameraPanZoom2D : MonoBehaviour
         if (maxOrthographicSize < minOrthographicSize) maxOrthographicSize = minOrthographicSize;
     }
 
-#if ENABLE_INPUT_SYSTEM
     void OnEnable()
     {
         EnhancedTouchSupport.Enable();
@@ -58,7 +55,6 @@ public class CameraPanZoom2D : MonoBehaviour
     {
         EnhancedTouchSupport.Disable();
     }
-#endif
 
     void Update()
     {
@@ -70,7 +66,6 @@ public class CameraPanZoom2D : MonoBehaviour
 
     void HandleMousePanAndZoom()
     {
-#if ENABLE_INPUT_SYSTEM
         var mouse = Mouse.current;
         if (mouse != null)
         {
@@ -108,47 +103,10 @@ public class CameraPanZoom2D : MonoBehaviour
                 _mousePanning = false;
             }
         }
-#else
-        // Legacy Input
-        float scrollY = Input.mouseScrollDelta.y;
-        if (scrollY != 0)
-        {
-            float sign = invertScroll ? -1f : 1f;
-            Vector2 screenPos = Input.mousePosition;
-            Vector3 worldBefore = _camera.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, 0));
-            _camera.orthographicSize -= scrollY * mouseWheelZoomSpeed * sign;
-            ClampZoom();
-            Vector3 worldAfter = _camera.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, 0));
-            Vector3 delta = worldBefore - worldAfter;
-            transform.position += new Vector3(delta.x, delta.y, 0f);
-            _velocity = Vector3.zero;
-        }
-
-        if (rightMouseDragToPan && Input.GetMouseButton(1))
-        {
-            Vector2 screenPos = Input.mousePosition;
-            if (!_mousePanning)
-            {
-                _mousePanning = true;
-                _lastMouseScreenPosition = screenPos;
-                _velocity = Vector3.zero;
-            }
-            else
-            {
-                PanByScreenDelta(screenPos - (Vector2)_lastMouseScreenPosition);
-                _lastMouseScreenPosition = screenPos;
-            }
-        }
-        else
-        {
-            _mousePanning = false;
-        }
-#endif
     }
 
     void HandleTouchPanAndZoom()
     {
-#if ENABLE_INPUT_SYSTEM
         var activeTouches = ETouch.activeTouches;
         int touchCount = activeTouches.Count;
         if (touchCount == 1)
@@ -184,42 +142,6 @@ public class CameraPanZoom2D : MonoBehaviour
             transform.position += new Vector3(delta.x, delta.y, 0f);
             _velocity = Vector3.zero;
         }
-#else
-        // Legacy Input touch handling
-        int touchCount = Input.touchCount;
-        if (touchCount == 1)
-        {
-            var t = Input.GetTouch(0);
-            if (t.phase == TouchPhase.Moved)
-            {
-                PanByScreenDelta(t.deltaPosition);
-            }
-        }
-        else if (touchCount >= 2)
-        {
-            var t0 = Input.GetTouch(0);
-            var t1 = Input.GetTouch(1);
-
-            Vector2 prev0 = t0.position - t0.deltaPosition;
-            Vector2 prev1 = t1.position - t1.deltaPosition;
-
-            float prevDist = (prev0 - prev1).magnitude;
-            float currDist = (t0.position - t1.position).magnitude;
-            float distDelta = currDist - prevDist;
-
-            Vector2 prevMid = (prev0 + prev1) * 0.5f;
-            Vector2 currMid = (t0.position + t1.position) * 0.5f;
-            Vector3 worldBefore = _camera.ScreenToWorldPoint(new Vector3(prevMid.x, prevMid.y, 0));
-
-            _camera.orthographicSize -= distDelta * pinchZoomSpeed;
-            ClampZoom();
-
-            Vector3 worldAfter = _camera.ScreenToWorldPoint(new Vector3(currMid.x, currMid.y, 0));
-            Vector3 delta = worldBefore - worldAfter;
-            transform.position += new Vector3(delta.x, delta.y, 0f);
-            _velocity = Vector3.zero;
-        }
-#endif
     }
 
     void PanByScreenDelta(Vector2 screenDelta)

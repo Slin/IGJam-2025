@@ -7,6 +7,9 @@ public class HexTile : MonoBehaviour
     private float hexRadius = 0.5f / 1.1f; // circumradius (center to vertex) in local units
     private int highlightOrderOffset = 100;
 
+    public Color _baseColor;
+    public Color _highlightColor;
+
    private Renderer _renderer;
    private int _baseSortingLayerId;
    private int _baseSortingOrder;
@@ -55,8 +58,8 @@ public class HexTile : MonoBehaviour
         {
             if (_renderer != null)
             {
-                if (_renderer.material.color != Color.red)
-                    _renderer.material.color = Color.red;
+                if (_renderer.material.color != _highlightColor)
+                    _renderer.material.color = _highlightColor;
             }
             if (!_isHighlighted) { SetHighlighted(true); }
         }
@@ -64,8 +67,8 @@ public class HexTile : MonoBehaviour
         {
             if (_renderer != null)
             {
-                if (_renderer.material.color != Color.white)
-                    _renderer.material.color = Color.white;
+                if (_renderer.material.color != _baseColor)
+                    _renderer.material.color = _baseColor;
             }
             if (_isHighlighted) { SetHighlighted(false); }
         }

@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6281680367509420016
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1023371140424597974}
+  - component: {fileID: 7885562716341752296}
+  m_Layer: 0
+  m_Name: BuildingManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1023371140424597974
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6281680367509420016}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 896.2369, y: 700.72034, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7885562716341752296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6281680367509420016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 719ac20c1bb88ca4992e28b436c86b72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingManager
+  basePrefab: {fileID: 6888416483435055594, guid: 73cb045852f4abf42a645407515cd91a, type: 3}
+  rocketLauncherPrefab: {fileID: 0}
+  laserTowerPrefab: {fileID: 6888416483435055594, guid: b87fc15a5085a473b93a8ed4b8831550, type: 3}
+  boostBuildingPrefab: {fileID: 6888416483435055594, guid: 7cfb3ea0823ad402e897ff051f6ae4c8, type: 3}
+  droneFactoryPrefab: {fileID: 6888416483435055594, guid: 7cfb3ea0823ad402e897ff051f6ae4c8, type: 3}
+  baseRingRadius: 2
+  hexTileLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  onBuildingPlaced:
+    m_PersistentCalls:
+      m_Calls: []
+  onBuildingDestroyed:
+    m_PersistentCalls:
+      m_Calls: []
+  onBuildingPreviewStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  onBuildingPreviewCancelled:
+    m_PersistentCalls:
+      m_Calls: []
+  onBaseDestroyed:
+    m_PersistentCalls:
+      m_Calls: []

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5211747805974415666}
   - component: {fileID: 6888416483435055594}
   m_Layer: 0
-  m_Name: BaseBuilding
+  m_Name: DroneFactory
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -80,7 +80,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: -5332737464397904548, guid: 214e1e34d2eb8437990768910827b8af, type: 3}
+  m_Sprite: {fileID: -53450540011065440, guid: de8bb3672b2274b8988f9f5415f641fb, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -103,7 +103,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd6bde3d49806bb49a5c96bf3aca1c1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Building
-  buildingType: 0
+  buildingType: 4
   maxHealth: 2000
   tritiumCost: 500
   isMultiTile: 1
@@ -114,6 +114,3 @@ MonoBehaviour:
   onDamaged:
     m_PersistentCalls:
       m_Calls: []
-  showHealthBar: 1
-  healthBarOffset: {x: 0, y: 0.7, z: 0}
-  healthBarSize: {x: 1.2, y: 0.15}

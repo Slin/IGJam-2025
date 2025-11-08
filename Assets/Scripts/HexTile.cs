@@ -65,7 +65,25 @@ public class HexTile : MonoBehaviour
         var cam = Camera.main;
         Vector3 world = cam.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, Mathf.Abs(cam.transform.position.z - transform.position.z)));
         bool inside = IsPointInHexagon(new Vector2(world.x, world.y));
-        SetHighlight(inside);
+		SetHighlight(inside);
+
+		// Building placement preview + placement
+		var bm = BuildingManager.Instance;
+		if (bm != null && bm.IsPlacingBuilding)
+		{
+			if (inside)
+			{
+				// Snap preview to this tile's center
+				bm.UpdateBuildingPreview(transform.position);
+
+				// Place on click
+				var mouse = Mouse.current;
+				if (mouse != null && mouse.leftButton.wasPressedThisFrame)
+				{
+					bm.TryPlaceBuilding(transform.position, this);
+				}
+			}
+		}
     }
 
     void SetHighlight(bool on)

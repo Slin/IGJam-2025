@@ -131,7 +131,7 @@ public class BuildingManager : MonoBehaviour
         if (!_isPlacingBuilding || _previewBuilding == null) return false;
 
         // Validate placement (tile availability, etc.)
-        if (!IsValidPlacement(worldPosition, tile))
+		if (!IsValidPlacement(worldPosition, tile))
         {
             AudioManager.Instance?.PlaySFX("error");
             return false;
@@ -157,6 +157,12 @@ public class BuildingManager : MonoBehaviour
         {
             _bases.Add(_previewBuilding);
         }
+
+		// Mark tiles as occupied
+		foreach (var t in occupiedTiles)
+		{
+			if (t != null) t.SetOccupied(true);
+		}
 
         AudioManager.Instance?.PlaySFX("build");
 
@@ -185,12 +191,16 @@ public class BuildingManager : MonoBehaviour
 
     bool IsValidPlacement(Vector3 position, HexTile tile)
     {
-        // TODO: Add more sophisticated validation
-        // - Check if tile is occupied
-        // - Check if within asteroid bounds
-        // - Check minimum distance from other buildings
-        
-        return true; // Placeholder
+		// Basic validation:
+		// - Require a tile
+		// - Tile must not be occupied
+		if (tile == null) return false;
+		if (tile.IsOccupied) return false;
+
+		// TODO: Add more sophisticated validation:
+		// - Check within bounds
+		// - Check distance from other buildings
+		return true;
     }
 
     Building GetBuildingPrefab(BuildingType type)

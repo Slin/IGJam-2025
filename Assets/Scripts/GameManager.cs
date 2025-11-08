@@ -77,6 +77,9 @@ public class GameManager : MonoBehaviour
             onPhaseChanged?.Invoke(_currentPhase);
         }
         catch (Exception) { /* ignore event exceptions */ }
+
+        // Initialize UI to the current (or first) round
+        ApplyRoundToUI(PlayerStatsManager.Instance?.CurrentRound ?? 1);
     }
 
     public void RequestStartDefensePhase()
@@ -125,6 +128,9 @@ public class GameManager : MonoBehaviour
             onRoundStarted?.Invoke(currentRound);
         }
         catch (Exception) { /* ignore event exceptions */ }
+
+        // Update round-dependent UI for this round
+        ApplyRoundToUI(currentRound);
 
         // Start spawning enemies
         int enemyCount = CalculateEnemyCount(currentRound);
@@ -177,6 +183,9 @@ public class GameManager : MonoBehaviour
             onPhaseChanged?.Invoke(_currentPhase);
         }
         catch (Exception) { /* ignore event exceptions */ }
+
+        // Reflect the current round in UI after returning to build phase
+        ApplyRoundToUI(PlayerStatsManager.Instance?.CurrentRound ?? 1);
     }
 
     public void OnAllBasesDestroyed()
@@ -231,5 +240,18 @@ public class GameManager : MonoBehaviour
             EnemyType.Boss => round >= roundsUntilBossEnemies,
             _ => false
         };
+    }
+
+    void ApplyRoundToUI(int round)
+    {
+        var controllers = FindObjectsOfType<UIRoundController>(true);
+        for (int i = 0; i < controllers.Length; i++)
+        {
+            var ctrl = controllers[i];
+            if (ctrl != null)
+            {
+                ctrl.ApplyRound(round);
+            }
+        }
     }
 }

@@ -13,9 +13,9 @@ public class CreateTiles : MonoBehaviour
         float gridRadius = tilemapRadius * innerRadius;
 
         //Create grid of hexagonal tiles in a sphere shape around the center
-        for (int x = -tilemapRadius; x <= tilemapRadius; x++)
+        for(int x = -tilemapRadius; x <= tilemapRadius; x++)
         {
-            for (int y = -tilemapRadius; y <= tilemapRadius; y++)
+            for(int y = -tilemapRadius; y <= tilemapRadius; y++)
             {
                 float positionX = x * outerRadius + y % 2.0f * outerRadius / 2.0f;
                 float positionY = y * innerRadius;

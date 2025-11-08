@@ -35,9 +35,9 @@ public class SpawnerManager : MonoBehaviour
     void Update()
     {
         var kb = Keyboard.current;
-        if (kb != null && kb.spaceKey.wasPressedThisFrame)
+        if(kb != null && kb.spaceKey.wasPressedThisFrame)
         {
-            if (_remainingInRound <= 0)
+            if(_remainingInRound <= 0)
             {
                 StartRound(enemiesPerRound);
             }
@@ -80,16 +80,15 @@ public class SpawnerManager : MonoBehaviour
 
     public void OnEnemyArrived(Enemy enemy)
     {
-        if (enemy != null)
+        if(enemy != null)
         {
             Destroy(enemy.gameObject);
         }
         _remainingInRound = Mathf.Max(0, _remainingInRound - 1);
 
-        if (_remainingInRound == 0)
+        if(_remainingInRound == 0)
         {
-            // Round complete. Hook your next-round logic here if desired.
-            // Debug.Log($"Round {_currentRound} complete.");
+            EndRound();
         }
     }
 

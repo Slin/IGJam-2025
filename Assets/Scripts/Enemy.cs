@@ -39,7 +39,7 @@ public class Enemy : MonoBehaviour
 
     void HandleArrived()
     {
-        if (_arrived) return;
+        if(_arrived) return;
         _arrived = true;
 
         try
@@ -50,8 +50,14 @@ public class Enemy : MonoBehaviour
 
         try
         {
-            SpawnerManager.Instance?.OnEnemyArrived(this);
-            _arrivedCallback?.Invoke(this);
+            if(_arrivedCallback != null)
+            {
+                _arrivedCallback.Invoke(this);
+            }
+            else
+            {
+                SpawnerManager.Instance?.OnEnemyArrived(this);
+            }
         }
         catch (Exception) { /* ignore callbacks if none registered */ }
     }

@@ -38,7 +38,7 @@ public class PlayerStatsManager : MonoBehaviour
     public void InitializeNewGame()
     {
         _tritium = startingTritium;
-        _currentRound = 0;
+        // _currentRound = 0;
         _enemiesKilled = 0;
 
         NotifyTritiumChanged();

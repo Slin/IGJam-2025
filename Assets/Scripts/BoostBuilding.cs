@@ -1,109 +1,39 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Boosts the attack damage of adjacent buildings by a factor of 1.5
+/// Provides damage boost to adjacent buildings
+/// Towers will check for nearby BoostBuildings when calculating their damage
 /// </summary>
 [DisallowMultipleComponent]
 public class BoostBuilding : MonoBehaviour
 {
     [Header("Boost Settings")]
     public float boostRadius = 2f; // How far the boost reaches
-    public float damageMultiplier = 1.5f;
+    public float damageMultiplier = 1.5f; // 1.5 = +50% damage bonus
 
     private Building _building;
-    private List<BuildingAttackBehavior> _boostedBuildings = new List<BuildingAttackBehavior>();
 
     void Awake()
     {
         _building = GetComponent<Building>();
     }
 
-    void Start()
+    /// <summary>
+    /// Checks if this boost building is active and can provide boosts
+    /// </summary>
+    public bool IsActive()
     {
-        // Initial boost application
-        UpdateBoosts();
+        return _building != null && _building.IsPlaced && !_building.IsDead;
     }
 
-    void Update()
+    /// <summary>
+    /// Checks if a position is within boost range
+    /// </summary>
+    public bool IsInRange(Vector3 position)
     {
-        // Only boost if building is placed and alive
-        if (_building == null || !_building.IsPlaced || _building.IsDead)
-        {
-            RemoveAllBoosts();
-            return;
-        }
-
-        // Periodically update boosts (every few frames to avoid overhead)
-        if (Time.frameCount % 30 == 0)
-        {
-            UpdateBoosts();
-        }
-    }
-
-    void UpdateBoosts()
-    {
-        // Remove old boosts
-        RemoveAllBoosts();
-
-        // Find adjacent buildings with attack behaviors
-        var adjacentBuildings = FindAdjacentAttackBuildings();
-
-        // Apply boost to each
-        foreach (var attackBehavior in adjacentBuildings)
-        {
-            if (attackBehavior != null)
-            {
-                attackBehavior.AddDamageMultiplier(damageMultiplier);
-                _boostedBuildings.Add(attackBehavior);
-            }
-        }
-    }
-
-    List<BuildingAttackBehavior> FindAdjacentAttackBuildings()
-    {
-        var result = new List<BuildingAttackBehavior>();
-
-        if (BuildingManager.Instance == null)
-            return result;
-
-        foreach (var building in BuildingManager.Instance.AllBuildings)
-        {
-            if (building == null || building.IsDead || building == _building)
-                continue;
-
-            // Check if within boost radius
-            float distance = Vector3.Distance(transform.position, building.transform.position);
-            if (distance <= boostRadius)
-            {
-                // Get attack behavior component
-                var attackBehavior = building.GetComponent<BuildingAttackBehavior>();
-                if (attackBehavior != null)
-                {
-                    result.Add(attackBehavior);
-                }
-            }
-        }
-
-        return result;
-    }
-
-    void RemoveAllBoosts()
-    {
-        foreach (var attackBehavior in _boostedBuildings)
-        {
-            if (attackBehavior != null)
-            {
-                attackBehavior.RemoveDamageMultiplier(damageMultiplier);
-            }
-        }
-        _boostedBuildings.Clear();
-    }
-
-    void OnDestroy()
-    {
-        // Clean up boosts when destroyed
-        RemoveAllBoosts();
+        if (!IsActive()) return false;
+        float distance = Vector3.Distance(transform.position, position);
+        return distance <= boostRadius;
     }
 
     void OnDrawGizmosSelected()

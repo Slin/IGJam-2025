@@ -10,17 +10,16 @@ public class GameManager : MonoBehaviour
 
     [Header("Game Settings")]
     public float buildPhaseMinDuration = 5f; // Minimum time before allowing defense phase start
+
     public float defensePhaseEndDelay = 2f; // Delay after all enemies defeated before returning to build phase
 
-    [Header("Difficulty Scaling")]
-    public int baseEnemiesPerRound = 5;
+    [Header("Difficulty Scaling")] public int baseEnemiesPerRound = 5;
     public float enemyScalingPerRound = 1.2f; // Multiply enemy count by this each round
     public int roundsUntilFastEnemies = 2;
     public int roundsUntilArmoredEnemies = 4;
     public int roundsUntilBossEnemies = 7;
 
-    [Header("Events")]
-    public UnityEvent onGameStarted;
+    [Header("Events")] public UnityEvent onGameStarted;
     public UnityEvent onGameOver;
     public UnityEvent<GamePhase> onPhaseChanged;
     public UnityEvent<int> onRoundStarted;
@@ -44,6 +43,7 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
         Instance = this;
     }
 
@@ -79,11 +79,14 @@ public class GameManager : MonoBehaviour
             onGameStarted?.Invoke();
             onPhaseChanged?.Invoke(_currentPhase);
         }
-        catch (Exception) { /* ignore event exceptions */ }
+        catch (Exception)
+        {
+            /* ignore event exceptions */
+        }
 
         // Initialize UI to the current (or first) round
         ApplyRoundToUI(PlayerStatsManager.Instance?.CurrentRound ?? 1);
-		UpdateReadyButtonVisibility();
+        UpdateReadyButtonVisibility();
     }
 
     public void RequestStartDefensePhase()
@@ -131,11 +134,14 @@ public class GameManager : MonoBehaviour
             onPhaseChanged?.Invoke(_currentPhase);
             onRoundStarted?.Invoke(currentRound);
         }
-        catch (Exception) { /* ignore event exceptions */ }
+        catch (Exception)
+        {
+            /* ignore event exceptions */
+        }
 
         // Update round-dependent UI for this round
         ApplyRoundToUI(currentRound);
-		UpdateReadyButtonVisibility();
+        UpdateReadyButtonVisibility();
 
         // Start spawning enemies
         int enemyCount = CalculateEnemyCount(currentRound);
@@ -161,7 +167,10 @@ public class GameManager : MonoBehaviour
         {
             onRoundCompleted?.Invoke(currentRound);
         }
-        catch (Exception) { /* ignore event exceptions */ }
+        catch (Exception)
+        {
+            /* ignore event exceptions */
+        }
 
         // Return to building phase after delay
         StartCoroutine(ReturnToBuildingPhaseAfterDelay());
@@ -187,11 +196,14 @@ public class GameManager : MonoBehaviour
         {
             onPhaseChanged?.Invoke(_currentPhase);
         }
-        catch (Exception) { /* ignore event exceptions */ }
+        catch (Exception)
+        {
+            /* ignore event exceptions */
+        }
 
         // Reflect the current round in UI after returning to build phase
         ApplyRoundToUI(PlayerStatsManager.Instance?.CurrentRound ?? 1);
-		UpdateReadyButtonVisibility();
+        UpdateReadyButtonVisibility();
     }
 
     public void OnAllBasesDestroyed()
@@ -216,7 +228,10 @@ public class GameManager : MonoBehaviour
         {
             onGameOver?.Invoke();
         }
-        catch (Exception) { /* ignore event exceptions */ }
+        catch (Exception)
+        {
+            /* ignore event exceptions */
+        }
     }
 
     public void RestartGame()
@@ -228,7 +243,7 @@ public class GameManager : MonoBehaviour
     public void QuitGame()
     {
         Debug.Log("GameManager: Quitting game");
-        
+
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else
@@ -264,12 +279,13 @@ public class GameManager : MonoBehaviour
     void UpdateReadyButtonVisibility()
     {
         // Ensure we have a reference
-        if(readyButton == null)
+        if (readyButton == null)
         {
             var found = GameObject.Find("ReadyButton");
-            if(found != null) readyButton = found;
+            if (found != null) readyButton = found;
         }
-        if(readyButton == null) return;
+
+        if (readyButton == null) return;
 
         // Visible during Building, hidden during Defense
         bool isVisible = _currentPhase == GamePhase.Building;

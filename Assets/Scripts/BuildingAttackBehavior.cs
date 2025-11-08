@@ -13,45 +13,78 @@ public abstract class BuildingAttackBehavior : MonoBehaviour
 
     protected Building _building;
     protected float _attackCooldown;
-    private float _damageBoostAdditive = 0f;
 
     /// <summary>
-    /// Gets the final attack damage with all boosts applied
+    /// Gets the final attack damage with all boosts applied by checking nearby BoostBuildings
     /// </summary>
-    public float EffectiveAttackDamage => attackDamage * (1f + _damageBoostAdditive);
-
-    /// <summary>
-    /// Adds a damage boost to this building's attack (additive stacking)
-    /// For example, a multiplier of 1.5 adds 0.5 (50%) bonus damage
-    /// </summary>
-    public void AddDamageMultiplier(float multiplier)
+    public float EffectiveAttackDamage
     {
-        // Convert multiplier to additive bonus (1.5 -> 0.5)
-        _damageBoostAdditive += (multiplier - 1f);
+        get
+        {
+            float boostMultiplier = CalculateBoostMultiplier();
+            return attackDamage * boostMultiplier;
+        }
     }
 
     /// <summary>
-    /// Removes a damage boost from this building's attack
+    /// Calculates the total boost multiplier from nearby BoostBuildings
+    /// Boosts stack additively (1.5 + 1.5 = 2.0x damage, not 2.25x)
     /// </summary>
-    public void RemoveDamageMultiplier(float multiplier)
+    private float CalculateBoostMultiplier()
     {
-        // Convert multiplier to additive bonus and subtract
-        _damageBoostAdditive -= (multiplier - 1f);
+        if (BuildingManager.Instance == null) return 1f;
+
+        float additiveBoost = 0f;
+        int boostCount = 0;
+
+        // Find all BoostBuildings
+        var boostBuildings = BuildingManager.Instance.GetBuildingsOfType(BuildingType.BoostBuilding);
+
+        foreach (var building in boostBuildings)
+        {
+            if (building == null) continue;
+
+            var boostComponent = building.GetComponent<BoostBuilding>();
+            if (boostComponent != null && boostComponent.IsInRange(transform.position))
+            {
+                // Add the bonus (1.5 multiplier = 0.5 bonus)
+                additiveBoost += (boostComponent.damageMultiplier - 1f);
+                boostCount++;
+            }
+        }
+
+        return 1f + additiveBoost;
     }
 
     /// <summary>
-    /// Resets all damage boosts
+    /// Gets the number of active boosts affecting this building
     /// </summary>
-    public void ResetDamageMultipliers()
+    public int GetActiveBoostCount()
     {
-        _damageBoostAdditive = 0f;
+        if (BuildingManager.Instance == null) return 0;
+
+        int count = 0;
+        var boostBuildings = BuildingManager.Instance.GetBuildingsOfType(BuildingType.BoostBuilding);
+
+        foreach (var building in boostBuildings)
+        {
+            if (building == null) continue;
+
+            var boostComponent = building.GetComponent<BoostBuilding>();
+            if (boostComponent != null && boostComponent.IsInRange(transform.position))
+            {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     protected virtual void Awake()
     {
         _building = GetComponent<Building>();
     }
-    
+
     protected virtual void Start()
     {
         // Add tooltip component if not present

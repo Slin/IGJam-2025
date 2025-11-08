@@ -11,11 +11,12 @@ using UnityEngine.UI;
 public class BuildingTooltip : MonoBehaviour
 {
     [Header("Settings")]
-    public Vector3 tooltipOffset = new Vector3(0, 1.8f, 0);
-    public Vector2 tooltipSize = new Vector2(2f, 0.5f);
-    public Color backgroundColor = new Color(0, 0, 0, 0.8f);
+    public Vector3 tooltipOffset = new Vector3(0, 2.0f, 0);
+    public Vector2 tooltipSize = new Vector2(3.0f, 1.0f);
+    public Color backgroundColor = new Color(0, 0, 0, 0.85f);
     public Color textColor = Color.white;
-    public float fontSize = 0.3f;
+    public float fontSize = 0.22f;
+    public Vector2 textPadding = new Vector2(0.15f, 0.1f);
 
     private BuildingAttackBehavior _attackBehavior;
     private Building _building;
@@ -29,7 +30,7 @@ public class BuildingTooltip : MonoBehaviour
     {
         _attackBehavior = GetComponent<BuildingAttackBehavior>();
         _building = GetComponent<Building>();
-        
+
         // Add collider if not present (needed for mouse detection)
         _collider = GetComponent<Collider2D>();
         if (_collider == null)
@@ -89,7 +90,7 @@ public class BuildingTooltip : MonoBehaviour
     void ShowTooltip()
     {
         if (_tooltipObject != null) return;
-        if (_attackBehavior == null) return; // Only show for buildings with attack behaviors
+        if (_building == null) return; // Need a building to show tooltip
 
         CreateTooltip();
         UpdateTooltipContent();
@@ -144,32 +145,54 @@ public class BuildingTooltip : MonoBehaviour
         _text.color = textColor;
         _text.fontSize = fontSize * 100f;
         _text.alignment = TextAlignmentOptions.Center;
-        _text.enableWordWrapping = false;
+        _text.textWrappingMode = TMPro.TextWrappingModes.Normal;
+        _text.overflowMode = TMPro.TextOverflowModes.Overflow;
 
         RectTransform textRect = textObj.GetComponent<RectTransform>();
         textRect.anchorMin = Vector2.zero;
         textRect.anchorMax = Vector2.one;
-        textRect.sizeDelta = Vector2.zero;
+        textRect.sizeDelta = new Vector2(-textPadding.x * 200f, -textPadding.y * 200f); // Apply padding
         textRect.localPosition = Vector3.zero;
         textRect.localScale = Vector3.one;
     }
 
     void UpdateTooltipContent()
     {
-        if (_text == null || _attackBehavior == null) return;
+        if (_text == null) return;
 
-        float baseDamage = _attackBehavior.attackDamage;
-        float effectiveDamage = _attackBehavior.EffectiveAttackDamage;
-        float boostPercent = ((effectiveDamage / baseDamage) - 1f) * 100f;
+        string tooltip = "";
 
-        if (boostPercent > 0.01f)
+        // Show health for all buildings
+        if (_building != null)
         {
-            _text.text = $"Damage: {effectiveDamage:F1} (+{boostPercent:F0}%)";
+            float currentHealth = _building.CurrentHealth;
+            float maxHealth = _building.maxHealth;
+            tooltip = $"HP: {currentHealth:F0}/{maxHealth:F0}";
         }
-        else
+
+        // Add damage info for attack buildings
+        if (_attackBehavior != null)
         {
-            _text.text = $"Damage: {effectiveDamage:F1}";
+            float baseDamage = _attackBehavior.attackDamage;
+            float effectiveDamage = _attackBehavior.EffectiveAttackDamage;
+            float boostPercent = ((effectiveDamage / baseDamage) - 1f) * 100f;
+
+            if (boostPercent > 0.01f)
+            {
+                int boostCount = _attackBehavior.GetActiveBoostCount();
+                tooltip += $"\nDamage: {effectiveDamage:F1} (+{boostPercent:F0}%)";
+                if (boostCount > 0)
+                {
+                    tooltip += $"\n[{boostCount} Booster{(boostCount > 1 ? "s" : "")}]";
+                }
+            }
+            else
+            {
+                tooltip += $"\nDamage: {effectiveDamage:F1}";
+            }
         }
+
+        _text.text = tooltip;
     }
 
     void OnDestroy()

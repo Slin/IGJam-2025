@@ -3,14 +3,13 @@ using UnityEngine;
 /// <summary>
 /// Renders a laser beam between two points using a prefabbed mesh (MeshRenderer)
 /// </summary>
-[RequireComponent(typeof(MeshRenderer))]
 public class LaserBeam : MonoBehaviour
 {
     [Header("Laser Settings")]
     public Color laserColor = Color.red;
     public float duration = 0.2f;
 
-    MeshRenderer _renderer;
+    MeshRenderer[] _renderers;
     float _timeRemaining;
     Vector3 _startWorld;
     Enemy _endEnemy;
@@ -18,7 +17,7 @@ public class LaserBeam : MonoBehaviour
 
     void Awake()
     {
-        _renderer = GetComponent<MeshRenderer>();
+        _renderers = GetComponentsInChildren<MeshRenderer>(true);
     }
 
     void Update()
@@ -48,13 +47,7 @@ public class LaserBeam : MonoBehaviour
     /// <param name="end">End position of the laser</param>
     public void Setup(Vector3 start, Vector3 end)
     {
-        // Apply color to material if supported
-        if (_renderer != null && _renderer.material != null)
-        {
-            var mat = _renderer.material;
-            if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", laserColor);
-            if (mat.HasProperty("_Color")) mat.SetColor("_Color", laserColor);
-        }
+        ApplyColorToRenderers();
 
         _timeRemaining = duration;
 
@@ -69,12 +62,7 @@ public class LaserBeam : MonoBehaviour
     /// </summary>
     public void SetupFollow(Vector3 start, Enemy target)
     {
-        if (_renderer != null && _renderer.material != null)
-        {
-            var mat = _renderer.material;
-            if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", laserColor);
-            if (mat.HasProperty("_Color")) mat.SetColor("_Color", laserColor);
-        }
+        ApplyColorToRenderers();
 
         _timeRemaining = duration;
         _followTarget = true;
@@ -84,6 +72,24 @@ public class LaserBeam : MonoBehaviour
         UpdateTransform(start, end);
     }
 
+    void ApplyColorToRenderers()
+    {
+        if (_renderers == null || _renderers.Length == 0) return;
+        for (int i = 0; i < _renderers.Length; i++)
+        {
+            var r = _renderers[i];
+            if (r == null) continue;
+            var mats = r.materials; // instantiates materials
+            for (int m = 0; m < mats.Length; m++)
+            {
+                var mat = mats[m];
+                if (mat == null) continue;
+                if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", laserColor);
+                if (mat.HasProperty("_Color")) mat.SetColor("_Color", laserColor);
+            }
+            r.materials = mats;
+        }
+    }
     void UpdateTransform(Vector3 start, Vector3 end)
     {
         // Position at start (prefab offset stretches away from start)

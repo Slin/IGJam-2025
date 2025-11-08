@@ -46,14 +46,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   enemyType: 4
-  maxHealth: 750
+  maxHealth: 500
   tritiumReward: 60
   baseDamage: 50
-  moveSpeed: 2
+  moveSpeed: 1.5
   arrivalDistance: 0.05
   targetPosition: {x: 0, y: 0, z: 0}
-  attackRange: 2
-  attackDamage: 40
+  attackRange: 2.5
+  attackDamage: 75
   attackDelay: 1.5
   stopToAttack: 1
   maxAttackTargets: 4

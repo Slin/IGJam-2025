@@ -156,7 +156,7 @@ public class Enemy : MonoBehaviour
             foreach (var building in BuildingManager.Instance.AllBuildings)
             {
                 if (building == null || building.IsDead) continue;
-                
+
                 // Skip bases that are at the center (or very close to center)
                 if (building.buildingType == BuildingType.Base && building.transform.position.sqrMagnitude < 0.1f)
                     continue;

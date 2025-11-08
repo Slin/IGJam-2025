@@ -616,6 +616,7 @@ MonoBehaviour:
   onRoundCompleted:
     m_PersistentCalls:
       m_Calls: []
+  readyButton: {fileID: 0}
 --- !u!4 &1673550299
 Transform:
   m_ObjectHideFlags: 0

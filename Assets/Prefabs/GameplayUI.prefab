@@ -1541,6 +1541,7 @@ GameObject:
   - component: {fileID: 3770566453432554858}
   - component: {fileID: 8009603165394055036}
   - component: {fileID: 4621694191398330954}
+  - component: {fileID: 6310135681617838960}
   m_Layer: 5
   m_Name: TritiumCounter
   m_TagString: Untagged
@@ -1666,6 +1667,21 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &6310135681617838960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2405070647312762964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9146ff8b97ef84797ae3bef52c458474, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TritiumCounterUI
+  uiText: {fileID: 0}
+  tmpText: {fileID: 0}
+  format: 'Tritium: {0}'
 --- !u!1 &2897480232324192877
 GameObject:
   m_ObjectHideFlags: 0

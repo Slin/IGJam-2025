@@ -127,7 +127,14 @@ public class Building : MonoBehaviour
         }
         catch (Exception) { /* ignore if manager not available */ }
 
-        // Clear occupied tiles
+        // Free up occupied tiles so new buildings can be placed there
+        foreach (var tile in occupiedTiles)
+        {
+            if (tile != null)
+            {
+                tile.SetOccupied(false);
+            }
+        }
         occupiedTiles.Clear();
 
         Destroy(gameObject);
@@ -154,6 +161,7 @@ public class Building : MonoBehaviour
         _healthBar = gameObject.AddComponent<HealthBar>();
         _healthBar.SetOffset(healthBarOffset);
         _healthBar.SetSize(healthBarSize);
+        _healthBar.hideWhenFull = true;
         UpdateHealthBar();
     }
 

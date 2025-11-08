@@ -115,5 +115,5 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   showHealthBar: 1
-  healthBarOffset: {x: 0, y: 1.5, z: 0}
-  healthBarSize: {x: 1.2, y: 0.15}
+  healthBarOffset: {x: 0, y: 0.5, z: 0}
+  healthBarSize: {x: 1, y: 0.1}

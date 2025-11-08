@@ -47,6 +47,7 @@ public class HealthBar : MonoBehaviour
 
         _canvas = canvasObj.AddComponent<Canvas>();
         _canvas.renderMode = RenderMode.WorldSpace;
+        _canvas.sortingOrder = 1000; // High sorting order to render on top of all other sprites
 
         CanvasScaler scaler = canvasObj.AddComponent<CanvasScaler>();
         scaler.dynamicPixelsPerUnit = 10;

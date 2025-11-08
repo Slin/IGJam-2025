@@ -49,7 +49,8 @@ MonoBehaviour:
   laserTowerPrefab: {fileID: 6888416483435055594, guid: b87fc15a5085a473b93a8ed4b8831550, type: 3}
   boostBuildingPrefab: {fileID: 6888416483435055594, guid: c28e32f8d56a2458389326b90bf09e6d, type: 3}
   droneFactoryPrefab: {fileID: 6888416483435055594, guid: 7cfb3ea0823ad402e897ff051f6ae4c8, type: 3}
-  baseRingRadius: 2
+  baseRingRadius: 1
+  centerBlockRadius: 1
   hexTileLayer:
     serializedVersion: 2
     m_Bits: 0

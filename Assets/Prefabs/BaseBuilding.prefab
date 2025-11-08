@@ -106,7 +106,7 @@ MonoBehaviour:
   buildingType: 0
   maxHealth: 2000
   tritiumCost: 5000
-  isMultiTile: 1
+  size: 2
   occupiedTiles: []
   onDestroyed:
     m_PersistentCalls:

@@ -12,7 +12,7 @@ public class Building : MonoBehaviour
     public int tritiumCost = 50;
 
     [Header("Placement")]
-    public bool isMultiTile = false; // true for Base which occupies 2 rings
+    public int size = 1; // 1 = single tile, 2 = center + 1 ring, 3 = center + 2 rings, etc.
     public List<HexTile> occupiedTiles = new List<HexTile>();
 
     [Header("Events")]
@@ -40,13 +40,13 @@ public class Building : MonoBehaviour
         InitializeHealthBar();
     }
 
-    public void Initialize(BuildingType type, int cost, float health, bool multiTile = false)
+    public void Initialize(BuildingType type, int cost, float health, int buildingSize = 1)
     {
         buildingType = type;
         tritiumCost = cost;
         maxHealth = health;
         _currentHealth = health;
-        isMultiTile = multiTile;
+        size = buildingSize;
         UpdateHealthBar();
     }
 
@@ -127,17 +127,28 @@ public class Building : MonoBehaviour
         }
         catch (Exception) { /* ignore if manager not available */ }
 
-        // Free up occupied tiles so new buildings can be placed there
-        foreach (var tile in occupiedTiles)
+        // Free up occupied tiles based on building size
+        FreeTilesOccupiedByBuilding();
+
+        Destroy(gameObject);
+    }
+
+    void FreeTilesOccupiedByBuilding()
+    {
+        // Find all tiles within the building's occupied radius and free them
+        var allTiles = FindObjectsByType<HexTile>(FindObjectsSortMode.None);
+        float occupiedRadius = GetOccupiedRadius();
+
+        foreach (var tile in allTiles)
         {
-            if (tile != null)
+            float distance = Vector3.Distance(tile.transform.position, transform.position);
+            if (distance <= occupiedRadius)
             {
                 tile.SetOccupied(false);
             }
         }
-        occupiedTiles.Clear();
 
-        Destroy(gameObject);
+        occupiedTiles.Clear();
     }
 
     public void Repair(float amount)
@@ -152,6 +163,35 @@ public class Building : MonoBehaviour
     {
         if (maxHealth <= 0) return 0;
         return _currentHealth / maxHealth;
+    }
+
+    /// <summary>
+    /// Get the radius occupied by this building based on its size
+    /// Size 1 = single hex (radius ~0.5)
+    /// Size 2 = center + 1 ring (radius ~0.95, just past first ring)
+    /// Size 3 = center + 2 rings (radius ~1.8, just past second ring)
+    /// </summary>
+    public float GetOccupiedRadius()
+    {
+        // From CreateTiles: outerRadius = 0.866
+        // The first ring of hexes is at distance 0.866 from center
+        // The second ring is at distance ~1.732 from center
+        // Size 1: just center hex
+        // Size 2: center + first ring (6 hexes at 0.866 distance)
+        // Size 3: center + first + second ring (12 hexes at ~1.732 distance)
+
+        const float hexOuterRadius = 0.866025404f;
+
+        if (size <= 1)
+        {
+            // Single hex: small radius to just cover the center
+            return hexOuterRadius * 0.5f;
+        }
+
+        // For size N, we want to reach just past ring (N-1)
+        // Ring 1 is at distance 0.866, ring 2 at 1.732 (0.866 * 2), etc.
+        // Add a small margin (0.1) to ensure we capture all tiles in that ring
+        return (size - 1) * hexOuterRadius + 0.1f;
     }
 
     void InitializeHealthBar()

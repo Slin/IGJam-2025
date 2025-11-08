@@ -17,7 +17,7 @@ public class BuildingManager : MonoBehaviour
     public Building droneFactoryPrefab;
 
     [Header("Placement Settings")]
-    public int baseRingRadius = 2; // Base occupies 2 rings of hex tiles
+    public float hexOuterRadius = 0.866025404f; // Distance between hex centers
     public LayerMask hexTileLayer;
 
     [Header("Events")]
@@ -37,8 +37,8 @@ public class BuildingManager : MonoBehaviour
     public IReadOnlyList<Building> Bases => _bases;
     public bool IsPlacingBuilding => _isPlacingBuilding;
     public bool HasBase => _bases.Count > 0 && _bases.Any(b => !b.IsDead);
-	public BuildingType? SelectedBuildingType => _isPlacingBuilding ? _selectedBuildingType : (BuildingType?)null;
-	public bool IsPlacingBuildingOfType(BuildingType type) => _isPlacingBuilding && _selectedBuildingType == type;
+    public BuildingType? SelectedBuildingType => _isPlacingBuilding ? _selectedBuildingType : (BuildingType?)null;
+    public bool IsPlacingBuildingOfType(BuildingType type) => _isPlacingBuilding && _selectedBuildingType == type;
 
     void Awake()
     {
@@ -48,6 +48,19 @@ public class BuildingManager : MonoBehaviour
             return;
         }
         Instance = this;
+    }
+
+    void Update()
+    {
+        // Allow canceling building placement with ESC key
+        if (_isPlacingBuilding)
+        {
+            var keyboard = UnityEngine.InputSystem.Keyboard.current;
+            if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame)
+            {
+                CancelBuildingPlacement();
+            }
+        }
     }
 
     public void InitializeNewGame()
@@ -74,13 +87,33 @@ public class BuildingManager : MonoBehaviour
         }
 
         var baseBuilding = Instantiate(basePrefab, Vector3.zero, Quaternion.identity);
-        baseBuilding.Initialize(BuildingType.Base, 0, baseBuilding.maxHealth, true);
-        
-        // For now, place without tile validation (tiles can be added later)
+        // Base has size 2 (center + 1 ring)
+        baseBuilding.Initialize(BuildingType.Base, 0, baseBuilding.maxHealth, 2);
+
+        // Mark tiles occupied by this building
+        MarkTilesOccupiedByBuilding(baseBuilding, Vector3.zero);
+
+        // Place without tile validation
         baseBuilding.Place(new List<HexTile>());
-        
+
         _allBuildings.Add(baseBuilding);
         _bases.Add(baseBuilding);
+    }
+
+    void MarkTilesOccupiedByBuilding(Building building, Vector3 position)
+    {
+        // Find all tiles within the building's occupied radius
+        var allTiles = FindObjectsByType<HexTile>(FindObjectsSortMode.None);
+        float occupiedRadius = building.GetOccupiedRadius();
+
+        foreach (var tile in allTiles)
+        {
+            float distance = Vector3.Distance(tile.transform.position, position);
+            if (distance <= occupiedRadius)
+            {
+                tile.SetOccupied(true);
+            }
+        }
     }
 
     public void StartBuildingPlacement(BuildingType type)
@@ -107,7 +140,7 @@ public class BuildingManager : MonoBehaviour
 
         _selectedBuildingType = type;
         _isPlacingBuilding = true;
-		CreatePreviewForType(_selectedBuildingType);
+        CreatePreviewForType(_selectedBuildingType);
 
         try
         {
@@ -118,13 +151,13 @@ public class BuildingManager : MonoBehaviour
         AudioManager.Instance?.PlaySFX("select");
     }
 
-	void CreatePreviewForType(BuildingType type)
-	{
-		var prefab = GetBuildingPrefab(type);
-		if (prefab == null) return;
-		_previewBuilding = Instantiate(prefab, Vector3.zero, Quaternion.identity);
-		_previewBuilding.SetPreviewMode(true);
-	}
+    void CreatePreviewForType(BuildingType type)
+    {
+        var prefab = GetBuildingPrefab(type);
+        if (prefab == null) return;
+        _previewBuilding = Instantiate(prefab, Vector3.zero, Quaternion.identity);
+        _previewBuilding.SetPreviewMode(true);
+    }
 
     public void UpdateBuildingPreview(Vector3 worldPosition)
     {
@@ -138,7 +171,7 @@ public class BuildingManager : MonoBehaviour
         if (!_isPlacingBuilding || _previewBuilding == null) return false;
 
         // Validate placement (tile availability, etc.)
-		if (!IsValidPlacement(worldPosition, tile))
+        if (!IsValidPlacement(worldPosition, tile))
         {
             AudioManager.Instance?.PlaySFX("error");
             return false;
@@ -157,37 +190,24 @@ public class BuildingManager : MonoBehaviour
 
         _previewBuilding.transform.position = worldPosition;
         _previewBuilding.Place(occupiedTiles);
-        
+
         _allBuildings.Add(_previewBuilding);
-        
+
         if (_previewBuilding.buildingType == BuildingType.Base)
         {
             _bases.Add(_previewBuilding);
         }
 
-		// Mark tiles as occupied
-		foreach (var t in occupiedTiles)
-		{
-			if (t != null) t.SetOccupied(true);
-		}
+        // Mark tiles as occupied based on building size
+        MarkTilesOccupiedByBuilding(_previewBuilding, worldPosition);
 
         AudioManager.Instance?.PlaySFX("build");
 
-		// Prepare next preview of the same type if player can afford another one
-		var nextPrefab = GetBuildingPrefab(_selectedBuildingType);
-		bool canPlaceAnother = nextPrefab != null && PlayerStatsManager.Instance.CanAfford(nextPrefab.tritiumCost);
-		if (canPlaceAnother)
-		{
-			CreatePreviewForType(_selectedBuildingType);
-			// Start the preview at the last placed position; it will snap on hover
-			_previewBuilding.transform.position = worldPosition;
-			_isPlacingBuilding = true;
-		}
-		else
-		{
-			_previewBuilding = null;
-			_isPlacingBuilding = false;
-		}
+        // Keep the same building type selected so player can place multiple
+        CreatePreviewForType(_selectedBuildingType);
+        // Start the preview at the last placed position; it will snap on hover
+        _previewBuilding.transform.position = worldPosition;
+        _isPlacingBuilding = true;
 
         return true;
     }
@@ -211,16 +231,36 @@ public class BuildingManager : MonoBehaviour
 
     bool IsValidPlacement(Vector3 position, HexTile tile)
     {
-		// Basic validation:
-		// - Require a tile
-		// - Tile must not be occupied
-		if (tile == null) return false;
-		if (tile.IsOccupied) return false;
+        // Basic validation: require a tile
+        if (tile == null) return false;
+        if (_previewBuilding == null) return false;
 
-		// TODO: Add more sophisticated validation:
-		// - Check within bounds
-		// - Check distance from other buildings
-		return true;
+        // Get the radius this building will occupy
+        float buildingRadius = _previewBuilding.GetOccupiedRadius();
+
+        // Check collision with existing buildings
+        foreach (var existingBuilding in _allBuildings)
+        {
+            if (existingBuilding == null || existingBuilding.IsDead) continue;
+
+            float existingRadius = existingBuilding.GetOccupiedRadius();
+            float distance = Vector3.Distance(position, existingBuilding.transform.position);
+
+            // Buildings overlap if distance is less than sum of their radii
+            float minDistance = buildingRadius + existingRadius;
+            if (distance < minDistance)
+            {
+                return false;
+            }
+        }
+
+        // Check if the center tile is occupied (for size 1 buildings)
+        if (_previewBuilding.size <= 1 && tile.IsOccupied)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     Building GetBuildingPrefab(BuildingType type)
@@ -248,11 +288,11 @@ public class BuildingManager : MonoBehaviour
     public void OnBuildingDestroyed(Building building)
     {
         _allBuildings.Remove(building);
-        
+
         if (building.buildingType == BuildingType.Base)
         {
             _bases.Remove(building);
-            
+
             try
             {
                 onBaseDestroyed?.Invoke();

@@ -131,5 +131,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b813e59ca31e20141a39717081698671, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoostBuilding
-  boostRadius: 2
+  boostRadius: 1
   damageMultiplier: 2

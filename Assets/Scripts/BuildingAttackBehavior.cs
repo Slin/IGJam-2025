@@ -51,6 +51,16 @@ public abstract class BuildingAttackBehavior : MonoBehaviour
     {
         _building = GetComponent<Building>();
     }
+    
+    protected virtual void Start()
+    {
+        // Add tooltip component if not present
+        var tooltipType = System.Type.GetType("BuildingTooltip");
+        if (tooltipType != null && GetComponent(tooltipType) == null)
+        {
+            gameObject.AddComponent(tooltipType);
+        }
+    }
 
     protected virtual void Update()
     {

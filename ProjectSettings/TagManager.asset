@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - Particle_green
+  - Particle_write
   layers:
   - Default
   - TransparentFX

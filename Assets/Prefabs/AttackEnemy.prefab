@@ -48,7 +48,7 @@ MonoBehaviour:
   enemyType: 4
   maxHealth: 500
   tritiumReward: 60
-  baseDamage: 50
+  baseDamage: 150
   moveSpeed: 1.5
   arrivalDistance: 0.05
   targetPosition: {x: 0, y: 0, z: 0}

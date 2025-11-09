@@ -166,17 +166,12 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Calculate the money value for a round based on formula: initialRoundMoneyValue + (previous round value) + roundMoneyIncrement
+    /// Calculate the money value for a round based on quadratic formula: initialRoundMoneyValue + (roundMoneyIncrement * round² / 2)
+    /// This provides smooth exponential-like scaling that accelerates over time.
     /// </summary>
     int CalculateRoundMoneyValue(int round)
     {
-        if (round <= 1)
-        {
-            _lastRoundMoneyValue = initialRoundMoneyValue;
-            return initialRoundMoneyValue;
-        }
-
-        int currentValue = initialRoundMoneyValue + _lastRoundMoneyValue + roundMoneyIncrement;
+        int currentValue = initialRoundMoneyValue + (roundMoneyIncrement * round * round / 2);
         _lastRoundMoneyValue = currentValue;
         return currentValue;
     }
@@ -186,6 +181,15 @@ public class GameManager : MonoBehaviour
         if (round % 5 != 0 || round < roundsUntilBossEnemies)
             return 0;
         return round / 5;
+    }
+
+    /// <summary>
+    /// Calculate the maximum number of enemies for a round based on formula: (round / 20) * starting max but never less than 50
+    /// </summary>
+    public int GetMaxEnemiesForRound(int round)
+    {
+        int scaledMax = Mathf.RoundToInt((round / 20f) * maxEnemiesPerRound);
+        return Mathf.Max(50, scaledMax);
     }
 
     int CalculateEnemyCount(int round)

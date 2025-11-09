@@ -117,7 +117,7 @@ public class SpawnerManager : MonoBehaviour
 
         // Spend the money value to buy enemies
         int remainingMoney = roundMoneyValue;
-        int maxEnemies = GameManager.Instance?.maxEnemiesPerRound ?? 50;
+        int maxEnemies = GameManager.Instance?.GetMaxEnemiesForRound(round) ?? 50;
 
         while (remainingMoney > 0 && enemiesToSpawn.Count < maxEnemies)
         {

@@ -230,17 +230,17 @@ public class SingularityEffectManager : MonoBehaviour
         // Add general effects (affect all types)
         foreach (var effectType in effectTypes)
         {
-            // ±25% effects (rounds 1-7)
-            effectPool.Add(CreateEffect(effectType, 25f, 1, 7));
-            effectPool.Add(CreateEffect(effectType, -25f, 1, 7));
+            // ±10% effects (rounds 1-7)
+            effectPool.Add(CreateEffect(effectType, 10f, 1, 7));
+            effectPool.Add(CreateEffect(effectType, -10f, 1, 7));
 
-            // ±50% effects (rounds 8-15)
-            effectPool.Add(CreateEffect(effectType, 50f, 8, 15));
-            effectPool.Add(CreateEffect(effectType, -50f, 8, 15));
+            // ±20% effects (rounds 8-15)
+            effectPool.Add(CreateEffect(effectType, 20f, 8, 15));
+            effectPool.Add(CreateEffect(effectType, -20f, 8, 15));
 
-            // ±100% effects (rounds 16+)
-            effectPool.Add(CreateEffect(effectType, 100f, 16, -1));
-            effectPool.Add(CreateEffect(effectType, -100f, 16, -1));
+            // ±30% effects (rounds 16+)
+            effectPool.Add(CreateEffect(effectType, 30f, 16, -1));
+            effectPool.Add(CreateEffect(effectType, -30f, 16, -1));
         }
 
         // Add drone effects based on DroneFactory unlock round
@@ -248,14 +248,14 @@ public class SingularityEffectManager : MonoBehaviour
         if (gameManager != null)
         {
             int droneUnlock = gameManager.roundsUntilDroneFactory;
-            
+
             // DroneSpeed effects
             effectPool.Add(CreateEffect(SingularityEffectType.DroneSpeed, 25f, droneUnlock, droneUnlock + 6));
             effectPool.Add(CreateEffect(SingularityEffectType.DroneSpeed, -25f, droneUnlock, droneUnlock + 6));
             effectPool.Add(CreateEffect(SingularityEffectType.DroneSpeed, 50f, droneUnlock + 7, droneUnlock + 14));
             effectPool.Add(CreateEffect(SingularityEffectType.DroneSpeed, -50f, droneUnlock + 7, droneUnlock + 14));
             effectPool.Add(CreateEffect(SingularityEffectType.DroneSpeed, 100f, droneUnlock + 15, -1));
-            effectPool.Add(CreateEffect(SingularityEffectType.DroneSpeed, -100f, droneUnlock + 15, -1));
+            effectPool.Add(CreateEffect(SingularityEffectType.DroneSpeed, -75f, droneUnlock + 15, -1));
 
             // DroneDamage effects
             effectPool.Add(CreateEffect(SingularityEffectType.DroneDamage, 25f, droneUnlock, droneUnlock + 6));
@@ -263,7 +263,7 @@ public class SingularityEffectManager : MonoBehaviour
             effectPool.Add(CreateEffect(SingularityEffectType.DroneDamage, 50f, droneUnlock + 7, droneUnlock + 14));
             effectPool.Add(CreateEffect(SingularityEffectType.DroneDamage, -50f, droneUnlock + 7, droneUnlock + 14));
             effectPool.Add(CreateEffect(SingularityEffectType.DroneDamage, 100f, droneUnlock + 15, -1));
-            effectPool.Add(CreateEffect(SingularityEffectType.DroneDamage, -100f, droneUnlock + 15, -1));
+            effectPool.Add(CreateEffect(SingularityEffectType.DroneDamage, -75f, droneUnlock + 15, -1));
         }
 
         // Add type-specific enemy effects
@@ -326,7 +326,7 @@ public class SingularityEffectManager : MonoBehaviour
         AddSpecificEnemyEffect(EnemyType.Attack, SingularityEffectType.EnemyDamageDealt, 50f, attackUnlock + 7, attackUnlock + 14);
         AddSpecificEnemyEffect(EnemyType.Attack, SingularityEffectType.EnemyDamageDealt, -50f, attackUnlock + 7, attackUnlock + 14);
         AddSpecificEnemyEffect(EnemyType.Attack, SingularityEffectType.EnemyDamageDealt, 100f, attackUnlock + 15, -1);
-        AddSpecificEnemyEffect(EnemyType.Attack, SingularityEffectType.EnemyDamageDealt, -100f, attackUnlock + 15, -1);
+        AddSpecificEnemyEffect(EnemyType.Attack, SingularityEffectType.EnemyDamageDealt, -75f, attackUnlock + 15, -1);
 
         // Teleporter enemies - available when they start appearing
         int teleporterUnlock = gameManager.roundsUntilTeleporterEnemies;
@@ -360,30 +360,45 @@ public class SingularityEffectManager : MonoBehaviour
         AddSpecificBuildingEffect(BuildingType.RocketLauncher, SingularityEffectType.BuildingAttackDamage, 25f, rocketUnlock, rocketUnlock + 6);
         AddSpecificBuildingEffect(BuildingType.RocketLauncher, SingularityEffectType.BuildingAttackDamage, -25f, rocketUnlock, rocketUnlock + 6);
         AddSpecificBuildingEffect(BuildingType.RocketLauncher, SingularityEffectType.BuildingAttackRange, 25f, rocketUnlock, rocketUnlock + 6);
+        AddSpecificBuildingEffect(BuildingType.RocketLauncher, SingularityEffectType.BuildingAttackRange, -25f, rocketUnlock, rocketUnlock + 6);
         AddSpecificBuildingEffect(BuildingType.RocketLauncher, SingularityEffectType.BuildingAttackDamage, 50f, rocketUnlock + 7, rocketUnlock + 14);
         AddSpecificBuildingEffect(BuildingType.RocketLauncher, SingularityEffectType.BuildingAttackDamage, -50f, rocketUnlock + 7, rocketUnlock + 14);
         AddSpecificBuildingEffect(BuildingType.RocketLauncher, SingularityEffectType.BuildingAttackRange, 50f, rocketUnlock + 7, rocketUnlock + 14);
+        AddSpecificBuildingEffect(BuildingType.RocketLauncher, SingularityEffectType.BuildingAttackRange, -50f, rocketUnlock + 7, rocketUnlock + 14);
         AddSpecificBuildingEffect(BuildingType.RocketLauncher, SingularityEffectType.BuildingAttackDamage, 100f, rocketUnlock + 15, -1);
-        AddSpecificBuildingEffect(BuildingType.RocketLauncher, SingularityEffectType.BuildingAttackDamage, -100f, rocketUnlock + 15, -1);
+        AddSpecificBuildingEffect(BuildingType.RocketLauncher, SingularityEffectType.BuildingAttackDamage, -75f, rocketUnlock + 15, -1);
         AddSpecificBuildingEffect(BuildingType.RocketLauncher, SingularityEffectType.BuildingAttackRange, 100f, rocketUnlock + 15, -1);
+        AddSpecificBuildingEffect(BuildingType.RocketLauncher, SingularityEffectType.BuildingAttackRange, -75f, rocketUnlock + 15, -1);
 
         // Laser Tower - available when unlocked
         int laserUnlock = gameManager.roundsUntilLaserTower;
         AddSpecificBuildingEffect(BuildingType.LaserTower, SingularityEffectType.BuildingAttackDamage, 25f, laserUnlock, laserUnlock + 4);
+        AddSpecificBuildingEffect(BuildingType.LaserTower, SingularityEffectType.BuildingAttackDamage, -25f, laserUnlock, laserUnlock + 4);
+        AddSpecificBuildingEffect(BuildingType.LaserTower, SingularityEffectType.BuildingAttackRange, 25f, laserUnlock, laserUnlock + 4);
         AddSpecificBuildingEffect(BuildingType.LaserTower, SingularityEffectType.BuildingAttackRange, -25f, laserUnlock, laserUnlock + 4);
         AddSpecificBuildingEffect(BuildingType.LaserTower, SingularityEffectType.BuildingAttackDamage, 50f, laserUnlock + 5, laserUnlock + 12);
+        AddSpecificBuildingEffect(BuildingType.LaserTower, SingularityEffectType.BuildingAttackDamage, -50f, laserUnlock + 5, laserUnlock + 12);
+        AddSpecificBuildingEffect(BuildingType.LaserTower, SingularityEffectType.BuildingAttackRange, 50f, laserUnlock + 5, laserUnlock + 12);
         AddSpecificBuildingEffect(BuildingType.LaserTower, SingularityEffectType.BuildingAttackRange, -50f, laserUnlock + 5, laserUnlock + 12);
         AddSpecificBuildingEffect(BuildingType.LaserTower, SingularityEffectType.BuildingAttackDamage, 100f, laserUnlock + 13, -1);
-        AddSpecificBuildingEffect(BuildingType.LaserTower, SingularityEffectType.BuildingAttackRange, -100f, laserUnlock + 13, -1);
+        AddSpecificBuildingEffect(BuildingType.LaserTower, SingularityEffectType.BuildingAttackDamage, -75f, laserUnlock + 13, -1);
+        AddSpecificBuildingEffect(BuildingType.LaserTower, SingularityEffectType.BuildingAttackRange, 100f, laserUnlock + 13, -1);
+        AddSpecificBuildingEffect(BuildingType.LaserTower, SingularityEffectType.BuildingAttackRange, -75f, laserUnlock + 13, -1);
 
         // Freeze Tower - available when unlocked
         int freezeUnlock = gameManager.roundsUntilFreezeTower;
         AddSpecificBuildingEffect(BuildingType.FreezeTower, SingularityEffectType.BuildingAttackRange, 25f, freezeUnlock, freezeUnlock + 6);
+        AddSpecificBuildingEffect(BuildingType.FreezeTower, SingularityEffectType.BuildingAttackRange, -25f, freezeUnlock, freezeUnlock + 6);
         AddSpecificBuildingEffect(BuildingType.FreezeTower, SingularityEffectType.BuildingAttackDamage, 25f, freezeUnlock, freezeUnlock + 6);
+        AddSpecificBuildingEffect(BuildingType.FreezeTower, SingularityEffectType.BuildingAttackDamage, -25f, freezeUnlock, freezeUnlock + 6);
         AddSpecificBuildingEffect(BuildingType.FreezeTower, SingularityEffectType.BuildingAttackRange, 50f, freezeUnlock + 7, freezeUnlock + 14);
+        AddSpecificBuildingEffect(BuildingType.FreezeTower, SingularityEffectType.BuildingAttackRange, -50f, freezeUnlock + 7, freezeUnlock + 14);
         AddSpecificBuildingEffect(BuildingType.FreezeTower, SingularityEffectType.BuildingAttackDamage, 50f, freezeUnlock + 7, freezeUnlock + 14);
+        AddSpecificBuildingEffect(BuildingType.FreezeTower, SingularityEffectType.BuildingAttackDamage, -50f, freezeUnlock + 7, freezeUnlock + 14);
         AddSpecificBuildingEffect(BuildingType.FreezeTower, SingularityEffectType.BuildingAttackRange, 100f, freezeUnlock + 15, -1);
+        AddSpecificBuildingEffect(BuildingType.FreezeTower, SingularityEffectType.BuildingAttackRange, -75f, freezeUnlock + 15, -1);
         AddSpecificBuildingEffect(BuildingType.FreezeTower, SingularityEffectType.BuildingAttackDamage, 100f, freezeUnlock + 15, -1);
+        AddSpecificBuildingEffect(BuildingType.FreezeTower, SingularityEffectType.BuildingAttackDamage, -75f, freezeUnlock + 15, -1);
 
         // Base - available when unlocked, affects damage taken
         int baseUnlock = gameManager.roundsUntilBase;
@@ -391,8 +406,26 @@ public class SingularityEffectManager : MonoBehaviour
         AddSpecificBuildingEffect(BuildingType.Base, SingularityEffectType.BuildingDamageTaken, 25f, baseUnlock, baseUnlock + 6);
         AddSpecificBuildingEffect(BuildingType.Base, SingularityEffectType.BuildingDamageTaken, -50f, baseUnlock + 7, baseUnlock + 14);
         AddSpecificBuildingEffect(BuildingType.Base, SingularityEffectType.BuildingDamageTaken, 50f, baseUnlock + 7, baseUnlock + 14);
-        AddSpecificBuildingEffect(BuildingType.Base, SingularityEffectType.BuildingDamageTaken, -100f, baseUnlock + 15, -1);
+        AddSpecificBuildingEffect(BuildingType.Base, SingularityEffectType.BuildingDamageTaken, -75f, baseUnlock + 15, -1);
         AddSpecificBuildingEffect(BuildingType.Base, SingularityEffectType.BuildingDamageTaken, 100f, baseUnlock + 15, -1);
+
+        // Boost Building - available when unlocked
+        int boostUnlock = gameManager.roundsUntilBoostBuilding;
+        AddSpecificBuildingEffect(BuildingType.BoostBuilding, SingularityEffectType.BuildingAttackRange, 25f, boostUnlock, boostUnlock + 6);
+        AddSpecificBuildingEffect(BuildingType.BoostBuilding, SingularityEffectType.BuildingAttackRange, -25f, boostUnlock, boostUnlock + 6);
+        AddSpecificBuildingEffect(BuildingType.BoostBuilding, SingularityEffectType.BuildingAttackRange, 50f, boostUnlock + 7, boostUnlock + 14);
+        AddSpecificBuildingEffect(BuildingType.BoostBuilding, SingularityEffectType.BuildingAttackRange, -50f, boostUnlock + 7, boostUnlock + 14);
+        AddSpecificBuildingEffect(BuildingType.BoostBuilding, SingularityEffectType.BuildingAttackRange, 100f, boostUnlock + 15, -1);
+        AddSpecificBuildingEffect(BuildingType.BoostBuilding, SingularityEffectType.BuildingAttackRange, -75f, boostUnlock + 15, -1);
+
+        // Radar Jammer - available when unlocked
+        int jammerUnlock = gameManager.roundsUntilRadarJammer;
+        AddSpecificBuildingEffect(BuildingType.RadarJammer, SingularityEffectType.BuildingAttackRange, 25f, jammerUnlock, jammerUnlock + 6);
+        AddSpecificBuildingEffect(BuildingType.RadarJammer, SingularityEffectType.BuildingAttackRange, -25f, jammerUnlock, jammerUnlock + 6);
+        AddSpecificBuildingEffect(BuildingType.RadarJammer, SingularityEffectType.BuildingAttackRange, 50f, jammerUnlock + 7, jammerUnlock + 14);
+        AddSpecificBuildingEffect(BuildingType.RadarJammer, SingularityEffectType.BuildingAttackRange, -50f, jammerUnlock + 7, jammerUnlock + 14);
+        AddSpecificBuildingEffect(BuildingType.RadarJammer, SingularityEffectType.BuildingAttackRange, 100f, jammerUnlock + 15, -1);
+        AddSpecificBuildingEffect(BuildingType.RadarJammer, SingularityEffectType.BuildingAttackRange, -75f, jammerUnlock + 15, -1);
     }
 
     /// <summary>
@@ -531,8 +564,12 @@ public class SingularityEffectManager : MonoBehaviour
 
         string intensity = absValue switch
         {
+            10f => isPositive ? "Enhanced" : "Weakened",
+            20f => isPositive ? "Superior" : "Inferior",
             25f => isPositive ? "Enhanced" : "Weakened",
+            30f => isPositive ? "Maximum" : "Minimum",
             50f => isPositive ? "Superior" : "Inferior",
+            75f => isPositive ? "Maximum" : "Minimum",
             100f => isPositive ? "Maximum" : "Minimum",
             _ => isPositive ? "Boosted" : "Reduced"
         };

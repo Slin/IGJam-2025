@@ -24,6 +24,15 @@ public class GameManager : MonoBehaviour
     public int roundsUntilExploderEnemies = 3;
     public int maxEnemiesPerRound = 50;
 
+    [Header("Building Unlocks")]
+    public int roundsUntilRocketLauncher = 1;
+    public int roundsUntilBase = 15;
+    public int roundsUntilLaserTower = 3;
+    public int roundsUntilBoostBuilding = 5;
+    public int roundsUntilDroneFactory = 7;
+    public int roundsUntilFreezeTower = 9;
+    public int roundsUntilRadarJammer = 12;
+
     [Header("Events")] public UnityEvent onGameStarted;
     public UnityEvent onGameOver;
     public UnityEvent<GamePhase> onPhaseChanged;
@@ -35,7 +44,7 @@ public class GameManager : MonoBehaviour
 
     [Header("VFX Prefabs")]
     public LaserBeam laserBeamPrefab;
-	public GameObject buildingDeathEffectPrefab;
+    public GameObject buildingDeathEffectPrefab;
     public GameObject enemyDeathEffectPrefab;
     public GameObject enemyTeleportInEffectPrefab;
     public GameObject enemyTeleportOutEffectPrefab;
@@ -323,6 +332,36 @@ public class GameManager : MonoBehaviour
             EnemyType.Teleporter => round >= roundsUntilTeleporterEnemies,
             EnemyType.Exploder => round >= roundsUntilExploderEnemies,
             _ => false
+        };
+    }
+
+    public bool IsBuildingUnlocked(BuildingType type, int round)
+    {
+        return type switch
+        {
+            BuildingType.Base => round >= roundsUntilBase,
+            BuildingType.RocketLauncher => round >= roundsUntilRocketLauncher,
+            BuildingType.LaserTower => round >= roundsUntilLaserTower,
+            BuildingType.BoostBuilding => round >= roundsUntilBoostBuilding,
+            BuildingType.DroneFactory => round >= roundsUntilDroneFactory,
+            BuildingType.FreezeTower => round >= roundsUntilFreezeTower,
+            BuildingType.RadarJammer => round >= roundsUntilRadarJammer,
+            _ => false
+        };
+    }
+
+    public int GetBuildingUnlockRound(BuildingType type)
+    {
+        return type switch
+        {
+            BuildingType.Base => roundsUntilBase,
+            BuildingType.RocketLauncher => roundsUntilRocketLauncher,
+            BuildingType.LaserTower => roundsUntilLaserTower,
+            BuildingType.BoostBuilding => roundsUntilBoostBuilding,
+            BuildingType.DroneFactory => roundsUntilDroneFactory,
+            BuildingType.FreezeTower => roundsUntilFreezeTower,
+            BuildingType.RadarJammer => roundsUntilRadarJammer,
+            _ => 1
         };
     }
 

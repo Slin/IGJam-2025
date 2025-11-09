@@ -654,6 +654,13 @@ MonoBehaviour:
   roundsUntilTeleporterEnemies: 5
   roundsUntilExploderEnemies: 3
   maxEnemiesPerRound: 50
+  roundsUntilRocketLauncher: 5
+  roundsUntilBase: 12
+  roundsUntilLaserTower: 0
+  roundsUntilBoostBuilding: 2
+  roundsUntilDroneFactory: 3
+  roundsUntilFreezeTower: 7
+  roundsUntilRadarJammer: 9
   onGameStarted:
     m_PersistentCalls:
       m_Calls: []

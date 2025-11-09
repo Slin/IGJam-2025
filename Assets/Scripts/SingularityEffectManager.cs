@@ -216,7 +216,7 @@ public class SingularityEffectManager : MonoBehaviour
     {
         effectPool = new List<SingularityEffect>();
 
-        // Define effect types to generate
+        // Define effect types to generate (non-drone)
         var effectTypes = new[]
         {
             SingularityEffectType.BuildingAttackDamage,
@@ -224,11 +224,10 @@ public class SingularityEffectManager : MonoBehaviour
             SingularityEffectType.BuildingDamageTaken,
             SingularityEffectType.EnemyDamageDealt,
             SingularityEffectType.EnemyDamageTaken,
-            SingularityEffectType.EnemySpeed,
-            SingularityEffectType.DroneSpeed,
-            SingularityEffectType.DroneDamage
+            SingularityEffectType.EnemySpeed
         };
 
+        // Add general effects (affect all types)
         foreach (var effectType in effectTypes)
         {
             // ±25% effects (rounds 1-7)
@@ -244,7 +243,234 @@ public class SingularityEffectManager : MonoBehaviour
             effectPool.Add(CreateEffect(effectType, -100f, 16, -1));
         }
 
+        // Add drone effects based on DroneFactory unlock round
+        var gameManager = GameManager.Instance;
+        if (gameManager != null)
+        {
+            int droneUnlock = gameManager.roundsUntilDroneFactory;
+            
+            // DroneSpeed effects
+            effectPool.Add(CreateEffect(SingularityEffectType.DroneSpeed, 25f, droneUnlock, droneUnlock + 6));
+            effectPool.Add(CreateEffect(SingularityEffectType.DroneSpeed, -25f, droneUnlock, droneUnlock + 6));
+            effectPool.Add(CreateEffect(SingularityEffectType.DroneSpeed, 50f, droneUnlock + 7, droneUnlock + 14));
+            effectPool.Add(CreateEffect(SingularityEffectType.DroneSpeed, -50f, droneUnlock + 7, droneUnlock + 14));
+            effectPool.Add(CreateEffect(SingularityEffectType.DroneSpeed, 100f, droneUnlock + 15, -1));
+            effectPool.Add(CreateEffect(SingularityEffectType.DroneSpeed, -100f, droneUnlock + 15, -1));
+
+            // DroneDamage effects
+            effectPool.Add(CreateEffect(SingularityEffectType.DroneDamage, 25f, droneUnlock, droneUnlock + 6));
+            effectPool.Add(CreateEffect(SingularityEffectType.DroneDamage, -25f, droneUnlock, droneUnlock + 6));
+            effectPool.Add(CreateEffect(SingularityEffectType.DroneDamage, 50f, droneUnlock + 7, droneUnlock + 14));
+            effectPool.Add(CreateEffect(SingularityEffectType.DroneDamage, -50f, droneUnlock + 7, droneUnlock + 14));
+            effectPool.Add(CreateEffect(SingularityEffectType.DroneDamage, 100f, droneUnlock + 15, -1));
+            effectPool.Add(CreateEffect(SingularityEffectType.DroneDamage, -100f, droneUnlock + 15, -1));
+        }
+
+        // Add type-specific enemy effects
+        AddEnemyTypeSpecificEffects();
+
+        // Add type-specific building effects
+        AddBuildingTypeSpecificEffects();
+
         Debug.Log($"SingularityEffectManager: Populated with {effectPool.Count} effects");
+    }
+
+    /// <summary>
+    /// Add effects that target specific enemy types
+    /// </summary>
+    private void AddEnemyTypeSpecificEffects()
+    {
+        var gameManager = GameManager.Instance;
+        if (gameManager == null) return;
+
+        // Fast enemies - available when they start appearing
+        int fastUnlock = gameManager.roundsUntilFastEnemies;
+        AddSpecificEnemyEffect(EnemyType.Fast, SingularityEffectType.EnemySpeed, 25f, fastUnlock, fastUnlock + 6);
+        AddSpecificEnemyEffect(EnemyType.Fast, SingularityEffectType.EnemySpeed, -25f, fastUnlock, fastUnlock + 6);
+        AddSpecificEnemyEffect(EnemyType.Fast, SingularityEffectType.EnemyDamageTaken, 15f, fastUnlock, fastUnlock + 6);
+        AddSpecificEnemyEffect(EnemyType.Fast, SingularityEffectType.EnemySpeed, 50f, fastUnlock + 7, fastUnlock + 14);
+        AddSpecificEnemyEffect(EnemyType.Fast, SingularityEffectType.EnemySpeed, -50f, fastUnlock + 7, fastUnlock + 14);
+        AddSpecificEnemyEffect(EnemyType.Fast, SingularityEffectType.EnemyDamageTaken, 20f, fastUnlock + 7, fastUnlock + 14);
+        AddSpecificEnemyEffect(EnemyType.Fast, SingularityEffectType.EnemySpeed, 100f, fastUnlock + 15, -1);
+        AddSpecificEnemyEffect(EnemyType.Fast, SingularityEffectType.EnemySpeed, -75f, fastUnlock + 15, -1);
+        AddSpecificEnemyEffect(EnemyType.Fast, SingularityEffectType.EnemyDamageTaken, 25f, fastUnlock + 15, -1);
+
+        // Armored enemies - available when they start appearing
+        int armoredUnlock = gameManager.roundsUntilArmoredEnemies;
+        AddSpecificEnemyEffect(EnemyType.Armored, SingularityEffectType.EnemyDamageTaken, -15f, armoredUnlock, armoredUnlock + 6);
+        AddSpecificEnemyEffect(EnemyType.Armored, SingularityEffectType.EnemySpeed, -25f, armoredUnlock, armoredUnlock + 6);
+        AddSpecificEnemyEffect(EnemyType.Armored, SingularityEffectType.EnemyDamageTaken, 15f, armoredUnlock, armoredUnlock + 6);
+        AddSpecificEnemyEffect(EnemyType.Armored, SingularityEffectType.EnemyDamageTaken, -20f, armoredUnlock + 7, armoredUnlock + 14);
+        AddSpecificEnemyEffect(EnemyType.Armored, SingularityEffectType.EnemySpeed, -50f, armoredUnlock + 7, armoredUnlock + 14);
+        AddSpecificEnemyEffect(EnemyType.Armored, SingularityEffectType.EnemyDamageTaken, 20f, armoredUnlock + 7, armoredUnlock + 14);
+        AddSpecificEnemyEffect(EnemyType.Armored, SingularityEffectType.EnemyDamageTaken, -25f, armoredUnlock + 15, -1);
+        AddSpecificEnemyEffect(EnemyType.Armored, SingularityEffectType.EnemySpeed, -75f, armoredUnlock + 15, -1);
+        AddSpecificEnemyEffect(EnemyType.Armored, SingularityEffectType.EnemyDamageTaken, 25f, armoredUnlock + 15, -1);
+
+        // Boss enemies - available when they start appearing
+        int bossUnlock = gameManager.roundsUntilBossEnemies;
+        AddSpecificEnemyEffect(EnemyType.Boss, SingularityEffectType.EnemyDamageDealt, 25f, bossUnlock, bossUnlock + 6);
+        AddSpecificEnemyEffect(EnemyType.Boss, SingularityEffectType.EnemyDamageTaken, -15f, bossUnlock, bossUnlock + 6);
+        AddSpecificEnemyEffect(EnemyType.Boss, SingularityEffectType.EnemyDamageTaken, 15f, bossUnlock, bossUnlock + 6);
+        AddSpecificEnemyEffect(EnemyType.Boss, SingularityEffectType.EnemyDamageDealt, 50f, bossUnlock + 7, bossUnlock + 14);
+        AddSpecificEnemyEffect(EnemyType.Boss, SingularityEffectType.EnemyDamageTaken, -20f, bossUnlock + 7, bossUnlock + 14);
+        AddSpecificEnemyEffect(EnemyType.Boss, SingularityEffectType.EnemyDamageTaken, 20f, bossUnlock + 7, bossUnlock + 14);
+        AddSpecificEnemyEffect(EnemyType.Boss, SingularityEffectType.EnemyDamageDealt, 100f, bossUnlock + 15, -1);
+        AddSpecificEnemyEffect(EnemyType.Boss, SingularityEffectType.EnemyDamageTaken, -25f, bossUnlock + 15, -1);
+        AddSpecificEnemyEffect(EnemyType.Boss, SingularityEffectType.EnemyDamageTaken, 25f, bossUnlock + 15, -1);
+
+        // Attack enemies - available when they start appearing
+        int attackUnlock = gameManager.roundsUntilAttackEnemies;
+        AddSpecificEnemyEffect(EnemyType.Attack, SingularityEffectType.EnemyDamageDealt, 25f, attackUnlock, attackUnlock + 6);
+        AddSpecificEnemyEffect(EnemyType.Attack, SingularityEffectType.EnemyDamageDealt, -25f, attackUnlock, attackUnlock + 6);
+        AddSpecificEnemyEffect(EnemyType.Attack, SingularityEffectType.EnemyDamageDealt, 50f, attackUnlock + 7, attackUnlock + 14);
+        AddSpecificEnemyEffect(EnemyType.Attack, SingularityEffectType.EnemyDamageDealt, -50f, attackUnlock + 7, attackUnlock + 14);
+        AddSpecificEnemyEffect(EnemyType.Attack, SingularityEffectType.EnemyDamageDealt, 100f, attackUnlock + 15, -1);
+        AddSpecificEnemyEffect(EnemyType.Attack, SingularityEffectType.EnemyDamageDealt, -100f, attackUnlock + 15, -1);
+
+        // Teleporter enemies - available when they start appearing
+        int teleporterUnlock = gameManager.roundsUntilTeleporterEnemies;
+        AddSpecificEnemyEffect(EnemyType.Teleporter, SingularityEffectType.EnemySpeed, 25f, teleporterUnlock, teleporterUnlock + 6);
+        AddSpecificEnemyEffect(EnemyType.Teleporter, SingularityEffectType.EnemyDamageTaken, 15f, teleporterUnlock, teleporterUnlock + 6);
+        AddSpecificEnemyEffect(EnemyType.Teleporter, SingularityEffectType.EnemySpeed, 50f, teleporterUnlock + 7, teleporterUnlock + 14);
+        AddSpecificEnemyEffect(EnemyType.Teleporter, SingularityEffectType.EnemyDamageTaken, 20f, teleporterUnlock + 7, teleporterUnlock + 14);
+        AddSpecificEnemyEffect(EnemyType.Teleporter, SingularityEffectType.EnemySpeed, 100f, teleporterUnlock + 15, -1);
+        AddSpecificEnemyEffect(EnemyType.Teleporter, SingularityEffectType.EnemyDamageTaken, 25f, teleporterUnlock + 15, -1);
+
+        // Exploder enemies - available when they start appearing
+        int exploderUnlock = gameManager.roundsUntilExploderEnemies;
+        AddSpecificEnemyEffect(EnemyType.Exploder, SingularityEffectType.EnemyDamageDealt, 25f, exploderUnlock, exploderUnlock + 6);
+        AddSpecificEnemyEffect(EnemyType.Exploder, SingularityEffectType.EnemySpeed, -25f, exploderUnlock, exploderUnlock + 6);
+        AddSpecificEnemyEffect(EnemyType.Exploder, SingularityEffectType.EnemyDamageDealt, 50f, exploderUnlock + 7, exploderUnlock + 14);
+        AddSpecificEnemyEffect(EnemyType.Exploder, SingularityEffectType.EnemySpeed, -50f, exploderUnlock + 7, exploderUnlock + 14);
+        AddSpecificEnemyEffect(EnemyType.Exploder, SingularityEffectType.EnemyDamageDealt, 100f, exploderUnlock + 15, -1);
+        AddSpecificEnemyEffect(EnemyType.Exploder, SingularityEffectType.EnemySpeed, -75f, exploderUnlock + 15, -1);
+    }
+
+    /// <summary>
+    /// Add effects that target specific building types
+    /// </summary>
+    private void AddBuildingTypeSpecificEffects()
+    {
+        var gameManager = GameManager.Instance;
+        if (gameManager == null) return;
+
+        // Rocket Launcher - available when unlocked
+        int rocketUnlock = gameManager.roundsUntilRocketLauncher;
+        AddSpecificBuildingEffect(BuildingType.RocketLauncher, SingularityEffectType.BuildingAttackDamage, 25f, rocketUnlock, rocketUnlock + 6);
+        AddSpecificBuildingEffect(BuildingType.RocketLauncher, SingularityEffectType.BuildingAttackDamage, -25f, rocketUnlock, rocketUnlock + 6);
+        AddSpecificBuildingEffect(BuildingType.RocketLauncher, SingularityEffectType.BuildingAttackRange, 25f, rocketUnlock, rocketUnlock + 6);
+        AddSpecificBuildingEffect(BuildingType.RocketLauncher, SingularityEffectType.BuildingAttackDamage, 50f, rocketUnlock + 7, rocketUnlock + 14);
+        AddSpecificBuildingEffect(BuildingType.RocketLauncher, SingularityEffectType.BuildingAttackDamage, -50f, rocketUnlock + 7, rocketUnlock + 14);
+        AddSpecificBuildingEffect(BuildingType.RocketLauncher, SingularityEffectType.BuildingAttackRange, 50f, rocketUnlock + 7, rocketUnlock + 14);
+        AddSpecificBuildingEffect(BuildingType.RocketLauncher, SingularityEffectType.BuildingAttackDamage, 100f, rocketUnlock + 15, -1);
+        AddSpecificBuildingEffect(BuildingType.RocketLauncher, SingularityEffectType.BuildingAttackDamage, -100f, rocketUnlock + 15, -1);
+        AddSpecificBuildingEffect(BuildingType.RocketLauncher, SingularityEffectType.BuildingAttackRange, 100f, rocketUnlock + 15, -1);
+
+        // Laser Tower - available when unlocked
+        int laserUnlock = gameManager.roundsUntilLaserTower;
+        AddSpecificBuildingEffect(BuildingType.LaserTower, SingularityEffectType.BuildingAttackDamage, 25f, laserUnlock, laserUnlock + 4);
+        AddSpecificBuildingEffect(BuildingType.LaserTower, SingularityEffectType.BuildingAttackRange, -25f, laserUnlock, laserUnlock + 4);
+        AddSpecificBuildingEffect(BuildingType.LaserTower, SingularityEffectType.BuildingAttackDamage, 50f, laserUnlock + 5, laserUnlock + 12);
+        AddSpecificBuildingEffect(BuildingType.LaserTower, SingularityEffectType.BuildingAttackRange, -50f, laserUnlock + 5, laserUnlock + 12);
+        AddSpecificBuildingEffect(BuildingType.LaserTower, SingularityEffectType.BuildingAttackDamage, 100f, laserUnlock + 13, -1);
+        AddSpecificBuildingEffect(BuildingType.LaserTower, SingularityEffectType.BuildingAttackRange, -100f, laserUnlock + 13, -1);
+
+        // Freeze Tower - available when unlocked
+        int freezeUnlock = gameManager.roundsUntilFreezeTower;
+        AddSpecificBuildingEffect(BuildingType.FreezeTower, SingularityEffectType.BuildingAttackRange, 25f, freezeUnlock, freezeUnlock + 6);
+        AddSpecificBuildingEffect(BuildingType.FreezeTower, SingularityEffectType.BuildingAttackDamage, 25f, freezeUnlock, freezeUnlock + 6);
+        AddSpecificBuildingEffect(BuildingType.FreezeTower, SingularityEffectType.BuildingAttackRange, 50f, freezeUnlock + 7, freezeUnlock + 14);
+        AddSpecificBuildingEffect(BuildingType.FreezeTower, SingularityEffectType.BuildingAttackDamage, 50f, freezeUnlock + 7, freezeUnlock + 14);
+        AddSpecificBuildingEffect(BuildingType.FreezeTower, SingularityEffectType.BuildingAttackRange, 100f, freezeUnlock + 15, -1);
+        AddSpecificBuildingEffect(BuildingType.FreezeTower, SingularityEffectType.BuildingAttackDamage, 100f, freezeUnlock + 15, -1);
+
+        // Base - available when unlocked, affects damage taken
+        int baseUnlock = gameManager.roundsUntilBase;
+        AddSpecificBuildingEffect(BuildingType.Base, SingularityEffectType.BuildingDamageTaken, -25f, baseUnlock, baseUnlock + 6);
+        AddSpecificBuildingEffect(BuildingType.Base, SingularityEffectType.BuildingDamageTaken, 25f, baseUnlock, baseUnlock + 6);
+        AddSpecificBuildingEffect(BuildingType.Base, SingularityEffectType.BuildingDamageTaken, -50f, baseUnlock + 7, baseUnlock + 14);
+        AddSpecificBuildingEffect(BuildingType.Base, SingularityEffectType.BuildingDamageTaken, 50f, baseUnlock + 7, baseUnlock + 14);
+        AddSpecificBuildingEffect(BuildingType.Base, SingularityEffectType.BuildingDamageTaken, -100f, baseUnlock + 15, -1);
+        AddSpecificBuildingEffect(BuildingType.Base, SingularityEffectType.BuildingDamageTaken, 100f, baseUnlock + 15, -1);
+    }
+
+    /// <summary>
+    /// Create and add a type-specific enemy effect
+    /// </summary>
+    private void AddSpecificEnemyEffect(EnemyType enemyType, SingularityEffectType effectType, float valuePercent, int minRound, int maxRound)
+    {
+        string baseName = GetEnemyTypeName(enemyType);
+        string effectName = GetEffectBaseName(effectType);
+        string modifier = GetModifierName(effectType, valuePercent);
+
+        effectPool.Add(new SingularityEffect
+        {
+            effectName = $"{modifier} {baseName} {effectName}",
+            effectType = effectType,
+            valuePercent = valuePercent,
+            minRound = minRound,
+            maxRound = maxRound,
+            affectsAllEnemies = false,
+            targetEnemyType = enemyType
+        });
+    }
+
+    /// <summary>
+    /// Create and add a type-specific building effect
+    /// </summary>
+    private void AddSpecificBuildingEffect(BuildingType buildingType, SingularityEffectType effectType, float valuePercent, int minRound, int maxRound)
+    {
+        string baseName = GetBuildingTypeName(buildingType);
+        string effectName = GetEffectBaseName(effectType);
+        string modifier = GetModifierName(effectType, valuePercent);
+
+        effectPool.Add(new SingularityEffect
+        {
+            effectName = $"{modifier} {baseName} {effectName}",
+            effectType = effectType,
+            valuePercent = valuePercent,
+            minRound = minRound,
+            maxRound = maxRound,
+            affectsAllBuildings = false,
+            targetBuildingType = buildingType
+        });
+    }
+
+    /// <summary>
+    /// Get display name for enemy type
+    /// </summary>
+    private string GetEnemyTypeName(EnemyType enemyType)
+    {
+        return enemyType switch
+        {
+            EnemyType.Regular => "Regular",
+            EnemyType.Fast => "Fast",
+            EnemyType.Armored => "Armored",
+            EnemyType.Boss => "Boss",
+            EnemyType.Attack => "Attack",
+            EnemyType.Teleporter => "Teleporter",
+            EnemyType.Exploder => "Exploder",
+            _ => "Unknown"
+        };
+    }
+
+    /// <summary>
+    /// Get display name for building type
+    /// </summary>
+    private string GetBuildingTypeName(BuildingType buildingType)
+    {
+        return buildingType switch
+        {
+            BuildingType.Base => "Base",
+            BuildingType.RocketLauncher => "Rocket",
+            BuildingType.LaserTower => "Laser",
+            BuildingType.BoostBuilding => "Boost",
+            BuildingType.DroneFactory => "Drone",
+            BuildingType.FreezeTower => "Freeze",
+            BuildingType.RadarJammer => "Jammer",
+            _ => "Unknown"
+        };
     }
 
     /// <summary>

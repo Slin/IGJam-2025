@@ -19,11 +19,14 @@ public class SpawnerManager : MonoBehaviour
 
     [Header("Spawner Movement")]
     public float newSpawnerCircleRadius = 18.0f;
+    public float defaultSpawnRadius = 8f;
 
     EnemySpawner _activeSpawner;
     int _currentRound;
     int _remainingInRound;
     List<Enemy> _activeEnemies = new List<Enemy>();
+    List<EnemySpawner> _roundSpawners = new List<EnemySpawner>();
+    List<Vector3> _currentSpawnPositions = new List<Vector3>();
 
     void Awake()
     {
@@ -45,11 +48,15 @@ public class SpawnerManager : MonoBehaviour
             _activeSpawner = null;
         }
 
+        ClearRoundSpawners();
+
         // Clear enemies
         ClearAllEnemies();
 
         // Create initial spawner for first building phase
         CreateNewSpawner();
+        // Prepare visible spawners for the upcoming first defense
+        SetupUpcomingRoundSpawners();
     }
 
     void Update()
@@ -84,6 +91,8 @@ public class SpawnerManager : MonoBehaviour
     {
         _currentRound = roundNumber;
         _activeEnemies.Clear();
+        _currentSpawnPositions.Clear();
+        ClearRoundSpawners();
 
         // Create or reuse spawner
         if (_activeSpawner == null)
@@ -153,14 +162,109 @@ public class SpawnerManager : MonoBehaviour
             ReplaceWeakerEnemiesWithStronger(enemiesToSpawn, unlockedTypes, remainingMoney);
         }
 
-        // Now spawn all the enemies
-        _remainingInRound = enemiesToSpawn.Count;
-        Debug.Log($"SpawnerManager: Spawning {_remainingInRound} enemies (including {bossCount} bosses)");
-
-        foreach (var type in enemiesToSpawn)
+        // Ensure we have spawn positions prepared (typically set during building phase)
+        if (_currentSpawnPositions == null || _currentSpawnPositions.Count == 0)
         {
-            SpawnEnemyOfType(type);
+            int spawnPositions = GetSpawnPositionCountForRound(_currentRound);
+            GenerateSpawnPositions(spawnPositions);
+            InstantiateRoundSpawners();
         }
+
+        // Now spawn all the enemies (split across positions)
+        _remainingInRound = enemiesToSpawn.Count;
+        Debug.Log($"SpawnerManager: Spawning {_remainingInRound} enemies across {Mathf.Max(1, _currentSpawnPositions.Count)} positions (including {bossCount} bosses)");
+
+        int posCount = Mathf.Max(1, _currentSpawnPositions.Count);
+        int total = enemiesToSpawn.Count;
+        int basePer = total / posCount;
+        int rem = total % posCount;
+        int idx = 0;
+        for (int p = 0; p < posCount; p++)
+        {
+            int countForP = basePer + (p < rem ? 1 : 0);
+            Vector3 basePos = _currentSpawnPositions[p];
+            float spawnRadius = GetSpawnRadiusForPositionIndex(p);
+            for (int j = 0; j < countForP && idx < total; j++, idx++)
+            {
+                var type = enemiesToSpawn[idx];
+                SpawnEnemyOfTypeAt(type, basePos, spawnRadius);
+            }
+        }
+    }
+
+    void GenerateSpawnPositions(int count)
+    {
+        _currentSpawnPositions.Clear();
+        float radius = newSpawnerCircleRadius;
+        // Use active spawner angle as base so the first position matches the visible spawner
+        float baseAngle;
+        if (_activeSpawner != null)
+        {
+            baseAngle = Mathf.Atan2(_activeSpawner.transform.position.y, _activeSpawner.transform.position.x) * Mathf.Rad2Deg;
+        }
+        else
+        {
+            baseAngle = Random.Range(0f, 360f);
+        }
+        for (int i = 0; i < count; i++)
+        {
+            float angle = baseAngle + (360f / count) * i;
+            float rad = angle * Mathf.Deg2Rad;
+            Vector3 pos = new Vector3(Mathf.Cos(rad) * radius, Mathf.Sin(rad) * radius, 0f);
+            _currentSpawnPositions.Add(pos);
+        }
+    }
+
+    void SetupUpcomingRoundSpawners()
+    {
+        int completed = PlayerStatsManager.Instance != null ? PlayerStatsManager.Instance.CurrentRound : 0;
+        int upcomingRound = completed + 1;
+        int spawnPositions = GetSpawnPositionCountForRound(upcomingRound);
+        GenerateSpawnPositions(spawnPositions);
+        InstantiateRoundSpawners();
+    }
+
+    int GetSpawnPositionCountForRound(int round)
+    {
+        // Rounds 1-5 => 1, 6-10 => 2, 11-15 => 3, ...
+        return Mathf.Max(1, Mathf.FloorToInt((round - 1) / 5f) + 1);
+    }
+
+    void InstantiateRoundSpawners()
+    {
+        // Ensure we have an active spawner at position 0; create extras for the rest for visibility
+        for (int i = 0; i < _currentSpawnPositions.Count; i++)
+        {
+            if (i == 0)
+            {
+                // Move the active spawner to the first position if it exists
+                if (_activeSpawner != null)
+                {
+                    _activeSpawner.transform.position = _currentSpawnPositions[0];
+                }
+                else
+                {
+                    _activeSpawner = InstantiateSpawner(_currentSpawnPositions[0]);
+                }
+            }
+            else
+            {
+                var sp = InstantiateSpawner(_currentSpawnPositions[i]);
+                if (sp != null)
+                {
+                    _roundSpawners.Add(sp);
+                }
+            }
+        }
+    }
+
+    float GetSpawnRadiusForPositionIndex(int index)
+    {
+        if (index == 0 && _activeSpawner != null) return _activeSpawner.spawnRadius;
+        int extraIndex = index - 1;
+        if (extraIndex >= 0 && extraIndex < _roundSpawners.Count && _roundSpawners[extraIndex] != null)
+            return _roundSpawners[extraIndex].spawnRadius;
+        return defaultSpawnRadius;
     }
 
     List<EnemyType> GetUnlockedEnemyTypes(int round)
@@ -255,6 +359,14 @@ public class SpawnerManager : MonoBehaviour
 
     void SpawnEnemyOfType(EnemyType type)
     {
+        // Backwards compatible spawn at active spawner
+        Vector3 basePos = _activeSpawner != null ? _activeSpawner.transform.position : Vector3.zero;
+        float spawnRadius = _activeSpawner != null ? _activeSpawner.spawnRadius : defaultSpawnRadius;
+        SpawnEnemyOfTypeAt(type, basePos, spawnRadius);
+    }
+
+    void SpawnEnemyOfTypeAt(EnemyType type, Vector3 basePos, float spawnRadius)
+    {
         Enemy prefab = GetEnemyPrefab(type);
         if (prefab == null)
         {
@@ -262,9 +374,9 @@ public class SpawnerManager : MonoBehaviour
             return;
         }
 
-        // Position at spawner location
-        Vector3 spawnPos = _activeSpawner.transform.position;
-        Vector2 randomOffset = Random.insideUnitCircle.normalized * Random.Range(0f, _activeSpawner.spawnRadius);
+        // Position at provided base position
+        Vector3 spawnPos = basePos;
+        Vector2 randomOffset = Random.insideUnitCircle.normalized * Random.Range(0f, spawnRadius);
         spawnPos += new Vector3(randomOffset.x, randomOffset.y, 0f);
 
         Enemy enemy = Instantiate(prefab, spawnPos, Quaternion.identity);
@@ -378,10 +490,14 @@ public class SpawnerManager : MonoBehaviour
             _activeSpawner = null;
         }
 
+        ClearRoundSpawners();
+
         float angle = Random.Range(0f, Mathf.PI * 2f);
         Vector3 position = new Vector3(Mathf.Cos(angle) * newSpawnerCircleRadius,
             Mathf.Sin(angle) * newSpawnerCircleRadius, 0f);
         _activeSpawner = InstantiateSpawner(position);
+        // Prepare and display spawners for the next defense during building
+        SetupUpcomingRoundSpawners();
     }
 
     public Enemy GetClosestEnemy(Vector3 position, float maxRange = Mathf.Infinity)
@@ -412,6 +528,19 @@ public class SpawnerManager : MonoBehaviour
         return _activeEnemies;
     }
 
+    void ClearRoundSpawners()
+    {
+        if (_roundSpawners == null || _roundSpawners.Count == 0) return;
+        for (int i = 0; i < _roundSpawners.Count; i++)
+        {
+            var sp = _roundSpawners[i];
+            if (sp != null)
+            {
+                Destroy(sp.gameObject);
+            }
+        }
+        _roundSpawners.Clear();
+    }
     /// <summary>
     /// Gets the closest building to the specified position, excluding the center base.
     /// </summary>

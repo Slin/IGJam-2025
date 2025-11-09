@@ -84,9 +84,6 @@ public class FreezeProjectile : MonoBehaviour
             // Hit the target - apply slow effect
             ApplySlowEffect(_target);
 
-            // Play impact effect/sound
-            AudioManager.Instance?.PlaySFX("freeze_impact");
-
             // Destroy projectile
             Destroy(gameObject);
         }

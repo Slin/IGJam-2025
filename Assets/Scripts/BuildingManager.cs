@@ -142,7 +142,7 @@ public class BuildingManager : MonoBehaviour
         if (!PlayerStatsManager.Instance.CanAfford(currentCost))
         {
             Debug.LogWarning($"BuildingManager: Cannot afford {type}. Cost: {currentCost}");
-            AudioManager.Instance?.PlaySFX("error");
+            AudioManager.Instance?.PlaySFX("click");
             return;
         }
 
@@ -156,7 +156,7 @@ public class BuildingManager : MonoBehaviour
         }
         catch (Exception) { /* ignore event exceptions */ }
 
-        AudioManager.Instance?.PlaySFX("select");
+        AudioManager.Instance?.PlaySFX("click");
     }
 
     void CreatePreviewForType(BuildingType type)
@@ -190,7 +190,7 @@ public class BuildingManager : MonoBehaviour
         // Validate placement (tile availability, etc.)
         if (!IsValidPlacement(worldPosition, tile))
         {
-            AudioManager.Instance?.PlaySFX("error");
+            AudioManager.Instance?.PlaySFX("click");
             return false;
         }
 
@@ -201,7 +201,7 @@ public class BuildingManager : MonoBehaviour
         // Spend tritium
         if (!PlayerStatsManager.Instance.TrySpendTritium(currentCost))
         {
-            AudioManager.Instance?.PlaySFX("error");
+            AudioManager.Instance?.PlaySFX("click");
             return false;
         }
 
@@ -225,7 +225,7 @@ public class BuildingManager : MonoBehaviour
         // Mark tiles as occupied based on building size
         MarkTilesOccupiedByBuilding(_previewBuilding, worldPosition);
 
-        AudioManager.Instance?.PlaySFX("build");
+        AudioManager.Instance?.PlaySFX("place_building");
 
         // Keep the same building type selected so player can place multiple
         CreatePreviewForType(_selectedBuildingType);

@@ -100,8 +100,10 @@ public class TeleporterEnemyBehavior : MonoBehaviour
         transform.position = newPosition;
         _teleportCooldownTimer = teleportCooldown;
 
-        // Visual/audio effect
+        // Play teleport sound
         AudioManager.Instance?.PlaySFX("teleport");
+
+        // Visual effect
         TeleportFX(currentPos, newPosition);
     }
 
@@ -124,8 +126,10 @@ public class TeleporterEnemyBehavior : MonoBehaviour
         // Reset forward timer to prevent immediate forward teleport
         _forwardTeleportTimer = forwardTeleportInterval;
 
-        // Visual/audio effect
+        // Play teleport sound
         AudioManager.Instance?.PlaySFX("teleport");
+
+        // Visual effect
         TeleportFX(currentPos, newPosition);
 
     }

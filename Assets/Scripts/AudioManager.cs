@@ -15,14 +15,17 @@ public class AudioManager : MonoBehaviour
     public AudioClip soundtrack;
 
     [Header("SFX")]
-    public AudioClip buildSound;
-    public AudioClip selectSound;
-    public AudioClip errorSound;
+    public AudioClip laserPlayerSound;
+    public AudioClip laserEnemySound;
     public AudioClip clickSound;
-    public AudioClip enemyDeathSound;
-    public AudioClip enemyAttackSound;
-    public AudioClip weaponFireSound;
+    public AudioClip placeBuildingSound;
+    public AudioClip rocketLaunchSound;
     public AudioClip explosionSound;
+    public AudioClip buildingEndSound;
+    public AudioClip defenseEndSound;
+    public AudioClip roundStartSound;
+    public AudioClip gameOverSound;
+    public AudioClip teleportSound;
 
     [Header("Volume Settings")]
     [Range(0f, 1f)] public float masterVolume = 1f;
@@ -68,14 +71,17 @@ public class AudioManager : MonoBehaviour
     {
         _sfxLibrary = new Dictionary<string, AudioClip>
         {
-            { "build", buildSound },
-            { "select", selectSound },
-            { "error", errorSound },
+            { "laser_player", laserPlayerSound },
+            { "laser_enemy", laserEnemySound },
             { "click", clickSound },
-            { "enemy_death", enemyDeathSound },
-            { "enemy_attack", enemyAttackSound },
-            { "weapon_fire", weaponFireSound },
-            { "explosion", explosionSound }
+            { "place_building", placeBuildingSound },
+            { "rocket_launch", rocketLaunchSound },
+            { "explosion", explosionSound },
+            { "building_end", buildingEndSound },
+            { "defense_end", defenseEndSound },
+            { "round_start", roundStartSound },
+            { "game_over", gameOverSound },
+            { "teleport", teleportSound }
         };
     }
 

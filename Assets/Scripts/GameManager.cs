@@ -139,7 +139,7 @@ public class GameManager : MonoBehaviour
         {
             float remaining = buildPhaseMinDuration - (Time.time - _buildPhaseStartTime);
             Debug.LogWarning($"GameManager: Must wait {remaining:F1} more seconds before starting defense phase");
-            AudioManager.Instance?.PlaySFX("error");
+            AudioManager.Instance?.PlaySFX("click");
             return;
         }
 
@@ -150,6 +150,9 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("GameManager: Starting defense phase");
         _currentPhase = GamePhase.Defense;
+
+        // Play building phase end sound
+        AudioManager.Instance?.PlaySFX("building_end");
 
         // Cancel any building placement in progress
         BuildingManager.Instance?.CancelBuildingPlacement();
@@ -171,6 +174,9 @@ public class GameManager : MonoBehaviour
         // Update round-dependent UI for this round
         ApplyRoundToUI(activeRound);
         UpdateReadyButtonVisibility();
+
+        // Play round start sound
+        AudioManager.Instance?.PlaySFX("round_start");
 
         // Calculate round money value and start spawning enemies
         int roundMoneyValue = CalculateRoundMoneyValue(activeRound);
@@ -232,6 +238,9 @@ public class GameManager : MonoBehaviour
             /* ignore event exceptions */
         }
 
+        // Play defense end sound
+        AudioManager.Instance?.PlaySFX("defense_end");
+
         // Return to building phase after delay
         StartCoroutine(ReturnToBuildingPhaseAfterDelay());
     }
@@ -283,6 +292,9 @@ public class GameManager : MonoBehaviour
 
         // Stop music on game over
         AudioManager.Instance?.StopMusic(true);
+
+        // Play game over sound
+        AudioManager.Instance?.PlaySFX("game_over");
 
         try
         {

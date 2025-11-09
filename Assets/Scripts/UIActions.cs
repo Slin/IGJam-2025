@@ -21,7 +21,7 @@ public class UIActions : MonoBehaviour
     {
         var bm = BuildingManager.Instance;
 		if (bm == null) return;
-		if (!CanSelectBuilding()) { AudioManager.Instance?.PlaySFX("error"); return; }
+		if (!CanSelectBuilding()) { AudioManager.Instance?.PlaySFX("click"); return; }
         bm.StartBuildingPlacement(BuildingType.Base);
     }
 
@@ -29,7 +29,7 @@ public class UIActions : MonoBehaviour
     {
         var bm = BuildingManager.Instance;
 		if (bm == null) return;
-		if (!CanSelectBuilding()) { AudioManager.Instance?.PlaySFX("error"); return; }
+		if (!CanSelectBuilding()) { AudioManager.Instance?.PlaySFX("click"); return; }
         bm.StartBuildingPlacement(BuildingType.RocketLauncher);
     }
 
@@ -37,7 +37,7 @@ public class UIActions : MonoBehaviour
     {
         var bm = BuildingManager.Instance;
 		if (bm == null) return;
-		if (!CanSelectBuilding()) { AudioManager.Instance?.PlaySFX("error"); return; }
+		if (!CanSelectBuilding()) { AudioManager.Instance?.PlaySFX("click"); return; }
         bm.StartBuildingPlacement(BuildingType.LaserTower);
     }
 
@@ -45,7 +45,7 @@ public class UIActions : MonoBehaviour
     {
         var bm = BuildingManager.Instance;
 		if (bm == null) return;
-		if (!CanSelectBuilding()) { AudioManager.Instance?.PlaySFX("error"); return; }
+		if (!CanSelectBuilding()) { AudioManager.Instance?.PlaySFX("click"); return; }
         bm.StartBuildingPlacement(BuildingType.BoostBuilding);
     }
 
@@ -53,7 +53,7 @@ public class UIActions : MonoBehaviour
     {
         var bm = BuildingManager.Instance;
 		if (bm == null) return;
-		if (!CanSelectBuilding()) { AudioManager.Instance?.PlaySFX("error"); return; }
+		if (!CanSelectBuilding()) { AudioManager.Instance?.PlaySFX("click"); return; }
         bm.StartBuildingPlacement(BuildingType.DroneFactory);
     }
 
@@ -61,7 +61,7 @@ public class UIActions : MonoBehaviour
     {
         var bm = BuildingManager.Instance;
 		if (bm == null) return;
-		if (!CanSelectBuilding()) { AudioManager.Instance?.PlaySFX("error"); return; }
+		if (!CanSelectBuilding()) { AudioManager.Instance?.PlaySFX("click"); return; }
         bm.StartBuildingPlacement(BuildingType.FreezeTower);
     }
 
@@ -69,7 +69,7 @@ public class UIActions : MonoBehaviour
     {
         var bm = BuildingManager.Instance;
 		if (bm == null) return;
-		if (!CanSelectBuilding()) { AudioManager.Instance?.PlaySFX("error"); return; }
+		if (!CanSelectBuilding()) { AudioManager.Instance?.PlaySFX("click"); return; }
         bm.StartBuildingPlacement(BuildingType.RadarJammer);
     }
 

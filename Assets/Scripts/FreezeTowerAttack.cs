@@ -26,9 +26,6 @@ public class FreezeTowerAttack : BuildingAttackBehavior
         {
             FireProjectile(targets[i], i);
         }
-
-        // Play attack sound
-        AudioManager.Instance?.PlaySFX("freeze_fire");
     }
 
     System.Collections.Generic.List<Enemy> FindMultipleTargets(int maxTargets)

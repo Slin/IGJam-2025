@@ -354,7 +354,7 @@ public class Enemy : MonoBehaviour
         LaserBeam.Create(transform.position, building.transform.position, Color.red, 0.1f, 0.2f);
 
         // Play attack sound
-        AudioManager.Instance?.PlaySFX("enemy_attack");
+        AudioManager.Instance?.PlaySFX("laser_enemy");
     }
 
     void AttackDrone(Drone drone)
@@ -372,7 +372,7 @@ public class Enemy : MonoBehaviour
         LaserBeam.Create(transform.position, drone.transform.position, Color.red, 0.1f, 0.2f);
 
         // Play attack sound
-        AudioManager.Instance?.PlaySFX("enemy_attack");
+        AudioManager.Instance?.PlaySFX("laser_enemy");
     }
 
     /// <summary>

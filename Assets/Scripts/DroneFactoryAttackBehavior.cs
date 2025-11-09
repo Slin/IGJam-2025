@@ -129,7 +129,7 @@ public class DroneFactoryAttackBehavior : BuildingAttackBehavior
         DroneManager.Instance?.RegisterDrone(drone);
 
         // Play spawn sound
-        AudioManager.Instance?.PlaySFX("build");
+        AudioManager.Instance?.PlaySFX("place_building");
 
         Debug.Log($"DroneFactory: Spawned drone ({_activeDrones.Count}/{EffectiveDroneLimit})");
     }

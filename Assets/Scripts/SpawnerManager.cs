@@ -422,7 +422,7 @@ public class SpawnerManager : MonoBehaviour
         if (closestBase != null && !closestBase.IsDead)
         {
             closestBase.TakeDamage(enemy.baseDamage);
-            AudioManager.Instance?.PlaySFX("enemy_attack");
+            AudioManager.Instance?.PlaySFX("laser_enemy");
         }
 
         // Destroy enemy

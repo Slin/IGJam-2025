@@ -21,6 +21,6 @@ public class LaserTowerAttack : BuildingAttackBehavior
         LaserBeam.CreateTracking(transform.position, target, laserColor, laserWidth, laserDuration);
 
         // Play attack sound
-        AudioManager.Instance?.PlaySFX("laser_fire");
+        AudioManager.Instance?.PlaySFX("laser_player");
     }
 }

@@ -90,7 +90,7 @@ public class Drone : MonoBehaviour
         // Notify DroneManager
         DroneManager.Instance?.OnDroneDestroyed(this);
 
-        AudioManager.Instance?.PlaySFX("enemy_death");
+        AudioManager.Instance?.PlaySFX("explosion");
 
         // Spawn global death effect (reuse building death effect)
         var deathFx = GameManager.Instance != null ? GameManager.Instance.buildingDeathEffectPrefab : null;
@@ -189,7 +189,7 @@ public class Drone : MonoBehaviour
         LaserBeam.Create(transform.position, _currentTarget.transform.position, laserColor, laserWidth, laserDuration);
 
         // Play attack sound
-        AudioManager.Instance?.PlaySFX("laser_fire");
+        AudioManager.Instance?.PlaySFX("laser_player");
     }
 
     /// <summary>

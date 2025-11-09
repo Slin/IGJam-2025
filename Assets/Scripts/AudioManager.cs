@@ -25,6 +25,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip defenseEndSound;
     public AudioClip roundStartSound;
     public AudioClip gameOverSound;
+    public AudioClip gameOverMelody;
     public AudioClip teleportSound;
     public AudioClip enemyDeathSound;
 
@@ -82,6 +83,7 @@ public class AudioManager : MonoBehaviour
             { "defense_end", defenseEndSound },
             { "round_start", roundStartSound },
             { "game_over", gameOverSound },
+            { "game_over_melody", gameOverMelody },
             { "teleport", teleportSound },
             { "enemy_death", enemyDeathSound }
         };
@@ -232,5 +234,11 @@ public class AudioManager : MonoBehaviour
     {
         if (musicSource != null && !musicSource.isPlaying)
             musicSource.UnPause();
+    }
+
+    public void StopAllSFX()
+    {
+        if (sfxSource != null)
+            sfxSource.Stop();
     }
 }

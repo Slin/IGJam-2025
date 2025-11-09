@@ -384,6 +384,13 @@ public class SpawnerManager : MonoBehaviour
 
         Enemy enemy = Instantiate(prefab, spawnPos, Quaternion.identity);
 
+        // Scale boss HP based on current round
+        if (type == EnemyType.Boss && GameManager.Instance != null)
+        {
+            float scaledHP = GameManager.Instance.GetBossHealthForRound(_currentRound);
+            enemy.maxHealth = scaledHP;
+        }
+
         // Initialize enemy to move towards the closest base from spawn position
         Vector3 targetPos = Vector3.zero;
         var closestBase = BuildingManager.Instance?.GetNearestBuilding(spawnPos, BuildingType.Base);

@@ -14,6 +14,15 @@ public class GameOverScreen : MonoBehaviour
     void Start()
     {
         UpdateStatsDisplay();
+        PlayGameOverMelody();
+    }
+
+    /// <summary>
+    /// Plays the game over melody when the screen is displayed
+    /// </summary>
+    void PlayGameOverMelody()
+    {
+        AudioManager.Instance?.PlaySFX("game_over_melody");
     }
 
     /// <summary>
@@ -40,7 +49,7 @@ public class GameOverScreen : MonoBehaviour
 
         // Format the text with actual statistics
         statsText.text = $"Game Over!\n\nYou made it to round {round}.\nYou killed {kills} aliens while defending your base.\nYou built {buildings} units.";
-        
+
         Debug.Log($"GameOverScreen: Displaying stats - Round: {round}, Kills: {kills}, Buildings: {buildings}");
     }
 }

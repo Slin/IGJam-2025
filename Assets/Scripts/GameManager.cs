@@ -202,6 +202,14 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Calculate boss HP for the current round using formula: 4000 + 1000 * round / 5
+    /// </summary>
+    public float GetBossHealthForRound(int round)
+    {
+        return 4000f + 1000f * round / 5f;
+    }
+
+    /// <summary>
     /// Calculate the maximum number of enemies for a round based on formula: (round / 20) * starting max but never less than 50
     /// </summary>
     public int GetMaxEnemiesForRound(int round)
@@ -220,7 +228,7 @@ public class GameManager : MonoBehaviour
     public void OnRoundDefeated()
     {
         if (_currentPhase != GamePhase.Defense) return;
-        
+
         // Don't process round completion if game is already over
         if (_currentState != GameState.Playing) return;
 

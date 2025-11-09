@@ -17,6 +17,9 @@ public class SceneLoader : MonoBehaviour
 
     public void LoadGameplayScene()
     {
+        // Stop any playing SFX (like game over melody) before loading gameplay scene
+        AudioManager.Instance?.StopAllSFX();
+        
         SceneManager.LoadScene("GameplayScene");
     }
 

@@ -973,9 +973,10 @@ MonoBehaviour:
   rocketLaunchSound: {fileID: 8300000, guid: 628e6eed96c57a14ca134e8de714d066, type: 3}
   explosionSound: {fileID: 8300000, guid: 7c982d181a76c04478d4bf7fc94b48be, type: 3}
   buildingEndSound: {fileID: 0}
-  defenseEndSound: {fileID: 8300000, guid: 2cacc885bfa3f104ba0f491c32f1ba95, type: 3}
+  defenseEndSound: {fileID: 8300000, guid: 8955267b3f7568843899a1d0c194a4cd, type: 3}
   roundStartSound: {fileID: 0}
   gameOverSound: {fileID: 0}
+  gameOverMelody: {fileID: 8300000, guid: 40b8702b90ef6624c92b062634a709a9, type: 3}
   teleportSound: {fileID: 8300000, guid: 37926aed805217249ac4c9ecea51f085, type: 3}
   enemyDeathSound: {fileID: 8300000, guid: 4edf164cdaa24b54791020e82c33851b, type: 3}
   masterVolume: 1

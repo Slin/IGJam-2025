@@ -26,6 +26,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip roundStartSound;
     public AudioClip gameOverSound;
     public AudioClip teleportSound;
+    public AudioClip enemyDeathSound;
 
     [Header("Volume Settings")]
     [Range(0f, 1f)] public float masterVolume = 1f;
@@ -81,7 +82,8 @@ public class AudioManager : MonoBehaviour
             { "defense_end", defenseEndSound },
             { "round_start", roundStartSound },
             { "game_over", gameOverSound },
-            { "teleport", teleportSound }
+            { "teleport", teleportSound },
+            { "enemy_death", enemyDeathSound }
         };
     }
 

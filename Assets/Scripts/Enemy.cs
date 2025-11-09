@@ -142,6 +142,12 @@ public class Enemy : MonoBehaviour
         }
         catch (Exception) { /* ignore if manager not available */ }
 
+        // Play death sound (except for exploders which have their own explosion sound)
+        if (enemyType != EnemyType.Exploder)
+        {
+            AudioManager.Instance?.PlaySFX("enemy_death");
+        }
+
         // Spawn enemy-specific death effect from GameManager
         var deathFx = GameManager.Instance != null ? GameManager.Instance.enemyDeathEffectPrefab : null;
         if (deathFx != null)

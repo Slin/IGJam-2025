@@ -971,12 +971,13 @@ MonoBehaviour:
   clickSound: {fileID: 8300000, guid: 64d9118ced7f5d449b04ab44469b6ec6, type: 3}
   placeBuildingSound: {fileID: 8300000, guid: 2f664ef96463cbb41ad3ae4876bfdf69, type: 3}
   rocketLaunchSound: {fileID: 8300000, guid: 628e6eed96c57a14ca134e8de714d066, type: 3}
-  explosionSound: {fileID: 8300000, guid: 4edf164cdaa24b54791020e82c33851b, type: 3}
+  explosionSound: {fileID: 8300000, guid: 7c982d181a76c04478d4bf7fc94b48be, type: 3}
   buildingEndSound: {fileID: 0}
   defenseEndSound: {fileID: 8300000, guid: 2cacc885bfa3f104ba0f491c32f1ba95, type: 3}
   roundStartSound: {fileID: 0}
   gameOverSound: {fileID: 0}
   teleportSound: {fileID: 8300000, guid: 37926aed805217249ac4c9ecea51f085, type: 3}
+  enemyDeathSound: {fileID: 8300000, guid: 4edf164cdaa24b54791020e82c33851b, type: 3}
   masterVolume: 1
   musicVolume: 0.7
   sfxVolume: 1

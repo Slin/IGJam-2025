@@ -220,6 +220,9 @@ public class GameManager : MonoBehaviour
     public void OnRoundDefeated()
     {
         if (_currentPhase != GamePhase.Defense) return;
+        
+        // Don't process round completion if game is already over
+        if (_currentState != GameState.Playing) return;
 
         int currentRound = PlayerStatsManager.Instance?.CurrentRound ?? 0;
         Debug.Log($"GameManager: Round {currentRound} defeated!");
@@ -291,7 +294,7 @@ public class GameManager : MonoBehaviour
         int finalRound = PlayerStatsManager.Instance?.CurrentRound ?? 0;
         int totalKills = PlayerStatsManager.Instance?.EnemiesKilled ?? 0;
         int buildingsBuilt = GameStats.Instance?.TotalBuildingsBuilt ?? 0;
-        
+
         GameStats.Instance?.RecordGameOver(finalRound, totalKills, buildingsBuilt);
 
         // Stop all spawning

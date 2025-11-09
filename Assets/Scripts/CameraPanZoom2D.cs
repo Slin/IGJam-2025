@@ -170,7 +170,18 @@ public class CameraPanZoom2D : MonoBehaviour
 
     void ClampZoom()
     {
-        _camera.orthographicSize = Mathf.Clamp(_camera.orthographicSize, minOrthographicSize, maxOrthographicSize);
+        float dynamicMax = maxOrthographicSize;
+        if (useWorldBounds)
+        {
+            float boundsWidth = Mathf.Max(0.0001f, worldMax.x - worldMin.x);
+            float boundsHeight = Mathf.Max(0.0001f, worldMax.y - worldMin.y);
+            float widthLimitedSize = boundsWidth / (2f * Mathf.Max(0.0001f, _camera.aspect));
+            float heightLimitedSize = boundsHeight / 2f;
+            dynamicMax = Mathf.Min(maxOrthographicSize, widthLimitedSize, heightLimitedSize);
+        }
+        // If min > dynamicMax due to tight bounds/aspect, clamp to dynamicMax
+        float minSize = Mathf.Min(minOrthographicSize, dynamicMax);
+        _camera.orthographicSize = Mathf.Clamp(_camera.orthographicSize, minSize, dynamicMax);
     }
 
     void ClampToBounds()

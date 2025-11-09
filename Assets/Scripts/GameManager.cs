@@ -141,9 +141,9 @@ public class GameManager : MonoBehaviour
         // Cancel any building placement in progress
         BuildingManager.Instance?.CancelBuildingPlacement();
 
-        // Start new round
-        PlayerStatsManager.Instance?.StartNewRound();
-        int currentRound = PlayerStatsManager.Instance?.CurrentRound ?? 1;
+        // Determine active round number (increment only after defending)
+        int currentCompleted = PlayerStatsManager.Instance?.CurrentRound ?? 0;
+        int activeRound = currentCompleted + 1;
 
         // Play defense music
         AudioManager.Instance?.PlayDefensePhaseMusic();
@@ -151,7 +151,7 @@ public class GameManager : MonoBehaviour
         try
         {
             onPhaseChanged?.Invoke(_currentPhase);
-            onRoundStarted?.Invoke(currentRound);
+            onRoundStarted?.Invoke(activeRound);
         }
         catch (Exception)
         {
@@ -159,12 +159,12 @@ public class GameManager : MonoBehaviour
         }
 
         // Update round-dependent UI for this round
-        ApplyRoundToUI(currentRound);
+        ApplyRoundToUI(activeRound);
         UpdateReadyButtonVisibility();
 
         // Calculate round money value and start spawning enemies
-        int roundMoneyValue = CalculateRoundMoneyValue(currentRound);
-        SpawnerManager.Instance?.StartRound(roundMoneyValue, currentRound);
+        int roundMoneyValue = CalculateRoundMoneyValue(activeRound);
+        SpawnerManager.Instance?.StartRound(roundMoneyValue, activeRound);
     }
 
     /// <summary>
@@ -210,6 +210,8 @@ public class GameManager : MonoBehaviour
 
         // Give round completion reward
         PlayerStatsManager.Instance?.CompleteRound();
+        // Increment round counter AFTER defending
+        PlayerStatsManager.Instance?.StartNewRound();
 
         try
         {

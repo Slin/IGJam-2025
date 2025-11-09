@@ -47,7 +47,9 @@ public class RoundCounterUI : MonoBehaviour
 
 	void UpdateText(int round)
 	{
-		string text = string.Format("{0}", round);
+		// Display one higher than the stored round (show upcoming/active round)
+		int displayRound = Mathf.Max(0, round) + 1;
+		string text = string.Format("{0}", displayRound);
 		if (tmpText != null) tmpText.text = text;
 		Debug.Log($"RoundCounterUI: Round changed to {round}");
 	}

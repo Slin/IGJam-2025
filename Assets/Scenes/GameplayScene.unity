@@ -206,9 +206,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStatsManager
   startingTritium: 750
-  tritiumPerRound: 100
+  tritiumPerRound: 500
   _tritium: 0
-  _currentRound: 6
+  _currentRound: 0
   _enemiesKilled: 0
   onTritiumChanged:
     m_PersistentCalls:

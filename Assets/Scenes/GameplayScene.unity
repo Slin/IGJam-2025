@@ -923,7 +923,7 @@ MonoBehaviour:
   laserEnemySound: {fileID: 8300000, guid: 2a7fdb917a2515c49b2011b8f28332b8, type: 3}
   clickSound: {fileID: 8300000, guid: 64d9118ced7f5d449b04ab44469b6ec6, type: 3}
   placeBuildingSound: {fileID: 8300000, guid: 2f664ef96463cbb41ad3ae4876bfdf69, type: 3}
-  rocketLaunchSound: {fileID: 0}
+  rocketLaunchSound: {fileID: 8300000, guid: 628e6eed96c57a14ca134e8de714d066, type: 3}
   explosionSound: {fileID: 0}
   buildingEndSound: {fileID: 0}
   defenseEndSound: {fileID: 8300000, guid: 2cacc885bfa3f104ba0f491c32f1ba95, type: 3}

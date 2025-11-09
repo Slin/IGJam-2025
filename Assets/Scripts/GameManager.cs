@@ -36,7 +36,9 @@ public class GameManager : MonoBehaviour
     [Header("VFX Prefabs")]
     public LaserBeam laserBeamPrefab;
 	public GameObject buildingDeathEffectPrefab;
-	public GameObject enemyDeathEffectPrefab;
+    public GameObject enemyDeathEffectPrefab;
+    public GameObject enemyTeleportInEffectPrefab;
+    public GameObject enemyTeleportOutEffectPrefab;
 
     GameState _currentState = GameState.NotStarted;
     GamePhase _currentPhase = GamePhase.Building;

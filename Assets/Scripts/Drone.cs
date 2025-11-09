@@ -139,19 +139,22 @@ public class Drone : MonoBehaviour
 
         float distanceToTarget = Vector3.Distance(transform.position, _currentTarget.transform.position);
 
+        // Get effective move speed with singularity effects
+        float effectiveSpeed = GetEffectiveMoveSpeed();
+
         // Move towards enemy if not in attack range
         if (distanceToTarget > attackRange)
         {
             Vector3 direction = (_currentTarget.transform.position - transform.position).normalized;
             Vector3 separationOffset = GetSeparationThrottled();
-            Vector3 movement = (direction + separationOffset * 0.5f).normalized * moveSpeed * Time.deltaTime;
+            Vector3 movement = (direction + separationOffset * 0.5f).normalized * effectiveSpeed * Time.deltaTime;
             transform.position += movement;
         }
         else
         {
             // In range - attack (still apply separation to avoid clustering)
             Vector3 separationOffset = GetSeparationThrottled();
-            transform.position += separationOffset * moveSpeed * 0.2f * Time.deltaTime;
+            transform.position += separationOffset * effectiveSpeed * 0.2f * Time.deltaTime;
 
             if (_attackCooldown <= 0)
             {
@@ -161,12 +164,26 @@ public class Drone : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Gets the effective move speed with singularity effect multiplier
+    /// </summary>
+    float GetEffectiveMoveSpeed()
+    {
+        if (SingularityEffectManager.Instance == null) return moveSpeed;
+        float effectMultiplier = SingularityEffectManager.Instance.GetEffectMultiplier(SingularityEffectType.DroneSpeed);
+        return moveSpeed * effectMultiplier;
+    }
+
     void PerformAttack()
     {
         if (_currentTarget == null || _currentTarget.IsDead) return;
 
+        // Apply singularity effect multiplier to drone damage
+        float effectMultiplier = GetDamageMultiplier();
+        float actualDamage = attackDamage * effectMultiplier;
+
         // Deal damage
-        _currentTarget.TakeDamage(attackDamage);
+        _currentTarget.TakeDamage(actualDamage);
 
         // Create laser visual effect
         LaserBeam.Create(transform.position, _currentTarget.transform.position, laserColor, laserWidth, laserDuration);
@@ -175,11 +192,21 @@ public class Drone : MonoBehaviour
         AudioManager.Instance?.PlaySFX("laser_fire");
     }
 
+    /// <summary>
+    /// Gets the singularity effect multiplier for drone damage
+    /// </summary>
+    float GetDamageMultiplier()
+    {
+        if (SingularityEffectManager.Instance == null) return 1f;
+        return SingularityEffectManager.Instance.GetEffectMultiplier(SingularityEffectType.DroneDamage);
+    }
+
     void IdleWithSeparation()
     {
         // Stay in place but apply separation to avoid clustering
+        float effectiveSpeed = GetEffectiveMoveSpeed();
         Vector3 separationOffset = GetSeparationThrottled();
-        transform.position += separationOffset * moveSpeed * 0.15f * Time.deltaTime;
+        transform.position += separationOffset * effectiveSpeed * 0.15f * Time.deltaTime;
     }
 
     void ReturnToFactory()
@@ -190,20 +217,21 @@ public class Drone : MonoBehaviour
 
         Vector3 factoryPos = _factory.transform.position;
         float distanceToFactory = Vector3.Distance(transform.position, factoryPos);
+        float effectiveSpeed = GetEffectiveMoveSpeed();
 
         // Move back towards factory if too far
         if (distanceToFactory > factoryReturnDistance)
         {
             Vector3 direction = (factoryPos - transform.position).normalized;
             Vector3 separationOffset = GetSeparationThrottled();
-            Vector3 movement = (direction + separationOffset * 0.5f).normalized * moveSpeed * Time.deltaTime;
+            Vector3 movement = (direction + separationOffset * 0.5f).normalized * effectiveSpeed * Time.deltaTime;
             transform.position += movement;
         }
         else
         {
             // Near factory - still apply separation
             Vector3 separationOffset = GetSeparationThrottled();
-            transform.position += separationOffset * moveSpeed * 0.15f * Time.deltaTime;
+            transform.position += separationOffset * effectiveSpeed * 0.15f * Time.deltaTime;
         }
     }
 

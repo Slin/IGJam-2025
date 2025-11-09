@@ -15,15 +15,47 @@ public abstract class BuildingAttackBehavior : MonoBehaviour
     protected float _attackCooldown;
 
     /// <summary>
-    /// Gets the final attack damage with all boosts applied by checking nearby BoostBuildings
+    /// Gets the final attack damage with all boosts applied by checking nearby BoostBuildings and singularity effects
     /// </summary>
     public float EffectiveAttackDamage
     {
         get
         {
             float boostMultiplier = CalculateBoostMultiplier();
-            return attackDamage * boostMultiplier;
+            float effectMultiplier = GetSingularityDamageMultiplier();
+            return attackDamage * boostMultiplier * effectMultiplier;
         }
+    }
+
+    /// <summary>
+    /// Gets the effective attack range with singularity effects applied
+    /// </summary>
+    public float EffectiveAttackRange
+    {
+        get
+        {
+            if (_building == null) return attackRange;
+            float effectMultiplier = GetSingularityRangeMultiplier();
+            return attackRange * effectMultiplier;
+        }
+    }
+
+    /// <summary>
+    /// Gets the singularity effect multiplier for building attack damage
+    /// </summary>
+    private float GetSingularityDamageMultiplier()
+    {
+        if (SingularityEffectManager.Instance == null || _building == null) return 1f;
+        return SingularityEffectManager.Instance.GetEffectMultiplier(SingularityEffectType.BuildingAttackDamage, _building.buildingType);
+    }
+
+    /// <summary>
+    /// Gets the singularity effect multiplier for building attack range
+    /// </summary>
+    private float GetSingularityRangeMultiplier()
+    {
+        if (SingularityEffectManager.Instance == null || _building == null) return 1f;
+        return SingularityEffectManager.Instance.GetEffectMultiplier(SingularityEffectType.BuildingAttackRange, _building.buildingType);
     }
 
     /// <summary>
@@ -129,7 +161,7 @@ public abstract class BuildingAttackBehavior : MonoBehaviour
     /// </summary>
     protected virtual Enemy FindTarget()
     {
-        return SpawnerManager.Instance?.GetClosestEnemy(transform.position, attackRange);
+        return SpawnerManager.Instance?.GetClosestEnemy(transform.position, EffectiveAttackRange);
     }
 
     /// <summary>

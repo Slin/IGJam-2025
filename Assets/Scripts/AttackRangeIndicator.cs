@@ -125,7 +125,8 @@ public class AttackRangeIndicator : MonoBehaviour
     {
         if (_lineRenderer == null || _attackBehavior == null) return;
 
-        float radius = _attackBehavior.attackRange;
+        // Use effective attack range which includes singularity effects
+        float radius = _attackBehavior.EffectiveAttackRange;
 
         // Generate circle points
         float angleStep = 360f / circleSegments;

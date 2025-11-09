@@ -25,17 +25,17 @@ public class Building : MonoBehaviour
     public Vector3 healthBarOffset = new Vector3(0, 1.5f, 0);
     public Vector2 healthBarSize = new Vector2(1.2f, 0.15f);
 
-	[Header("Hit Feedback")]
-	public Color baseHitBlinkColor = Color.red;
-	public float baseHitBlinkDuration = 0.12f;
+    [Header("Hit Feedback")]
+    public Color baseHitBlinkColor = Color.red;
+    public float baseHitBlinkDuration = 0.12f;
 
     float _currentHealth;
     bool _isPlaced = false;
     bool _isPreview = false;
     HealthBar _healthBar;
-	Renderer[] _hitRenderers;
-	Color[] _originalColors;
-	Coroutine _blinkRoutine;
+    Renderer[] _hitRenderers;
+    Color[] _originalColors;
+    Coroutine _blinkRoutine;
 
     public float CurrentHealth => _currentHealth;
     public bool IsDead => _currentHealth <= 0;
@@ -112,24 +112,28 @@ public class Building : MonoBehaviour
     {
         if (IsDead || !_isPlaced) return;
 
-        _currentHealth -= damage;
+        // Apply singularity effect multiplier to damage taken
+        float effectMultiplier = GetDamageTakenMultiplier();
+        float actualDamage = damage * effectMultiplier;
+
+        _currentHealth -= actualDamage;
         _currentHealth = Mathf.Max(0, _currentHealth);
 
         // Screen shake when the base is damaged
         if (buildingType == BuildingType.Base)
         {
             // Scale trauma by damage relative to health with a small floor to ensure visibility
-            float frac = damage / Mathf.Max(1f, maxHealth);
+            float frac = actualDamage / Mathf.Max(1f, maxHealth);
             float intensity = Mathf.Clamp01(frac * 2.0f + 0.15f);
             ScreenShake.Shake(intensity);
 
-			// Blink red
-			if (_blinkRoutine != null)
-			{
-				StopCoroutine(_blinkRoutine);
-				RestoreOriginalColors();
-			}
-			_blinkRoutine = StartCoroutine(BlinkBaseHit());
+            // Blink red
+            if (_blinkRoutine != null)
+            {
+                StopCoroutine(_blinkRoutine);
+                RestoreOriginalColors();
+            }
+            _blinkRoutine = StartCoroutine(BlinkBaseHit());
         }
 
         UpdateHealthBar();
@@ -140,10 +144,19 @@ public class Building : MonoBehaviour
         }
         catch (Exception) { /* ignore event exceptions */ }
 
-        if(IsDead)
+        if (IsDead)
         {
             HandleDestruction();
         }
+    }
+
+    /// <summary>
+    /// Gets the singularity effect multiplier for damage taken by buildings
+    /// </summary>
+    float GetDamageTakenMultiplier()
+    {
+        if (SingularityEffectManager.Instance == null) return 1f;
+        return SingularityEffectManager.Instance.GetEffectMultiplier(SingularityEffectType.BuildingDamageTaken, buildingType);
     }
 
     void HandleDestruction()
@@ -163,13 +176,13 @@ public class Building : MonoBehaviour
         // Free up occupied tiles based on building size
         FreeTilesOccupiedByBuilding();
 
-		// Global death effect (configured once in GameManager)
-		var deathFx = GameManager.Instance != null ? GameManager.Instance.buildingDeathEffectPrefab : null;
-		if(deathFx != null)
-		{
-			GameObject explosion = Instantiate(deathFx, transform.position, Quaternion.identity);
+        // Global death effect (configured once in GameManager)
+        var deathFx = GameManager.Instance != null ? GameManager.Instance.buildingDeathEffectPrefab : null;
+        if (deathFx != null)
+        {
+            GameObject explosion = Instantiate(deathFx, transform.position, Quaternion.identity);
             Destroy(explosion, 5);
-		}
+        }
 
         Destroy(gameObject);
     }
@@ -254,69 +267,69 @@ public class Building : MonoBehaviour
         }
     }
 
-	System.Collections.IEnumerator BlinkBaseHit()
-	{
-		CacheRenderersIfNeeded();
-		SaveOriginalColors();
-		ApplyColorToAll(baseHitBlinkColor);
-		yield return new WaitForSeconds(baseHitBlinkDuration);
-		RestoreOriginalColors();
-		_blinkRoutine = null;
-	}
+    System.Collections.IEnumerator BlinkBaseHit()
+    {
+        CacheRenderersIfNeeded();
+        SaveOriginalColors();
+        ApplyColorToAll(baseHitBlinkColor);
+        yield return new WaitForSeconds(baseHitBlinkDuration);
+        RestoreOriginalColors();
+        _blinkRoutine = null;
+    }
 
-	void CacheRenderersIfNeeded()
-	{
-		if (_hitRenderers == null || _hitRenderers.Length == 0)
-		{
-			_hitRenderers = GetComponentsInChildren<Renderer>(true);
-		}
-	}
+    void CacheRenderersIfNeeded()
+    {
+        if (_hitRenderers == null || _hitRenderers.Length == 0)
+        {
+            _hitRenderers = GetComponentsInChildren<Renderer>(true);
+        }
+    }
 
-	void SaveOriginalColors()
-	{
-		CacheRenderersIfNeeded();
-		if (_hitRenderers == null) return;
-		_originalColors = new Color[_hitRenderers.Length];
-		for (int i = 0; i < _hitRenderers.Length; i++)
-		{
-			var r = _hitRenderers[i];
-			if (r == null) { _originalColors[i] = Color.white; continue; }
-			var m = r.material;
-			if (m == null) { _originalColors[i] = Color.white; continue; }
-			if (m.HasProperty("_BaseColor")) _originalColors[i] = m.GetColor("_BaseColor");
-			else if (m.HasProperty("_Color")) _originalColors[i] = m.GetColor("_Color");
-			else _originalColors[i] = m.color;
-		}
-	}
+    void SaveOriginalColors()
+    {
+        CacheRenderersIfNeeded();
+        if (_hitRenderers == null) return;
+        _originalColors = new Color[_hitRenderers.Length];
+        for (int i = 0; i < _hitRenderers.Length; i++)
+        {
+            var r = _hitRenderers[i];
+            if (r == null) { _originalColors[i] = Color.white; continue; }
+            var m = r.material;
+            if (m == null) { _originalColors[i] = Color.white; continue; }
+            if (m.HasProperty("_BaseColor")) _originalColors[i] = m.GetColor("_BaseColor");
+            else if (m.HasProperty("_Color")) _originalColors[i] = m.GetColor("_Color");
+            else _originalColors[i] = m.color;
+        }
+    }
 
-	void RestoreOriginalColors()
-	{
-		if (_hitRenderers == null || _originalColors == null) return;
-		int count = Mathf.Min(_hitRenderers.Length, _originalColors.Length);
-		for (int i = 0; i < count; i++)
-		{
-			var r = _hitRenderers[i];
-			if (r == null) continue;
-			var m = r.material;
-			if (m == null) continue;
-			if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", _originalColors[i]);
-			if (m.HasProperty("_Color")) m.SetColor("_Color", _originalColors[i]);
-			else m.color = _originalColors[i];
-		}
-	}
+    void RestoreOriginalColors()
+    {
+        if (_hitRenderers == null || _originalColors == null) return;
+        int count = Mathf.Min(_hitRenderers.Length, _originalColors.Length);
+        for (int i = 0; i < count; i++)
+        {
+            var r = _hitRenderers[i];
+            if (r == null) continue;
+            var m = r.material;
+            if (m == null) continue;
+            if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", _originalColors[i]);
+            if (m.HasProperty("_Color")) m.SetColor("_Color", _originalColors[i]);
+            else m.color = _originalColors[i];
+        }
+    }
 
-	void ApplyColorToAll(Color c)
-	{
-		if (_hitRenderers == null) return;
-		for (int i = 0; i < _hitRenderers.Length; i++)
-		{
-			var r = _hitRenderers[i];
-			if (r == null) continue;
-			var m = r.material; // gets instanced material
-			if (m == null) continue;
-			if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", c);
-			if (m.HasProperty("_Color")) m.SetColor("_Color", c);
-			else m.color = c;
-		}
-	}
+    void ApplyColorToAll(Color c)
+    {
+        if (_hitRenderers == null) return;
+        for (int i = 0; i < _hitRenderers.Length; i++)
+        {
+            var r = _hitRenderers[i];
+            if (r == null) continue;
+            var m = r.material; // gets instanced material
+            if (m == null) continue;
+            if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", c);
+            if (m.HasProperty("_Color")) m.SetColor("_Color", c);
+            else m.color = c;
+        }
+    }
 }

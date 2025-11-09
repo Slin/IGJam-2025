@@ -88,7 +88,11 @@ public class Enemy : MonoBehaviour
     {
         if (IsDead) return;
 
-        _currentHealth -= damage;
+        // Apply singularity effect multiplier to damage taken by enemies
+        float effectMultiplier = GetDamageTakenMultiplier();
+        float actualDamage = damage * effectMultiplier;
+
+        _currentHealth -= actualDamage;
         _currentHealth = Mathf.Max(0, _currentHealth);
 
         UpdateHealthBar();
@@ -103,6 +107,15 @@ public class Enemy : MonoBehaviour
         {
             HandleDeath();
         }
+    }
+
+    /// <summary>
+    /// Gets the singularity effect multiplier for damage taken by enemies
+    /// </summary>
+    float GetDamageTakenMultiplier()
+    {
+        if (SingularityEffectManager.Instance == null) return 1f;
+        return SingularityEffectManager.Instance.GetEffectMultiplier(SingularityEffectType.EnemyDamageTaken, enemyType);
     }
 
     void HandleDeath()
@@ -129,13 +142,13 @@ public class Enemy : MonoBehaviour
         }
         catch (Exception) { /* ignore if manager not available */ }
 
-		// Spawn enemy-specific death effect from GameManager
-		var deathFx = GameManager.Instance != null ? GameManager.Instance.enemyDeathEffectPrefab : null;
-		if (deathFx != null)
-		{
-			GameObject explosion = Instantiate(deathFx, transform.position, Quaternion.identity);
-			Destroy(explosion, 5f);
-		}
+        // Spawn enemy-specific death effect from GameManager
+        var deathFx = GameManager.Instance != null ? GameManager.Instance.enemyDeathEffectPrefab : null;
+        if (deathFx != null)
+        {
+            GameObject explosion = Instantiate(deathFx, transform.position, Quaternion.identity);
+            Destroy(explosion, 5f);
+        }
 
         Destroy(gameObject);
     }
@@ -262,14 +275,30 @@ public class Enemy : MonoBehaviour
 
     float GetEffectiveMoveSpeed()
     {
-        // Check for slow effect
+        // Start with base move speed
+        float speed = moveSpeed;
+
+        // Apply slow effect from freeze towers
         SlowEffect slowEffect = GetComponent<SlowEffect>();
         if (slowEffect != null && slowEffect.IsActive)
         {
-            // Apply slow reduction
-            return moveSpeed * (1f - slowEffect.SlowPercentage);
+            speed *= (1f - slowEffect.SlowPercentage);
         }
-        return moveSpeed;
+
+        // Apply singularity effect multiplier to enemy speed
+        float effectMultiplier = GetSpeedMultiplier();
+        speed *= effectMultiplier;
+
+        return speed;
+    }
+
+    /// <summary>
+    /// Gets the singularity effect multiplier for enemy speed
+    /// </summary>
+    float GetSpeedMultiplier()
+    {
+        if (SingularityEffectManager.Instance == null) return 1f;
+        return SingularityEffectManager.Instance.GetEffectMultiplier(SingularityEffectType.EnemySpeed, enemyType);
     }
 
     Vector3 CalculateSeparationFast()
@@ -314,8 +343,12 @@ public class Enemy : MonoBehaviour
     {
         if (building == null || building.IsDead) return;
 
+        // Apply singularity effect multiplier to enemy damage dealt
+        float effectMultiplier = GetDamageDealtMultiplier();
+        float actualDamage = attackDamage * effectMultiplier;
+
         // Perform attack
-        building.TakeDamage(attackDamage);
+        building.TakeDamage(actualDamage);
 
         // Create laser visual effect
         LaserBeam.Create(transform.position, building.transform.position, Color.red, 0.1f, 0.2f);
@@ -328,14 +361,27 @@ public class Enemy : MonoBehaviour
     {
         if (drone == null || drone.IsDead) return;
 
+        // Apply singularity effect multiplier to enemy damage dealt
+        float effectMultiplier = GetDamageDealtMultiplier();
+        float actualDamage = attackDamage * effectMultiplier;
+
         // Perform attack
-        drone.TakeDamage(attackDamage);
+        drone.TakeDamage(actualDamage);
 
         // Create laser visual effect
         LaserBeam.Create(transform.position, drone.transform.position, Color.red, 0.1f, 0.2f);
 
         // Play attack sound
         AudioManager.Instance?.PlaySFX("enemy_attack");
+    }
+
+    /// <summary>
+    /// Gets the singularity effect multiplier for damage dealt by enemies
+    /// </summary>
+    float GetDamageDealtMultiplier()
+    {
+        if (SingularityEffectManager.Instance == null) return 1f;
+        return SingularityEffectManager.Instance.GetEffectMultiplier(SingularityEffectType.EnemyDamageDealt, enemyType);
     }
 
     void HandleArrived()

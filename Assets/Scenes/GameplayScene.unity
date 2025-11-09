@@ -208,7 +208,7 @@ MonoBehaviour:
   startingTritium: 750
   tritiumPerRound: 100
   _tritium: 0
-  _currentRound: 0
+  _currentRound: 6
   _enemiesKilled: 0
   onTritiumChanged:
     m_PersistentCalls:
@@ -673,6 +673,8 @@ MonoBehaviour:
   laserBeamPrefab: {fileID: 3614747911103135761, guid: 47680ed4a3d234e4cb8c1fb2cfafdd31, type: 3}
   buildingDeathEffectPrefab: {fileID: 8143215275596937479, guid: 8cf2346ec7a054a899cd2d34b361707d, type: 3}
   enemyDeathEffectPrefab: {fileID: 5010422975544378895, guid: e414741aa0d134f8c852373cb8355859, type: 3}
+  enemyTeleportInEffectPrefab: {fileID: 659604819964447068, guid: e70baa6becb38944a8c4bf8718eca285, type: 3}
+  enemyTeleportOutEffectPrefab: {fileID: 5989824759989697775, guid: 96bc0793865f9a54e9ff52c0c38b48b1, type: 3}
 --- !u!4 &1673550299
 Transform:
   m_ObjectHideFlags: 0

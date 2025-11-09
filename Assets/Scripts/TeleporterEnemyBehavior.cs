@@ -102,6 +102,7 @@ public class TeleporterEnemyBehavior : MonoBehaviour
 
         // Visual/audio effect
         AudioManager.Instance?.PlaySFX("teleport");
+        TeleportFX(currentPos, newPosition);
     }
 
     void TeleportAwayFromTarget()
@@ -125,7 +126,29 @@ public class TeleporterEnemyBehavior : MonoBehaviour
 
         // Visual/audio effect
         AudioManager.Instance?.PlaySFX("teleport");
+        TeleportFX(currentPos, newPosition);
+
     }
+    
+    private void TeleportFX(Vector3 teleportInPos, Vector3 teleportOutPos)
+    {
+        // Global Teleport effect (configured once in GameManager)
+		var teleportInFx = GameManager.Instance != null ? GameManager.Instance.enemyTeleportInEffectPrefab : null;
+        if (teleportInFx != null)
+        {
+            GameObject teleportParticleIn = Instantiate(teleportInFx, teleportInPos, Quaternion.identity);
+            Destroy(teleportParticleIn, 5);
+        }
+        var teleportOutFx = GameManager.Instance != null ? GameManager.Instance.enemyTeleportOutEffectPrefab : null;
+		if(teleportOutFx != null)
+		{
+			GameObject teleportParticleOut = Instantiate(teleportOutFx, teleportOutPos, Quaternion.identity);
+            Destroy(teleportParticleOut, 5);
+		}
+
+
+    }
+
 
     void OnDestroy()
     {

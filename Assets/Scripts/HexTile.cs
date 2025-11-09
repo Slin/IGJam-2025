@@ -6,10 +6,12 @@ public class HexTile : MonoBehaviour
 {
     public InputActionReference mousePosition;
     private float hexRadius = 0.5f / 1.1f; // circumradius (center to vertex) in local units
-    private int highlightOrderOffset = 100;
 
     public Color _baseColor;
     public Color _highlightColor;
+    public Color _neutralMouseoverColor = Color.cyan;
+    public Color _validPlacementColor = Color.green;
+    public Color _invalidPlacementColor = Color.red;
 
    private Renderer _renderer;
    private int _baseSortingLayerId;
@@ -66,7 +68,6 @@ public class HexTile : MonoBehaviour
         var cam = Camera.main;
         Vector3 world = cam.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, Mathf.Abs(cam.transform.position.z - transform.position.z)));
         bool inside = IsPointInHexagon(new Vector2(world.x, world.y));
-		SetHighlight(inside);
 
 		// Building placement preview + placement
 		var bm = BuildingManager.Instance;
@@ -74,7 +75,7 @@ public class HexTile : MonoBehaviour
 		{
 			if (inside)
 			{
-				// Snap preview to this tile's center
+				// Always snap preview to this tile's center when hovering
 				bm.UpdateBuildingPreview(transform.position);
 
 				// Place on click (ignore clicks over UI)
@@ -85,27 +86,50 @@ public class HexTile : MonoBehaviour
 					bm.TryPlaceBuilding(transform.position, this);
 				}
 			}
+
+			// Determine which tiles are affected by the building placement
+			bool isAffectedByBuilding = bm.IsTileAffectedByPlacement(transform.position);
+			
+			if (isAffectedByBuilding)
+			{
+				// This tile would be occupied by the building
+				// Check validity using the tile that's being hovered (which updates the preview position)
+				bool canPlace = bm.IsCurrentPlacementValid();
+				SetHighlight(true, canPlace ? _validPlacementColor : _invalidPlacementColor);
+			}
+			else if (_isOccupied)
+			{
+				// Not affected by building but this tile is blocked
+				SetHighlight(true, _invalidPlacementColor);
+			}
+			else
+			{
+				SetHighlight(false);
+			}
+		}
+		else
+		{
+			// Not placing a building - use neutral cyan color on mouseover
+			if (inside)
+			{
+				SetHighlight(true, _neutralMouseoverColor);
+			}
+			else
+			{
+				SetHighlight(false);
+			}
 		}
     }
 
-    void SetHighlight(bool on)
+    void SetHighlight(bool on, Color? customColor = null)
     {
-        if(_isHighlighted == on) return;
+        Color targetColor = on ? (customColor ?? _highlightColor) : _baseColor;
+        
+        if (_renderer == null) return;
+        
+        if (_renderer.material.color != targetColor)
+            _renderer.material.color = targetColor;
+        
         _isHighlighted = on;
-        if(_renderer == null) return;
-        if(on)
-        {
-            _renderer.sortingLayerID = _baseSortingLayerId;
-            _renderer.sortingOrder = _baseSortingOrder + highlightOrderOffset;
-            if (_renderer.material.color != _highlightColor)
-                _renderer.material.color = _highlightColor;
-        }
-        else
-        {
-            _renderer.sortingLayerID = _baseSortingLayerId;
-            _renderer.sortingOrder = _baseSortingOrder;
-            if (_renderer.material.color != _baseColor)
-                _renderer.material.color = _baseColor;
-        }
     }
 }

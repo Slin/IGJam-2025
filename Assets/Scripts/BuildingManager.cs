@@ -172,6 +172,15 @@ public class BuildingManager : MonoBehaviour
         _previewBuilding.transform.position = worldPosition;
     }
 
+    /// <summary>
+    /// Get the current position of the building preview.
+    /// </summary>
+    public Vector3 GetPreviewPosition()
+    {
+        if (_previewBuilding == null) return Vector3.zero;
+        return _previewBuilding.transform.position;
+    }
+
     public bool TryPlaceBuilding(Vector3 worldPosition, HexTile tile = null)
     {
         if (!_isPlacingBuilding || _previewBuilding == null) return false;
@@ -273,6 +282,61 @@ public class BuildingManager : MonoBehaviour
         if (_previewBuilding.size <= 1 && tile.IsOccupied)
         {
             return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Check if a tile at the given position would be affected by the current building placement preview.
+    /// Returns true if the tile is within the building's occupied radius.
+    /// </summary>
+    public bool IsTileAffectedByPlacement(Vector3 tilePosition)
+    {
+        if (!_isPlacingBuilding || _previewBuilding == null) return false;
+
+        Vector3 previewPosition = _previewBuilding.transform.position;
+        float buildingRadius = _previewBuilding.GetOccupiedRadius();
+        float distance = Vector3.Distance(tilePosition, previewPosition);
+
+        return distance <= buildingRadius;
+    }
+
+    /// <summary>
+    /// Check if the building can be placed at the specified position and tile.
+    /// Public wrapper for IsValidPlacement for use by HexTile.
+    /// </summary>
+    public bool CanPlaceAt(Vector3 position, HexTile tile)
+    {
+        return IsValidPlacement(position, tile);
+    }
+
+    /// <summary>
+    /// Check if the current building preview can be placed at its current position.
+    /// This checks placement validity without requiring the tile to not be occupied (useful for preview feedback).
+    /// </summary>
+    public bool IsCurrentPlacementValid()
+    {
+        if (!_isPlacingBuilding || _previewBuilding == null) return false;
+
+        Vector3 position = _previewBuilding.transform.position;
+        float buildingRadius = _previewBuilding.GetOccupiedRadius();
+
+        // Check collision with existing buildings
+        foreach (var existingBuilding in _allBuildings)
+        {
+            if (existingBuilding == null || existingBuilding.IsDead) continue;
+
+            float existingRadius = existingBuilding.GetOccupiedRadius();
+            float distance = Vector3.Distance(position, existingBuilding.transform.position);
+
+            // Buildings overlap if distance is less than sum of their radii
+            float minDistance = buildingRadius + existingRadius;
+            const float epsilon = 0.001f;
+            if (distance < minDistance - epsilon)
+            {
+                return false;
+            }
         }
 
         return true;

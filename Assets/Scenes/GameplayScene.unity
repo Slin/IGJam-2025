@@ -919,14 +919,17 @@ MonoBehaviour:
   musicSource: {fileID: 0}
   sfxSource: {fileID: 0}
   soundtrack: {fileID: 8300000, guid: 43a94cbbe6e417046817dec0350ef86d, type: 3}
-  buildSound: {fileID: 0}
-  selectSound: {fileID: 0}
-  errorSound: {fileID: 0}
-  clickSound: {fileID: 0}
-  enemyDeathSound: {fileID: 0}
-  enemyAttackSound: {fileID: 0}
-  weaponFireSound: {fileID: 8300000, guid: 2a7fdb917a2515c49b2011b8f28332b8, type: 3}
+  laserPlayerSound: {fileID: 8300000, guid: 2a7fdb917a2515c49b2011b8f28332b8, type: 3}
+  laserEnemySound: {fileID: 8300000, guid: 2a7fdb917a2515c49b2011b8f28332b8, type: 3}
+  clickSound: {fileID: 8300000, guid: 64d9118ced7f5d449b04ab44469b6ec6, type: 3}
+  placeBuildingSound: {fileID: 8300000, guid: 2f664ef96463cbb41ad3ae4876bfdf69, type: 3}
+  rocketLaunchSound: {fileID: 0}
   explosionSound: {fileID: 0}
+  buildingEndSound: {fileID: 0}
+  defenseEndSound: {fileID: 8300000, guid: 2cacc885bfa3f104ba0f491c32f1ba95, type: 3}
+  roundStartSound: {fileID: 0}
+  gameOverSound: {fileID: 0}
+  teleportSound: {fileID: 8300000, guid: 37926aed805217249ac4c9ecea51f085, type: 3}
   masterVolume: 1
   musicVolume: 0.7
   sfxVolume: 1

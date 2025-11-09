@@ -45,6 +45,12 @@ public class Enemy : MonoBehaviour
     float _attackCooldown;
     float _retargetTimer;
     const float RETARGET_INTERVAL = 1f; // Recalculate closest base every second
+    // Separation throttling
+    const int SEPARATION_INTERVAL_FRAMES = 20;
+    static int _nextSeparationPhase;
+    int _separationPhase;
+    int _lastSeparationFrame = -1;
+    Vector3 _cachedSeparation = Vector3.zero;
 
     public float CurrentHealth => _currentHealth;
     public bool IsDead => _currentHealth <= 0;
@@ -53,6 +59,7 @@ public class Enemy : MonoBehaviour
     {
         _currentHealth = maxHealth;
         InitializeHealthBar();
+        _separationPhase = (_nextSeparationPhase++) % SEPARATION_INTERVAL_FRAMES;
     }
 
     public void Initialize(Vector3 target, Action<Enemy> onArrivedCallback = null)
@@ -209,7 +216,7 @@ public class Enemy : MonoBehaviour
         // Continue moving towards target with separation
         Vector3 current = transform.position;
         Vector3 direction = (targetPosition - current).normalized;
-        Vector3 separationOffset = CalculateSeparation();
+        Vector3 separationOffset = GetSeparationThrottled();
 
         // Combine movement direction with separation smoothly
         Vector3 combinedDirection = (direction + separationOffset * 0.3f).normalized;
@@ -224,31 +231,45 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    Vector3 CalculateSeparation()
+    Vector3 GetSeparationThrottled()
+    {
+        int frame = Time.frameCount;
+        if (_lastSeparationFrame < 0 || ((frame + _separationPhase) % SEPARATION_INTERVAL_FRAMES) == 0)
+        {
+            _cachedSeparation = CalculateSeparationFast();
+            _lastSeparationFrame = frame;
+        }
+        return _cachedSeparation;
+    }
+
+    Vector3 CalculateSeparationFast()
     {
         Vector3 separation = Vector3.zero;
         int neighborCount = 0;
 
-        // Check separation from other enemies
-        if (SpawnerManager.Instance != null)
+        var sm = SpawnerManager.Instance;
+        var enemies = sm != null ? sm.GetActiveEnemiesSnapshot() : null;
+        if (enemies == null) return Vector3.zero;
+
+        Vector3 myPos = transform.position;
+        float radius = separationRadius;
+        float radiusSq = radius * radius;
+
+        for (int i = 0; i < enemies.Count; i++)
         {
-            // Get all active enemies (we need a method for this)
-            var allEnemies = FindObjectsOfType<Enemy>();
-            foreach (var otherEnemy in allEnemies)
-            {
-                if (otherEnemy == null || otherEnemy == this || otherEnemy.IsDead) continue;
+            var other = enemies[i];
+            if (other == null || other == this || other.IsDead) continue;
 
-                Vector3 offset = transform.position - otherEnemy.transform.position;
-                float distance = offset.magnitude;
+            Vector3 offset = myPos - other.transform.position;
+            if (Mathf.Abs(offset.x) > radius || Mathf.Abs(offset.y) > radius) continue;
 
-                if (distance < separationRadius && distance > 0.01f)
-                {
-                    // Push away with smooth falloff
-                    float strength = 1.0f - (distance / separationRadius);
-                    separation += offset.normalized * strength * separationForce;
-                    neighborCount++;
-                }
-            }
+            float d2 = offset.sqrMagnitude;
+            if (d2 <= 1e-6f || d2 > radiusSq) continue;
+            float distance = Mathf.Sqrt(d2);
+
+            float strength = 1.0f - (distance / radius);
+            separation += offset * ((1.0f / distance) * strength * separationForce);
+            neighborCount++;
         }
 
         if (neighborCount > 0)

@@ -396,6 +396,12 @@ public class SpawnerManager : MonoBehaviour
         return closest;
     }
 
+    public System.Collections.Generic.IReadOnlyList<Enemy> GetActiveEnemiesSnapshot()
+    {
+        _activeEnemies.RemoveAll(e => e == null);
+        return _activeEnemies;
+    }
+
     /// <summary>
     /// Gets the closest building to the specified position, excluding the center base.
     /// </summary>

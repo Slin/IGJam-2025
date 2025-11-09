@@ -26,16 +26,16 @@ public class HowToPlayController : MonoBehaviour
         // Setup button listeners
         if (nextButton1 != null)
             nextButton1.onClick.AddListener(() => ShowPanel(1));
-        
+
         if (nextButton2 != null)
             nextButton2.onClick.AddListener(() => ShowPanel(2));
-        
+
         if (previousButton2 != null)
             previousButton2.onClick.AddListener(() => ShowPanel(0));
-        
+
         if (previousButton3 != null)
             previousButton3.onClick.AddListener(() => ShowPanel(1));
-        
+
         if (closeButton != null)
             closeButton.onClick.AddListener(Close);
     }

@@ -78,6 +78,12 @@ public class BuildingManager : MonoBehaviour
         _bases.Clear();
         _buildingPurchaseCounts.Clear();
 
+        // Reset GameStats for new game
+        if (GameStats.Instance != null)
+        {
+            GameStats.Instance.ResetStats();
+        }
+
         // Place initial base at center
         PlaceBaseAtCenter();
     }
@@ -207,6 +213,9 @@ public class BuildingManager : MonoBehaviour
 
         // Increment purchase count for this building type
         IncrementPurchaseCount(_selectedBuildingType);
+
+        // Track building placement in GameStats
+        GameStats.Instance?.IncrementBuildingsBuilt();
 
         // Place the building
         List<HexTile> occupiedTiles = new List<HexTile>();

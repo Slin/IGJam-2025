@@ -287,6 +287,13 @@ public class GameManager : MonoBehaviour
     {
         _currentState = GameState.GameOver;
 
+        // Record game statistics before transitioning to game over scene
+        int finalRound = PlayerStatsManager.Instance?.CurrentRound ?? 0;
+        int totalKills = PlayerStatsManager.Instance?.EnemiesKilled ?? 0;
+        int buildingsBuilt = GameStats.Instance?.TotalBuildingsBuilt ?? 0;
+        
+        GameStats.Instance?.RecordGameOver(finalRound, totalKills, buildingsBuilt);
+
         // Stop all spawning
         SpawnerManager.Instance?.StopAllCoroutines();
 

@@ -176,6 +176,53 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 633d8b859cfaa4c75b95b4c4a980440c, type: 3}
+--- !u!1 &242685164
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 242685166}
+  - component: {fileID: 242685165}
+  m_Layer: 0
+  m_Name: GameplayStats
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &242685165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 242685164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39e03a6cc64a402488d1c690d37b6013, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameStats
+  _finalRound: 0
+  _totalKills: 0
+  _totalBuildingsBuilt: 0
+--- !u!4 &242685166
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 242685164}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 944.80994, y: 611.9584, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &265983113
 GameObject:
   m_ObjectHideFlags: 0
@@ -924,7 +971,7 @@ MonoBehaviour:
   clickSound: {fileID: 8300000, guid: 64d9118ced7f5d449b04ab44469b6ec6, type: 3}
   placeBuildingSound: {fileID: 8300000, guid: 2f664ef96463cbb41ad3ae4876bfdf69, type: 3}
   rocketLaunchSound: {fileID: 8300000, guid: 628e6eed96c57a14ca134e8de714d066, type: 3}
-  explosionSound: {fileID: 0}
+  explosionSound: {fileID: 8300000, guid: 4edf164cdaa24b54791020e82c33851b, type: 3}
   buildingEndSound: {fileID: 0}
   defenseEndSound: {fileID: 8300000, guid: 2cacc885bfa3f104ba0f491c32f1ba95, type: 3}
   roundStartSound: {fileID: 0}
@@ -1087,3 +1134,4 @@ SceneRoots:
   - {fileID: 1147333922}
   - {fileID: 1031068108}
   - {fileID: 6887167591130746306}
+  - {fileID: 242685166}

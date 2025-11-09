@@ -205,10 +205,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb078a2beba06144698edf8f41bf3fd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStatsManager
-  startingTritium: 500
+  startingTritium: 50000
   tritiumPerRound: 100
   _tritium: 0
-  _currentRound: 0
+  _currentRound: 10
   _enemiesKilled: 0
   onTritiumChanged:
     m_PersistentCalls:
@@ -675,6 +675,22 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 748074254592357234, guid: fc41aef7b58b3d34494c87969e08770b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 748074254592357234, guid: fc41aef7b58b3d34494c87969e08770b, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 748074254592357234, guid: fc41aef7b58b3d34494c87969e08770b, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 748074254592357234, guid: fc41aef7b58b3d34494c87969e08770b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 905086374446104749, guid: fc41aef7b58b3d34494c87969e08770b, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -688,6 +704,22 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 905086374446104749, guid: fc41aef7b58b3d34494c87969e08770b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2761113535812713179, guid: fc41aef7b58b3d34494c87969e08770b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2761113535812713179, guid: fc41aef7b58b3d34494c87969e08770b, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2761113535812713179, guid: fc41aef7b58b3d34494c87969e08770b, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2761113535812713179, guid: fc41aef7b58b3d34494c87969e08770b, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}

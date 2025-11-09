@@ -235,7 +235,7 @@ public class Enemy : MonoBehaviour
 
         // Combine movement direction with separation smoothly
         Vector3 combinedDirection = (direction + separationOffset * 0.3f).normalized;
-        
+
         // Calculate effective move speed (accounting for slow effects)
         float effectiveMoveSpeed = GetEffectiveMoveSpeed();
         float step = effectiveMoveSpeed * Time.deltaTime;

@@ -9,6 +9,9 @@ public class SlowEffect : MonoBehaviour
 {
     float _slowPercentage;
     float _remainingDuration;
+    SpriteRenderer[] _spriteRenderers;
+    Color[] _originalColors;
+    Color _slowTint = new Color(0.5f, 0.5f, 1f, 1f); // Blue tint
 
     /// <summary>
     /// Current slow percentage (0.5 = 50% slow)
@@ -20,6 +23,20 @@ public class SlowEffect : MonoBehaviour
     /// </summary>
     public bool IsActive => _remainingDuration > 0;
 
+    void Awake()
+    {
+        // Cache sprite renderers and their original colors
+        _spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
+        _originalColors = new Color[_spriteRenderers.Length];
+        for (int i = 0; i < _spriteRenderers.Length; i++)
+        {
+            if (_spriteRenderers[i] != null)
+            {
+                _originalColors[i] = _spriteRenderers[i].color;
+            }
+        }
+    }
+
     void Update()
     {
         if (_remainingDuration > 0)
@@ -29,7 +46,8 @@ public class SlowEffect : MonoBehaviour
             if (_remainingDuration <= 0)
             {
                 _remainingDuration = 0;
-                // Effect has expired - can destroy this component
+                // Effect has expired - restore colors and destroy component
+                RestoreOriginalColors();
                 Destroy(this);
             }
         }
@@ -44,5 +62,38 @@ public class SlowEffect : MonoBehaviour
     {
         _slowPercentage = slowPercentage;
         _remainingDuration = duration;
+        ApplySlowTint();
+    }
+
+    void ApplySlowTint()
+    {
+        if (_spriteRenderers == null) return;
+
+        for (int i = 0; i < _spriteRenderers.Length; i++)
+        {
+            if (_spriteRenderers[i] != null)
+            {
+                _spriteRenderers[i].color = _slowTint;
+            }
+        }
+    }
+
+    void RestoreOriginalColors()
+    {
+        if (_spriteRenderers == null || _originalColors == null) return;
+
+        for (int i = 0; i < _spriteRenderers.Length; i++)
+        {
+            if (_spriteRenderers[i] != null && i < _originalColors.Length)
+            {
+                _spriteRenderers[i].color = _originalColors[i];
+            }
+        }
+    }
+
+    void OnDestroy()
+    {
+        // Ensure colors are restored when component is destroyed
+        RestoreOriginalColors();
     }
 }

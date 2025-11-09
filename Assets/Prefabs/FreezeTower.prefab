@@ -104,7 +104,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd6bde3d49806bb49a5c96bf3aca1c1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Building
-  buildingType: 2
+  buildingType: 5
   maxHealth: 250
   tritiumCost: 750
   costIncrement: 750
@@ -119,6 +119,8 @@ MonoBehaviour:
   showHealthBar: 1
   healthBarOffset: {x: 0, y: 0.5, z: 0}
   healthBarSize: {x: 1, y: 0.1}
+  baseHitBlinkColor: {r: 1, g: 0, b: 0, a: 1}
+  baseHitBlinkDuration: 0.12
 --- !u!114 &3072958815303713793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136,7 +138,7 @@ MonoBehaviour:
   attackDelay: 1
   freezeProjectilePrefab: {fileID: 5850907833311725653, guid: ffddcf7802cfd484bbfd267ef333e521, type: 3}
   projectileCount: 5
-  projectileSpeed: 12
+  projectileSpeed: 6
   slowPercentage: 0.5
   slowDuration: 2
   launchOffset: {x: 0, y: 0.5, z: 0}

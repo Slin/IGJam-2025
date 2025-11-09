@@ -18,18 +18,57 @@ public class FreezeTowerAttack : BuildingAttackBehavior
     {
         if (target == null || target.IsDead) return;
 
-        // Fire multiple projectiles in a spread pattern
-        for (int i = 0; i < projectileCount; i++)
+        // Find up to projectileCount different enemies to target
+        var targets = FindMultipleTargets(projectileCount);
+        
+        // Fire one projectile at each target
+        for (int i = 0; i < targets.Count; i++)
         {
-            FireProjectile(target, i);
+            FireProjectile(targets[i], i);
         }
 
         // Play attack sound
         AudioManager.Instance?.PlaySFX("freeze_fire");
     }
 
+    System.Collections.Generic.List<Enemy> FindMultipleTargets(int maxTargets)
+    {
+        var targets = new System.Collections.Generic.List<Enemy>();
+        if (SpawnerManager.Instance == null) return targets;
+
+        var enemies = SpawnerManager.Instance.GetActiveEnemiesSnapshot();
+        if (enemies == null) return targets;
+
+        // Find enemies within range, sorted by distance
+        var enemiesInRange = new System.Collections.Generic.List<(Enemy enemy, float distance)>();
+        foreach (var enemy in enemies)
+        {
+            if (enemy == null || enemy.IsDead) continue;
+            
+            float distance = Vector3.Distance(transform.position, enemy.transform.position);
+            if (distance <= attackRange)
+            {
+                enemiesInRange.Add((enemy, distance));
+            }
+        }
+
+        // Sort by distance (closest first)
+        enemiesInRange.Sort((a, b) => a.distance.CompareTo(b.distance));
+
+        // Take up to maxTargets enemies
+        int count = Mathf.Min(maxTargets, enemiesInRange.Count);
+        for (int i = 0; i < count; i++)
+        {
+            targets.Add(enemiesInRange[i].enemy);
+        }
+
+        return targets;
+    }
+
     void FireProjectile(Enemy target, int index)
     {
+        if (target == null || target.IsDead) return;
+
         if (freezeProjectilePrefab == null)
         {
             // Fallback: apply slow effect directly if no prefab
@@ -48,16 +87,10 @@ public class FreezeTowerAttack : BuildingAttackBehavior
 
         projectile.Initialize(target, slowPercentage, slowDuration, projectileSpeed);
 
-        // Apply spread: center projectiles around the target direction
+        // Point directly at target
         Vector3 directionToTarget = (target.transform.position - spawnPos).normalized;
-        float baseAngle = Mathf.Atan2(directionToTarget.y, directionToTarget.x) * Mathf.Rad2Deg;
-
-        // Calculate spread offset for this projectile
-        float totalSpread = spreadAngle * (projectileCount - 1);
-        float angleOffset = -totalSpread / 2f + (spreadAngle * index);
-        float finalAngle = baseAngle + angleOffset;
-
-        projectile.transform.rotation = Quaternion.Euler(0f, 0f, finalAngle);
+        float angle = Mathf.Atan2(directionToTarget.y, directionToTarget.x) * Mathf.Rad2Deg;
+        projectile.transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 
     void ApplySlowDirectly(Enemy target)

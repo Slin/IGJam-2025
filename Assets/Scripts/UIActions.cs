@@ -57,6 +57,22 @@ public class UIActions : MonoBehaviour
         bm.StartBuildingPlacement(BuildingType.DroneFactory);
     }
 
+    public void SelectFreezeTower()
+    {
+        var bm = BuildingManager.Instance;
+		if (bm == null) return;
+		if (!CanSelectBuilding()) { AudioManager.Instance?.PlaySFX("error"); return; }
+        bm.StartBuildingPlacement(BuildingType.FreezeTower);
+    }
+
+    public void SelectRadarJammer()
+    {
+        var bm = BuildingManager.Instance;
+		if (bm == null) return;
+		if (!CanSelectBuilding()) { AudioManager.Instance?.PlaySFX("error"); return; }
+        bm.StartBuildingPlacement(BuildingType.RadarJammer);
+    }
+
     public void CancelPlacement()
     {
         BuildingManager.Instance?.CancelBuildingPlacement();

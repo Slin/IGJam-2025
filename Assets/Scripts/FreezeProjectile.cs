@@ -67,12 +67,11 @@ public class FreezeProjectile : MonoBehaviour
         // Move towards target
         Vector3 direction = (_target.transform.position - transform.position).normalized;
 
-        // Rotate towards target
+        // Rotate towards target (instant - no turn speed limit)
         if (direction != Vector3.zero)
         {
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            Quaternion targetRotation = Quaternion.Euler(0, 0, angle);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 360f * Time.deltaTime);
+            transform.rotation = Quaternion.Euler(0, 0, angle);
         }
 
         // Move forward

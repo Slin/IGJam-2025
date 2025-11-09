@@ -12,9 +12,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource sfxSource;
 
     [Header("Music")]
-    public AudioClip buildingPhaseMusic;
-    public AudioClip defensePhaseMusic;
-    public AudioClip gameOverMusic;
+    public AudioClip soundtrack;
 
     [Header("SFX")]
     public AudioClip buildSound;
@@ -99,19 +97,9 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void PlayBuildingPhaseMusic()
+    public void PlaySoundtrack(bool fadeIn = false)
     {
-        PlayMusic(buildingPhaseMusic, true);
-    }
-
-    public void PlayDefensePhaseMusic()
-    {
-        PlayMusic(defensePhaseMusic, true);
-    }
-
-    public void PlayGameOverMusic()
-    {
-        PlayMusic(gameOverMusic, true);
+        PlayMusic(soundtrack, fadeIn);
     }
 
     public void StopMusic(bool fadeOut = false)

@@ -839,16 +839,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
   musicSource: {fileID: 0}
   sfxSource: {fileID: 0}
-  buildingPhaseMusic: {fileID: 0}
-  defensePhaseMusic: {fileID: 0}
-  gameOverMusic: {fileID: 0}
+  soundtrack: {fileID: 8300000, guid: 43a94cbbe6e417046817dec0350ef86d, type: 3}
   buildSound: {fileID: 0}
   selectSound: {fileID: 0}
   errorSound: {fileID: 0}
   clickSound: {fileID: 0}
   enemyDeathSound: {fileID: 0}
   enemyAttackSound: {fileID: 0}
-  weaponFireSound: {fileID: 0}
+  weaponFireSound: {fileID: 8300000, guid: 2a7fdb917a2515c49b2011b8f28332b8, type: 3}
   explosionSound: {fileID: 0}
   masterVolume: 1
   musicVolume: 0.7

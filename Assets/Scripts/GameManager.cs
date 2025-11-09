@@ -92,8 +92,8 @@ public class GameManager : MonoBehaviour
         SpawnerManager.Instance?.InitializeNewGame();
         DroneManager.Instance?.ClearAllDrones();
 
-        // Play building phase music
-        AudioManager.Instance?.PlayBuildingPhaseMusic();
+        // Play soundtrack
+        AudioManager.Instance?.PlaySoundtrack(true);
 
         try
         {
@@ -146,9 +146,6 @@ public class GameManager : MonoBehaviour
         // Determine active round number (increment only after defending)
         int currentCompleted = PlayerStatsManager.Instance?.CurrentRound ?? 0;
         int activeRound = currentCompleted + 1;
-
-        // Play defense music
-        AudioManager.Instance?.PlayDefensePhaseMusic();
 
         try
         {
@@ -244,9 +241,6 @@ public class GameManager : MonoBehaviour
         // Notify DroneManager that round ended (drones persist)
         DroneManager.Instance?.OnRoundEnd();
 
-        // Play building music
-        AudioManager.Instance?.PlayBuildingPhaseMusic();
-
         try
         {
             onPhaseChanged?.Invoke(_currentPhase);
@@ -276,8 +270,8 @@ public class GameManager : MonoBehaviour
         // Stop all spawning
         SpawnerManager.Instance?.StopAllCoroutines();
 
-        // Play game over music
-        AudioManager.Instance?.PlayGameOverMusic();
+        // Stop music on game over
+        AudioManager.Instance?.StopMusic(true);
 
         try
         {

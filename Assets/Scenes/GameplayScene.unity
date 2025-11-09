@@ -338,6 +338,26 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 89e531595f8c846da87d1b9319fb8f60, type: 3}
+--- !u!1 &335325885 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5524070055547487322, guid: 8089a5f81909b440d8ac7aa0910be74f, type: 3}
+  m_PrefabInstance: {fileID: 6887167591130746306}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &335325886
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 335325885}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 928ec72f1a059464e92f10b8e21fd5ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Rotator
+  eulerSpeedDegPerSec: {x: 0, y: 0, z: 5}
+  rotationSpace: 1
+  useUnscaledTime: 0
 --- !u!1001 &649489664
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1061,7 +1081,10 @@ PrefabInstance:
     - {fileID: 1580526188789968272, guid: 8089a5f81909b440d8ac7aa0910be74f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5524070055547487322, guid: 8089a5f81909b440d8ac7aa0910be74f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 335325886}
   m_SourcePrefab: {fileID: 100100000, guid: 8089a5f81909b440d8ac7aa0910be74f, type: 3}
 --- !u!1001 &8586423426320342021
 PrefabInstance:

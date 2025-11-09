@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 408145754480907529}
   - component: {fileID: 4155672965448017039}
   - component: {fileID: 717620835004063538}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Particle Green
   m_TagString: Particle_green
   m_Icon: {fileID: 0}

@@ -303,14 +303,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemySpawnerManager
       objectReference: {fileID: 0}
-    - target: {fileID: 4676504926305827266, guid: 9a557ceb814264059af9331259a9793d, type: 3}
-      propertyPath: exploderEnemyPrefab
-      value: 
-      objectReference: {fileID: 4580924380053316161, guid: d99e126f6d3b8eb44aac27f0d89b2990, type: 3}
-    - target: {fileID: 4676504926305827266, guid: 9a557ceb814264059af9331259a9793d, type: 3}
-      propertyPath: teleporterEnemyPrefab
-      value: 
-      objectReference: {fileID: 4580924380053316161, guid: 4d4894ca949250f4ea2bbc74834bbe10, type: 3}
     - target: {fileID: 4897490179481173062, guid: 9a557ceb814264059af9331259a9793d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -630,6 +622,8 @@ MonoBehaviour:
       m_Calls: []
   readyButton: {fileID: 0}
   laserBeamPrefab: {fileID: 3614747911103135761, guid: 47680ed4a3d234e4cb8c1fb2cfafdd31, type: 3}
+  buildingDeathEffectPrefab: {fileID: 8143215275596937479, guid: 8cf2346ec7a054a899cd2d34b361707d, type: 3}
+  enemyDeathEffectPrefab: {fileID: 5010422975544378895, guid: e414741aa0d134f8c852373cb8355859, type: 3}
 --- !u!4 &1673550299
 Transform:
   m_ObjectHideFlags: 0

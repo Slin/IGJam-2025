@@ -91,6 +91,14 @@ public class Drone : MonoBehaviour
         DroneManager.Instance?.OnDroneDestroyed(this);
 
         AudioManager.Instance?.PlaySFX("enemy_death");
+
+        // Spawn global death effect (reuse building death effect)
+        var deathFx = GameManager.Instance != null ? GameManager.Instance.buildingDeathEffectPrefab : null;
+        if (deathFx != null)
+        {
+            GameObject explosion = Instantiate(deathFx, transform.position, Quaternion.identity);
+            Destroy(explosion, 5);
+        }
         Destroy(gameObject);
     }
 

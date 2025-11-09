@@ -140,7 +140,7 @@ public class Building : MonoBehaviour
         }
         catch (Exception) { /* ignore event exceptions */ }
 
-        if (IsDead)
+        if(IsDead)
         {
             HandleDestruction();
         }
@@ -162,6 +162,14 @@ public class Building : MonoBehaviour
 
         // Free up occupied tiles based on building size
         FreeTilesOccupiedByBuilding();
+
+		// Global death effect (configured once in GameManager)
+		var deathFx = GameManager.Instance != null ? GameManager.Instance.buildingDeathEffectPrefab : null;
+		if(deathFx != null)
+		{
+			GameObject explosion = Instantiate(deathFx, transform.position, Quaternion.identity);
+            Destroy(explosion, 5);
+		}
 
         Destroy(gameObject);
     }

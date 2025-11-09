@@ -50,4 +50,6 @@ MonoBehaviour:
   armoredEnemyPrefab: {fileID: 4580924380053316161, guid: 0140e73b0a537564db40a5a7207543ec, type: 3}
   bossEnemyPrefab: {fileID: 4580924380053316161, guid: a061ddf5ca02a2a42a6c1bc651e7751f, type: 3}
   attackEnemyPrefab: {fileID: 4580924380053316161, guid: 23c037453d9c9a64291988511db36b0e, type: 3}
+  teleporterEnemyPrefab: {fileID: 4580924380053316161, guid: 4d4894ca949250f4ea2bbc74834bbe10, type: 3}
+  exploderEnemyPrefab: {fileID: 4580924380053316161, guid: d99e126f6d3b8eb44aac27f0d89b2990, type: 3}
   newSpawnerCircleRadius: 16

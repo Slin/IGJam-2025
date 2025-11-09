@@ -129,6 +129,14 @@ public class Enemy : MonoBehaviour
         }
         catch (Exception) { /* ignore if manager not available */ }
 
+		// Spawn enemy-specific death effect from GameManager
+		var deathFx = GameManager.Instance != null ? GameManager.Instance.enemyDeathEffectPrefab : null;
+		if (deathFx != null)
+		{
+			GameObject explosion = Instantiate(deathFx, transform.position, Quaternion.identity);
+			Destroy(explosion, 5f);
+		}
+
         Destroy(gameObject);
     }
 

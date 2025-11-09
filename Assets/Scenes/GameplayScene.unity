@@ -438,15 +438,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraPanZoom2D
   minOrthographicSize: 1
-  maxOrthographicSize: 10
+  maxOrthographicSize: 13
   mouseWheelZoomSpeed: 0.1
   pinchZoomSpeed: 0.01
   invertScroll: 0
   rightMouseDragToPan: 1
   inertialPanDamp: 0
   useWorldBounds: 1
-  worldMin: {x: -20, y: -20}
-  worldMax: {x: 20, y: 20}
+  worldMin: {x: -22, y: -22}
+  worldMax: {x: 22, y: 22}
 --- !u!114 &1458674967
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -42,7 +42,7 @@ public class SlowEffect : MonoBehaviour
         if (_remainingDuration > 0)
         {
             _remainingDuration -= Time.deltaTime;
-            
+
             if (_remainingDuration <= 0)
             {
                 _remainingDuration = 0;

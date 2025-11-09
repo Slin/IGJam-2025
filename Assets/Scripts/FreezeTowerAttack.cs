@@ -20,7 +20,7 @@ public class FreezeTowerAttack : BuildingAttackBehavior
 
         // Find up to projectileCount different enemies to target
         var targets = FindMultipleTargets(projectileCount);
-        
+
         // Fire one projectile at each target
         for (int i = 0; i < targets.Count; i++)
         {
@@ -44,7 +44,7 @@ public class FreezeTowerAttack : BuildingAttackBehavior
         foreach (var enemy in enemies)
         {
             if (enemy == null || enemy.IsDead) continue;
-            
+
             float distance = Vector3.Distance(transform.position, enemy.transform.position);
             if (distance <= attackRange)
             {

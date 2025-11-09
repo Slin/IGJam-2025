@@ -531,6 +531,11 @@ public class SpawnerManager : MonoBehaviour
         return _activeEnemies;
     }
 
+    public System.Collections.Generic.IReadOnlyList<Vector3> GetCurrentSpawnPositions()
+    {
+        return _currentSpawnPositions;
+    }
+
     void ClearRoundSpawners()
     {
         if (_roundSpawners == null || _roundSpawners.Count == 0) return;

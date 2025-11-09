@@ -467,6 +467,7 @@ GameObject:
   - component: {fileID: 1458674968}
   - component: {fileID: 1458674967}
   - component: {fileID: 1458674966}
+  - component: {fileID: 1458674971}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -614,6 +615,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1458674971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1458674965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e37f94f6f6cdd448e9fb2fdb8a1e7828, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpawnEdgeIndicators
+  targetCamera: {fileID: 1458674969}
+  indicatorPrefab3D: {fileID: 5011969795310427797, guid: c970d9101f04a40048361898132344e1, type: 3}
+  indicatorsParent: {fileID: 0}
+  screenCircleRadiusPx: 500
+  indicatorDepthFromCamera: 5
+  hideInsideMargin: 0.02
+  onlyShowDuringBuilding: 1
+  faceCamera: 1
 --- !u!1 &1673550297
 GameObject:
   m_ObjectHideFlags: 0
@@ -936,6 +957,10 @@ PrefabInstance:
       propertyPath: targetCamera
       value: 
       objectReference: {fileID: 1458674969}
+    - target: {fileID: 2724701905901346822, guid: 8089a5f81909b440d8ac7aa0910be74f, type: 3}
+      propertyPath: m_SortingOrder
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 5524070055547487322, guid: 8089a5f81909b440d8ac7aa0910be74f, type: 3}
       propertyPath: m_Name
       value: pinkes_Loch_0

@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 1485789471786911382, guid: 80fa55e4737114b65b8180810f3fe55f, type: 3}
+  m_Sprite: {fileID: 7731603841684999060, guid: ab81b4799439a964f9f4a3c9891adcf9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1057,7 +1057,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1543058336349034562}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: HowToPlayController, Assembly-CSharp
+        m_MethodName: NextPanel
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2775271404706622010
 GameObject:
   m_ObjectHideFlags: 0
@@ -1395,7 +1407,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7771142326851984636}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: HowToPlayController, Assembly-CSharp
+        m_MethodName: Close
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &4943259828098282824
 GameObject:
   m_ObjectHideFlags: 0
@@ -1943,7 +1967,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5800850244429835026}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: HowToPlayController, Assembly-CSharp
+        m_MethodName: PreviousPanel
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6452634620075531877
 GameObject:
   m_ObjectHideFlags: 0
@@ -2030,8 +2066,9 @@ GameObject:
   - component: {fileID: 1499799106173163388}
   - component: {fileID: 7823070227986349062}
   - component: {fileID: 2167221752466341306}
+  - component: {fileID: 6890231040301499187}
   m_Layer: 5
-  m_Name: HowToPlayPrefab
+  m_Name: HowtoplayPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2097,6 +2134,26 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6890231040301499187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6453947412915725251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a1f2e3d4c5b6a7f8e9d0c1b2a3f4e5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HowToPlayController
+  panel1: {fileID: 9130501368611114174}
+  panel2: {fileID: 2822236021582957026}
+  panel3: {fileID: 1720348609781886031}
+  nextButton1: {fileID: 8160242173787678939}
+  nextButton2: {fileID: 1666278855309114475}
+  previousButton2: {fileID: 7311341040653237255}
+  previousButton3: {fileID: 2295713755017602689}
+  closeButton: {fileID: 1868159600739580523}
 --- !u!1 &6789768369599986943
 GameObject:
   m_ObjectHideFlags: 0

@@ -107,7 +107,8 @@ MonoBehaviour:
   buildingType: 4
   maxHealth: 2000
   tritiumCost: 300
-  isMultiTile: 1
+  costIncrement: 150
+  size: 1
   occupiedTiles: []
   onDestroyed:
     m_PersistentCalls:
@@ -132,7 +133,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DroneFactoryAttackBehavior
   attackRange: 10
   attackDamage: 20
-  attackDelay: 1
+  attackDelay: 3
   dronePrefab: {fileID: 482435225222130556, guid: 1538fd87ccab36c4bb886015e7cbf7b3, type: 3}
-  baseDroneLimit: 5
+  baseDroneLimit: 3
   droneSpawnOffset: 1

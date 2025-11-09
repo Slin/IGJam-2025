@@ -41,10 +41,19 @@ public class Drone : MonoBehaviour
     public Vector3 Position => transform.position;
     public DroneFactoryAttackBehavior Factory => _factory;
 
+    // Separation throttling
+    const int SEPARATION_INTERVAL_FRAMES = 20;
+    static int _nextSeparationPhase;
+    int _separationPhase;
+    int _lastSeparationFrame = -1;
+    Vector3 _cachedSeparation = Vector3.zero;
+
     void Awake()
     {
         _currentHealth = maxHealth;
         InitializeHealthBar();
+        // Distribute separation updates across frames
+        _separationPhase = (_nextSeparationPhase++) % SEPARATION_INTERVAL_FRAMES;
     }
 
     public void Initialize(DroneFactoryAttackBehavior factory)
@@ -106,7 +115,9 @@ public class Drone : MonoBehaviour
         else
         {
             _currentTarget = null;
-            ReturnToFactory();
+            // Return to factory when idle; if no factory, just idle with separation
+            if (_factory != null) ReturnToFactory();
+            else IdleWithSeparation();
         }
     }
 
@@ -124,16 +135,16 @@ public class Drone : MonoBehaviour
         if (distanceToTarget > attackRange)
         {
             Vector3 direction = (_currentTarget.transform.position - transform.position).normalized;
-            Vector3 separationOffset = CalculateSeparation();
+            Vector3 separationOffset = GetSeparationThrottled();
             Vector3 movement = (direction + separationOffset * 0.5f).normalized * moveSpeed * Time.deltaTime;
             transform.position += movement;
         }
         else
         {
             // In range - attack (still apply separation to avoid clustering)
-            Vector3 separationOffset = CalculateSeparation();
+            Vector3 separationOffset = GetSeparationThrottled();
             transform.position += separationOffset * moveSpeed * 0.2f * Time.deltaTime;
-            
+
             if (_attackCooldown <= 0)
             {
                 PerformAttack();
@@ -156,8 +167,16 @@ public class Drone : MonoBehaviour
         AudioManager.Instance?.PlaySFX("laser_fire");
     }
 
+    void IdleWithSeparation()
+    {
+        // Stay in place but apply separation to avoid clustering
+        Vector3 separationOffset = GetSeparationThrottled();
+        transform.position += separationOffset * moveSpeed * 0.15f * Time.deltaTime;
+    }
+
     void ReturnToFactory()
     {
+        // This method is no longer used, but keeping it for backward compatibility
         // If no factory, stay in place
         if (_factory == null) return;
 
@@ -168,19 +187,30 @@ public class Drone : MonoBehaviour
         if (distanceToFactory > factoryReturnDistance)
         {
             Vector3 direction = (factoryPos - transform.position).normalized;
-            Vector3 separationOffset = CalculateSeparation();
+            Vector3 separationOffset = GetSeparationThrottled();
             Vector3 movement = (direction + separationOffset * 0.5f).normalized * moveSpeed * Time.deltaTime;
             transform.position += movement;
         }
         else
         {
             // Near factory - still apply separation
-            Vector3 separationOffset = CalculateSeparation();
+            Vector3 separationOffset = GetSeparationThrottled();
             transform.position += separationOffset * moveSpeed * 0.15f * Time.deltaTime;
         }
     }
 
-    Vector3 CalculateSeparation()
+    Vector3 GetSeparationThrottled()
+    {
+        int frame = Time.frameCount;
+        if (_lastSeparationFrame < 0 || ((frame + _separationPhase) % SEPARATION_INTERVAL_FRAMES) == 0)
+        {
+            _cachedSeparation = CalculateSeparationFast();
+            _lastSeparationFrame = frame;
+        }
+        return _cachedSeparation;
+    }
+
+    Vector3 CalculateSeparationFast()
     {
         Vector3 separation = Vector3.zero;
         int neighborCount = 0;
@@ -188,18 +218,28 @@ public class Drone : MonoBehaviour
         // Check separation from other drones
         if (DroneManager.Instance != null)
         {
-            foreach (var otherDrone in DroneManager.Instance.AllDrones)
+            var drones = DroneManager.Instance.AllDrones;
+            int count = drones.Count;
+            Vector3 myPos = transform.position;
+            float radius = separationRadius;
+            float radiusSq = radius * radius;
+
+            for (int i = 0; i < count; i++)
             {
+                var otherDrone = drones[i];
                 if (otherDrone == null || otherDrone == this || otherDrone.IsDead) continue;
 
-                Vector3 offset = transform.position - otherDrone.Position;
-                float distance = offset.magnitude;
+                Vector3 offset = myPos - otherDrone.Position;
+                if (Mathf.Abs(offset.x) > radius || Mathf.Abs(offset.y) > radius) continue;
+                float d2 = offset.sqrMagnitude;
+                if (d2 <= 1e-6f || d2 > radiusSq) continue;
+                float distance = Mathf.Sqrt(d2);
 
                 if (distance < separationRadius && distance > 0.01f)
                 {
                     // Push away with smooth falloff
                     float strength = 1.0f - (distance / separationRadius);
-                    separation += offset.normalized * strength * separationForce;
+                    separation += offset * ((1.0f / distance) * strength * separationForce);
                     neighborCount++;
                 }
             }

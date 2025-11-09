@@ -13,11 +13,16 @@ public class GameManager : MonoBehaviour
 
     public float defensePhaseEndDelay = 2f; // Delay after all enemies defeated before returning to build phase
 
-    [Header("Difficulty Scaling")] public int baseEnemiesPerRound = 5;
-    public float enemyScalingPerRound = 1.2f; // Multiply enemy count by this each round
+    [Header("Difficulty Scaling")]
+    public int initialRoundMoneyValue = 50;
+    public int roundMoneyIncrement = 20;
     public int roundsUntilFastEnemies = 2;
     public int roundsUntilArmoredEnemies = 4;
     public int roundsUntilBossEnemies = 7;
+    public int roundsUntilAttackEnemies = 1;
+    public int roundsUntilTeleporterEnemies = 5;
+    public int roundsUntilExploderEnemies = 3;
+    public int maxEnemiesPerRound = 50;
 
     [Header("Events")] public UnityEvent onGameStarted;
     public UnityEvent onGameOver;
@@ -28,9 +33,13 @@ public class GameManager : MonoBehaviour
     [Header("UI")]
     public GameObject readyButton; // Optional: assign in Inspector; otherwise found by name "ReadyButton"
 
+    [Header("VFX Prefabs")]
+    public LaserBeam laserBeamPrefab;
+
     GameState _currentState = GameState.NotStarted;
     GamePhase _currentPhase = GamePhase.Building;
     float _buildPhaseStartTime;
+    int _lastRoundMoneyValue = 0; // Track the previous round's money value for formula
 
     public GameState CurrentState => _currentState;
     public GamePhase CurrentPhase => _currentPhase;
@@ -73,6 +82,7 @@ public class GameManager : MonoBehaviour
         _currentState = GameState.Playing;
         _currentPhase = GamePhase.Building;
         _buildPhaseStartTime = Time.time;
+        _lastRoundMoneyValue = 0; // Reset money value for new game
 
         // Initialize all managers
         PlayerStatsManager.Instance?.InitializeNewGame();
@@ -152,14 +162,43 @@ public class GameManager : MonoBehaviour
         ApplyRoundToUI(currentRound);
         UpdateReadyButtonVisibility();
 
-        // Start spawning enemies
-        int enemyCount = CalculateEnemyCount(currentRound);
-        SpawnerManager.Instance?.StartRound(enemyCount, currentRound);
+        // Calculate round money value and start spawning enemies
+        int roundMoneyValue = CalculateRoundMoneyValue(currentRound);
+        SpawnerManager.Instance?.StartRound(roundMoneyValue, currentRound);
+    }
+
+    /// <summary>
+    /// Calculate the money value for a round based on quadratic formula: initialRoundMoneyValue + (roundMoneyIncrement * round² / 2)
+    /// This provides smooth exponential-like scaling that accelerates over time.
+    /// </summary>
+    int CalculateRoundMoneyValue(int round)
+    {
+        int currentValue = initialRoundMoneyValue + (roundMoneyIncrement * round * round / 2);
+        _lastRoundMoneyValue = currentValue;
+        return currentValue;
+    }
+
+    public int GetBossCountForRound(int round)
+    {
+        if (round % 5 != 0 || round < roundsUntilBossEnemies)
+            return 0;
+        return round / 5;
+    }
+
+    /// <summary>
+    /// Calculate the maximum number of enemies for a round based on formula: (round / 20) * starting max but never less than 50
+    /// </summary>
+    public int GetMaxEnemiesForRound(int round)
+    {
+        int scaledMax = Mathf.RoundToInt((round / 20f) * maxEnemiesPerRound);
+        return Mathf.Max(50, scaledMax);
     }
 
     int CalculateEnemyCount(int round)
     {
-        return Mathf.RoundToInt(baseEnemiesPerRound * Mathf.Pow(enemyScalingPerRound, round - 1));
+        // This method is now deprecated in favor of money-based spawning
+        // Keeping for compatibility if needed
+        return 0;
     }
 
     public void OnRoundDefeated()
@@ -280,6 +319,9 @@ public class GameManager : MonoBehaviour
             EnemyType.Fast => round >= roundsUntilFastEnemies,
             EnemyType.Armored => round >= roundsUntilArmoredEnemies,
             EnemyType.Boss => round >= roundsUntilBossEnemies,
+            EnemyType.Attack => round >= roundsUntilAttackEnemies,
+            EnemyType.Teleporter => round >= roundsUntilTeleporterEnemies,
+            EnemyType.Exploder => round >= roundsUntilExploderEnemies,
             _ => false
         };
     }

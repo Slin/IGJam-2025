@@ -20,35 +20,40 @@ public class UIActions : MonoBehaviour
     public void SelectBase()
     {
         var bm = BuildingManager.Instance;
-        if (bm == null) return;
+		if (bm == null) return;
+		if (!CanSelectBuilding()) { AudioManager.Instance?.PlaySFX("error"); return; }
         bm.StartBuildingPlacement(BuildingType.Base);
     }
 
     public void SelectRocketLauncher()
     {
         var bm = BuildingManager.Instance;
-        if (bm == null) return;
+		if (bm == null) return;
+		if (!CanSelectBuilding()) { AudioManager.Instance?.PlaySFX("error"); return; }
         bm.StartBuildingPlacement(BuildingType.RocketLauncher);
     }
 
     public void SelectLaserTower()
     {
         var bm = BuildingManager.Instance;
-        if (bm == null) return;
+		if (bm == null) return;
+		if (!CanSelectBuilding()) { AudioManager.Instance?.PlaySFX("error"); return; }
         bm.StartBuildingPlacement(BuildingType.LaserTower);
     }
 
     public void SelectBoostBuilding()
     {
         var bm = BuildingManager.Instance;
-        if (bm == null) return;
+		if (bm == null) return;
+		if (!CanSelectBuilding()) { AudioManager.Instance?.PlaySFX("error"); return; }
         bm.StartBuildingPlacement(BuildingType.BoostBuilding);
     }
 
     public void SelectDroneFactory()
     {
         var bm = BuildingManager.Instance;
-        if (bm == null) return;
+		if (bm == null) return;
+		if (!CanSelectBuilding()) { AudioManager.Instance?.PlaySFX("error"); return; }
         bm.StartBuildingPlacement(BuildingType.DroneFactory);
     }
 
@@ -56,6 +61,12 @@ public class UIActions : MonoBehaviour
     {
         BuildingManager.Instance?.CancelBuildingPlacement();
     }
+
+	bool CanSelectBuilding()
+	{
+		var gm = GameManager.Instance;
+		return gm == null || gm.CurrentPhase == GamePhase.Building;
+	}
 }
 
 

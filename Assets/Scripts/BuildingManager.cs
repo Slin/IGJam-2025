@@ -15,6 +15,8 @@ public class BuildingManager : MonoBehaviour
     public Building laserTowerPrefab;
     public Building boostBuildingPrefab;
     public Building droneFactoryPrefab;
+    public Building freezeTowerPrefab;
+    public Building radarJammerPrefab;
 
     [Header("Placement Settings")]
     public float hexOuterRadius = 0.866025404f; // Distance between hex centers
@@ -32,6 +34,7 @@ public class BuildingManager : MonoBehaviour
     Building _previewBuilding;
     BuildingType _selectedBuildingType;
     bool _isPlacingBuilding;
+    Dictionary<BuildingType, int> _buildingPurchaseCounts = new Dictionary<BuildingType, int>();
 
     public IReadOnlyList<Building> AllBuildings => _allBuildings;
     public IReadOnlyList<Building> Bases => _bases;
@@ -73,6 +76,7 @@ public class BuildingManager : MonoBehaviour
         }
         _allBuildings.Clear();
         _bases.Clear();
+        _buildingPurchaseCounts.Clear();
 
         // Place initial base at center
         PlaceBaseAtCenter();
@@ -130,10 +134,14 @@ public class BuildingManager : MonoBehaviour
             return;
         }
 
+        // Get current purchase count for this building type
+        int purchaseCount = GetPurchaseCount(type);
+        int currentCost = prefab.GetCurrentCost(purchaseCount);
+
         // Check if player can afford it
-        if (!PlayerStatsManager.Instance.CanAfford(prefab.tritiumCost))
+        if (!PlayerStatsManager.Instance.CanAfford(currentCost))
         {
-            Debug.LogWarning($"BuildingManager: Cannot afford {type}. Cost: {prefab.tritiumCost}");
+            Debug.LogWarning($"BuildingManager: Cannot afford {type}. Cost: {currentCost}");
             AudioManager.Instance?.PlaySFX("error");
             return;
         }
@@ -166,6 +174,15 @@ public class BuildingManager : MonoBehaviour
         _previewBuilding.transform.position = worldPosition;
     }
 
+    /// <summary>
+    /// Get the current position of the building preview.
+    /// </summary>
+    public Vector3 GetPreviewPosition()
+    {
+        if (_previewBuilding == null) return Vector3.zero;
+        return _previewBuilding.transform.position;
+    }
+
     public bool TryPlaceBuilding(Vector3 worldPosition, HexTile tile = null)
     {
         if (!_isPlacingBuilding || _previewBuilding == null) return false;
@@ -177,12 +194,19 @@ public class BuildingManager : MonoBehaviour
             return false;
         }
 
+        // Calculate current cost based on purchase count
+        int purchaseCount = GetPurchaseCount(_selectedBuildingType);
+        int currentCost = _previewBuilding.GetCurrentCost(purchaseCount);
+
         // Spend tritium
-        if (!PlayerStatsManager.Instance.TrySpendTritium(_previewBuilding.tritiumCost))
+        if (!PlayerStatsManager.Instance.TrySpendTritium(currentCost))
         {
             AudioManager.Instance?.PlaySFX("error");
             return false;
         }
+
+        // Increment purchase count for this building type
+        IncrementPurchaseCount(_selectedBuildingType);
 
         // Place the building
         List<HexTile> occupiedTiles = new List<HexTile>();
@@ -247,8 +271,10 @@ public class BuildingManager : MonoBehaviour
             float distance = Vector3.Distance(position, existingBuilding.transform.position);
 
             // Buildings overlap if distance is less than sum of their radii
+            // Add small epsilon to account for floating point precision errors
             float minDistance = buildingRadius + existingRadius;
-            if (distance < minDistance)
+            const float epsilon = 0.001f;
+            if (distance < minDistance - epsilon)
             {
                 return false;
             }
@@ -263,6 +289,61 @@ public class BuildingManager : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// Check if a tile at the given position would be affected by the current building placement preview.
+    /// Returns true if the tile is within the building's occupied radius.
+    /// </summary>
+    public bool IsTileAffectedByPlacement(Vector3 tilePosition)
+    {
+        if (!_isPlacingBuilding || _previewBuilding == null) return false;
+
+        Vector3 previewPosition = _previewBuilding.transform.position;
+        float buildingRadius = _previewBuilding.GetOccupiedRadius();
+        float distance = Vector3.Distance(tilePosition, previewPosition);
+
+        return distance <= buildingRadius;
+    }
+
+    /// <summary>
+    /// Check if the building can be placed at the specified position and tile.
+    /// Public wrapper for IsValidPlacement for use by HexTile.
+    /// </summary>
+    public bool CanPlaceAt(Vector3 position, HexTile tile)
+    {
+        return IsValidPlacement(position, tile);
+    }
+
+    /// <summary>
+    /// Check if the current building preview can be placed at its current position.
+    /// This checks placement validity without requiring the tile to not be occupied (useful for preview feedback).
+    /// </summary>
+    public bool IsCurrentPlacementValid()
+    {
+        if (!_isPlacingBuilding || _previewBuilding == null) return false;
+
+        Vector3 position = _previewBuilding.transform.position;
+        float buildingRadius = _previewBuilding.GetOccupiedRadius();
+
+        // Check collision with existing buildings
+        foreach (var existingBuilding in _allBuildings)
+        {
+            if (existingBuilding == null || existingBuilding.IsDead) continue;
+
+            float existingRadius = existingBuilding.GetOccupiedRadius();
+            float distance = Vector3.Distance(position, existingBuilding.transform.position);
+
+            // Buildings overlap if distance is less than sum of their radii
+            float minDistance = buildingRadius + existingRadius;
+            const float epsilon = 0.001f;
+            if (distance < minDistance - epsilon)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     Building GetBuildingPrefab(BuildingType type)
     {
         return type switch
@@ -272,6 +353,8 @@ public class BuildingManager : MonoBehaviour
             BuildingType.LaserTower => laserTowerPrefab,
             BuildingType.BoostBuilding => boostBuildingPrefab,
             BuildingType.DroneFactory => droneFactoryPrefab,
+            BuildingType.FreezeTower => freezeTowerPrefab,
+            BuildingType.RadarJammer => radarJammerPrefab,
             _ => null
         };
     }
@@ -337,5 +420,44 @@ public class BuildingManager : MonoBehaviour
     public List<Building> GetBuildingsOfType(BuildingType type)
     {
         return _allBuildings.Where(b => b != null && !b.IsDead && b.buildingType == type).ToList();
+    }
+
+    /// <summary>
+    /// Get the number of times a building type has been purchased
+    /// </summary>
+    public int GetPurchaseCount(BuildingType type)
+    {
+        if (_buildingPurchaseCounts.TryGetValue(type, out int count))
+        {
+            return count;
+        }
+        return 0;
+    }
+
+    /// <summary>
+    /// Increment the purchase count for a building type
+    /// </summary>
+    void IncrementPurchaseCount(BuildingType type)
+    {
+        if (_buildingPurchaseCounts.ContainsKey(type))
+        {
+            _buildingPurchaseCounts[type]++;
+        }
+        else
+        {
+            _buildingPurchaseCounts[type] = 1;
+        }
+    }
+
+    /// <summary>
+    /// Get the current cost for a building type based on purchase count
+    /// </summary>
+    public int GetCurrentBuildingCost(BuildingType type)
+    {
+        Building prefab = GetBuildingPrefab(type);
+        if (prefab == null) return 0;
+
+        int purchaseCount = GetPurchaseCount(type);
+        return prefab.GetCurrentCost(purchaseCount);
     }
 }

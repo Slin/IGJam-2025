@@ -3,7 +3,7 @@ using UnityEngine;
 
 /// <summary>
 /// DroneFactory attack behavior - spawns and manages drones instead of directly attacking.
-/// Boosters increase the maximum number of drones instead of boosting their damage.
+/// Boosters multiply the maximum number of drones (e.g., 1.5x multiplier = 50% more drones).
 /// </summary>
 public class DroneFactoryAttackBehavior : BuildingAttackBehavior
 {
@@ -16,15 +16,43 @@ public class DroneFactoryAttackBehavior : BuildingAttackBehavior
 
     /// <summary>
     /// Gets the effective maximum number of drones based on nearby boosts.
-    /// Each boost adds +1 to the drone limit.
+    /// Boosters multiply the drone limit (e.g., 1.5x multiplier = 50% more drones).
     /// </summary>
     public int EffectiveDroneLimit
     {
         get
         {
-            int boostCount = GetActiveBoostCount();
-            return baseDroneLimit + boostCount;
+            float boostMultiplier = CalculateDroneBoostMultiplier();
+            return Mathf.RoundToInt(baseDroneLimit * boostMultiplier);
         }
+    }
+
+    /// <summary>
+    /// Calculates the boost multiplier for drone limit from nearby BoostBuildings.
+    /// Uses the same stacking logic as damage boosts (additive stacking).
+    /// </summary>
+    private float CalculateDroneBoostMultiplier()
+    {
+        if (BuildingManager.Instance == null) return 1f;
+
+        float additiveBoost = 0f;
+
+        // Find all BoostBuildings
+        var boostBuildings = BuildingManager.Instance.GetBuildingsOfType(BuildingType.BoostBuilding);
+
+        foreach (var building in boostBuildings)
+        {
+            if (building == null) continue;
+
+            var boostComponent = building.GetComponent<BoostBuilding>();
+            if (boostComponent != null && boostComponent.IsInRange(transform.position))
+            {
+                // Add the bonus (1.5 multiplier = 0.5 bonus)
+                additiveBoost += (boostComponent.damageMultiplier - 1f);
+            }
+        }
+
+        return 1f + additiveBoost;
     }
 
     protected override void Start()
@@ -147,11 +175,25 @@ public class DroneFactoryAttackBehavior : BuildingAttackBehavior
         }
 
         // Check if we should spawn a new drone
-        // We use FindTarget to check if there are enemies nearby and we need more drones
         if (CanSpawnDrone())
         {
-            Enemy target = FindTarget();
-            if (target != null)
+            // During defense phase, always spawn drones up to the limit
+            // During building phase, only spawn if there are enemies nearby
+            bool shouldSpawn = false;
+
+            if (GameManager.Instance != null && GameManager.Instance.CurrentPhase == GamePhase.Defense)
+            {
+                // Defense phase - spawn drones regardless of enemies
+                shouldSpawn = true;
+            }
+            else
+            {
+                // Building phase - only spawn if enemies are nearby
+                Enemy target = FindTarget();
+                shouldSpawn = target != null;
+            }
+
+            if (shouldSpawn)
             {
                 SpawnDrone();
                 _attackCooldown = attackDelay;

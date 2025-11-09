@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4576325487721238013}
   - component: {fileID: 3570221254916896693}
   - component: {fileID: 8488708014896982300}
+  - component: {fileID: 4805110051110741559}
   m_Layer: 5
   m_Name: Unit5Button
   m_TagString: Untagged
@@ -150,6 +151,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoundUIVisibility
   minRound: 5
   maxRound: -1
+--- !u!114 &4805110051110741559
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 54116192509998463}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8147646893380d4989e13fa4eefb36b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingButtonUI
+  buildingType: 0
+  priceText: {fileID: 0}
+  button: {fileID: 0}
 --- !u!1 &58235190250917813
 GameObject:
   m_ObjectHideFlags: 0
@@ -918,8 +934,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Ready
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1df6ed6cf55d52543876672c019437ab, type: 2}
+  m_sharedMaterial: {fileID: 6734818920173278105, guid: 1df6ed6cf55d52543876672c019437ab, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -943,8 +959,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 52
-  m_fontSizeBase: 52
+  m_fontSize: 60
+  m_fontSizeBase: 60
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1182,6 +1198,7 @@ GameObject:
   - component: {fileID: 6450276277583966521}
   - component: {fileID: 383200920341618708}
   - component: {fileID: 8040161906209893407}
+  - component: {fileID: 2024566448782386308}
   m_Layer: 5
   m_Name: Unit2Button
   m_TagString: Untagged
@@ -1319,6 +1336,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoundUIVisibility
   minRound: 2
   maxRound: -1
+--- !u!114 &2024566448782386308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1716719008369645080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8147646893380d4989e13fa4eefb36b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingButtonUI
+  buildingType: 3
+  priceText: {fileID: 0}
+  button: {fileID: 0}
 --- !u!1 &2314559292282661436
 GameObject:
   m_ObjectHideFlags: 0
@@ -2731,7 +2763,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 1711504910390415380, guid: 13f6e2c29fc52c046946df8b1b25ef90, type: 3}
+  m_Sprite: {fileID: 2773483569941617647, guid: d84295db12a71cc4bb486b46c70bca7e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2801,6 +2833,7 @@ GameObject:
   - component: {fileID: 8295205015202761676}
   - component: {fileID: 7996507504158550106}
   - component: {fileID: 1225015292342239511}
+  - component: {fileID: 8236179685330050553}
   m_Layer: 5
   m_Name: Unit3Button
   m_TagString: Untagged
@@ -2938,6 +2971,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoundUIVisibility
   minRound: 3
   maxRound: -1
+--- !u!114 &8236179685330050553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5470396790989607866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8147646893380d4989e13fa4eefb36b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingButtonUI
+  buildingType: 4
+  priceText: {fileID: 0}
+  button: {fileID: 0}
 --- !u!1 &5937848665335623276
 GameObject:
   m_ObjectHideFlags: 0
@@ -3165,6 +3213,7 @@ GameObject:
   - component: {fileID: 956921540053674399}
   - component: {fileID: 5221500493632783488}
   - component: {fileID: 7529199752852823929}
+  - component: {fileID: 713122838122203477}
   m_Layer: 5
   m_Name: Unit1Button
   m_TagString: Untagged
@@ -3302,6 +3351,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoundUIVisibility
   minRound: -1
   maxRound: -1
+--- !u!114 &713122838122203477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7566575632766001764}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8147646893380d4989e13fa4eefb36b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingButtonUI
+  buildingType: 2
+  priceText: {fileID: 0}
+  button: {fileID: 0}
 --- !u!1 &7570424499963099904
 GameObject:
   m_ObjectHideFlags: 0
@@ -3526,6 +3590,7 @@ GameObject:
   - component: {fileID: 8439183920424991503}
   - component: {fileID: 4771215045967381485}
   - component: {fileID: 1957767939408527508}
+  - component: {fileID: 1261728691045476410}
   m_Layer: 5
   m_Name: Unit4Button
   m_TagString: Untagged
@@ -3663,6 +3728,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoundUIVisibility
   minRound: 4
   maxRound: -1
+--- !u!114 &1261728691045476410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7960678224245689937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8147646893380d4989e13fa4eefb36b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingButtonUI
+  buildingType: 1
+  priceText: {fileID: 0}
+  button: {fileID: 0}
 --- !u!1 &8076597846571456892
 GameObject:
   m_ObjectHideFlags: 0

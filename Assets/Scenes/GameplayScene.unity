@@ -205,10 +205,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb078a2beba06144698edf8f41bf3fd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStatsManager
-  startingTritium: 6000
-  tritiumPerRound: 50
+  startingTritium: 500
+  tritiumPerRound: 100
   _tritium: 0
-  _currentRound: 10
+  _currentRound: 0
   _enemiesKilled: 0
   onTritiumChanged:
     m_PersistentCalls:
@@ -303,6 +303,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemySpawnerManager
       objectReference: {fileID: 0}
+    - target: {fileID: 4676504926305827266, guid: 9a557ceb814264059af9331259a9793d, type: 3}
+      propertyPath: exploderEnemyPrefab
+      value: 
+      objectReference: {fileID: 4580924380053316161, guid: d99e126f6d3b8eb44aac27f0d89b2990, type: 3}
+    - target: {fileID: 4676504926305827266, guid: 9a557ceb814264059af9331259a9793d, type: 3}
+      propertyPath: teleporterEnemyPrefab
+      value: 
+      objectReference: {fileID: 4580924380053316161, guid: 4d4894ca949250f4ea2bbc74834bbe10, type: 3}
     - target: {fileID: 4897490179481173062, guid: 9a557ceb814264059af9331259a9793d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -438,15 +446,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraPanZoom2D
   minOrthographicSize: 1
-  maxOrthographicSize: 10
+  maxOrthographicSize: 13
   mouseWheelZoomSpeed: 0.1
   pinchZoomSpeed: 0.01
   invertScroll: 0
   rightMouseDragToPan: 1
   inertialPanDamp: 0
   useWorldBounds: 1
-  worldMin: {x: -20, y: -20}
-  worldMax: {x: 20, y: 20}
+  worldMin: {x: -22, y: -22}
+  worldMax: {x: 22, y: 22}
 --- !u!114 &1458674967
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -596,11 +604,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   buildPhaseMinDuration: 0
   defensePhaseEndDelay: 0
-  baseEnemiesPerRound: 5
-  enemyScalingPerRound: 1.2
-  roundsUntilFastEnemies: 2
+  initialRoundMoneyValue: 100
+  roundMoneyIncrement: 30
+  roundsUntilFastEnemies: 6
   roundsUntilArmoredEnemies: 4
-  roundsUntilBossEnemies: 7
+  roundsUntilBossEnemies: 5
+  roundsUntilAttackEnemies: 11
+  roundsUntilTeleporterEnemies: 5
+  roundsUntilExploderEnemies: 3
+  maxEnemiesPerRound: 50
   onGameStarted:
     m_PersistentCalls:
       m_Calls: []
@@ -617,6 +629,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   readyButton: {fileID: 0}
+  laserBeamPrefab: {fileID: 3614747911103135761, guid: 47680ed4a3d234e4cb8c1fb2cfafdd31, type: 3}
 --- !u!4 &1673550299
 Transform:
   m_ObjectHideFlags: 0

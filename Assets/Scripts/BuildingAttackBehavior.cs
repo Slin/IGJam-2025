@@ -93,6 +93,13 @@ public abstract class BuildingAttackBehavior : MonoBehaviour
         {
             gameObject.AddComponent(tooltipType);
         }
+
+        // Add attack range indicator if not present
+        var rangeIndicatorType = System.Type.GetType("AttackRangeIndicator");
+        if (rangeIndicatorType != null && GetComponent(rangeIndicatorType) == null)
+        {
+            gameObject.AddComponent(rangeIndicatorType);
+        }
     }
 
     protected virtual void Update()

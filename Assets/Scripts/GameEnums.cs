@@ -9,7 +9,9 @@ public enum EnemyType
     Fast,
     Armored,
     Boss,
-    Attack
+    Attack,
+    Teleporter,
+    Exploder
 }
 
 /// <summary>
@@ -21,7 +23,9 @@ public enum BuildingType
     RocketLauncher,
     LaserTower,
     BoostBuilding,
-    DroneFactory
+    DroneFactory,
+    FreezeTower,
+    RadarJammer
 }
 
 /// <summary>

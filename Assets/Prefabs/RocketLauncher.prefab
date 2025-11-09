@@ -81,12 +81,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 1711504910390415380, guid: 13f6e2c29fc52c046946df8b1b25ef90, type: 3}
+  m_Sprite: {fileID: 2773483569941617647, guid: d84295db12a71cc4bb486b46c70bca7e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.32, y: 0.32}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -105,9 +105,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Building
   buildingType: 1
-  maxHealth: 500
+  maxHealth: 250
   tritiumCost: 500
-  isMultiTile: 1
+  costIncrement: 250
+  size: 1
   occupiedTiles: []
   onDestroyed:
     m_PersistentCalls:
@@ -131,8 +132,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RocketLauncherAttack
   attackRange: 10
-  attackDamage: 500
-  attackDelay: 3
+  attackDamage: 250
+  attackDelay: 5
   rocketPrefab: {fileID: 6415429859441681765, guid: 8f4c810ae6bd8e34897a34485ecca7df, type: 3}
   rocketSpeed: 10
   rocketTurnSpeed: 200

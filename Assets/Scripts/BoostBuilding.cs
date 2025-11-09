@@ -8,7 +8,7 @@ using UnityEngine;
 public class BoostBuilding : MonoBehaviour
 {
     [Header("Boost Settings")]
-    public float boostRadius = 2f; // How far the boost reaches
+    public float boostRadius = 1f; // How far the boost reaches
     public float damageMultiplier = 1.5f; // 1.5 = +50% damage bonus
 
     private Building _building;

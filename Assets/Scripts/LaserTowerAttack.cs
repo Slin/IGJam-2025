@@ -17,8 +17,8 @@ public class LaserTowerAttack : BuildingAttackBehavior
         // Deal damage instantly
         target.TakeDamage(EffectiveAttackDamage);
 
-        // Create laser visual effect
-        LaserBeam.Create(transform.position, target.transform.position, laserColor, laserWidth, laserDuration);
+        // Create laser visual that follows the target while it's alive
+        LaserBeam.CreateTracking(transform.position, target, laserColor, laserWidth, laserDuration);
 
         // Play attack sound
         AudioManager.Instance?.PlaySFX("laser_fire");

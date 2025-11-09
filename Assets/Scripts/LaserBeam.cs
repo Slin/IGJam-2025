@@ -1,41 +1,23 @@
 using UnityEngine;
 
 /// <summary>
-/// Renders a laser beam between two points using a generated sprite
+/// Renders a laser beam between two points using a prefabbed mesh (MeshRenderer)
 /// </summary>
-[RequireComponent(typeof(SpriteRenderer))]
 public class LaserBeam : MonoBehaviour
 {
     [Header("Laser Settings")]
     public Color laserColor = Color.red;
-    public float width = 0.1f;
     public float duration = 0.2f;
 
-    SpriteRenderer _spriteRenderer;
+    MeshRenderer[] _renderers;
     float _timeRemaining;
-    bool _initialized;
+    Vector3 _startWorld;
+    Enemy _endEnemy;
+    bool _followTarget;
 
     void Awake()
     {
-        InitializeSpriteRenderer();
-    }
-
-    void InitializeSpriteRenderer()
-    {
-        if (_initialized) return;
-
-        _spriteRenderer = GetComponent<SpriteRenderer>();
-
-        // Create a simple sprite
-        Texture2D texture = new Texture2D(1, 1);
-        texture.SetPixel(0, 0, Color.white);
-        texture.Apply();
-
-        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1);
-        _spriteRenderer.sprite = sprite;
-        _spriteRenderer.color = laserColor;
-
-        _initialized = true;
+        _renderers = GetComponentsInChildren<MeshRenderer>(true);
     }
 
     void Update()
@@ -44,6 +26,17 @@ public class LaserBeam : MonoBehaviour
         if (_timeRemaining <= 0)
         {
             Destroy(gameObject);
+        }
+
+        if (_followTarget)
+        {
+            if (_endEnemy == null || _endEnemy.IsDead)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            UpdateTransform(_startWorld, _endEnemy.transform.position);
         }
     }
 
@@ -54,47 +47,99 @@ public class LaserBeam : MonoBehaviour
     /// <param name="end">End position of the laser</param>
     public void Setup(Vector3 start, Vector3 end)
     {
-        InitializeSpriteRenderer();
-
-        // Update color in case it was changed before Awake
-        if (_spriteRenderer != null)
-        {
-            _spriteRenderer.color = laserColor;
-        }
+        ApplyColorToRenderers();
 
         _timeRemaining = duration;
 
-        // Position at midpoint
-        Vector3 midpoint = (start + end) / 2f;
-        transform.position = midpoint;
+        _followTarget = false;
+        _startWorld = start;
+        UpdateTransform(start, end);
+    }
+
+    /// <summary>
+    /// Sets up the laser to follow a live target from a fixed start.
+    /// The beam stops when the target dies or duration elapses.
+    /// </summary>
+    public void SetupFollow(Vector3 start, Enemy target)
+    {
+        ApplyColorToRenderers();
+
+        _timeRemaining = duration;
+        _followTarget = true;
+        _startWorld = start;
+        _endEnemy = target;
+        var end = target != null ? target.transform.position : start;
+        UpdateTransform(start, end);
+    }
+
+    void ApplyColorToRenderers()
+    {
+        if (_renderers == null || _renderers.Length == 0) return;
+        for (int i = 0; i < _renderers.Length; i++)
+        {
+            var r = _renderers[i];
+            if (r == null) continue;
+            var mats = r.materials; // instantiates materials
+            for (int m = 0; m < mats.Length; m++)
+            {
+                var mat = mats[m];
+                if (mat == null) continue;
+                if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", laserColor);
+                if (mat.HasProperty("_Color")) mat.SetColor("_Color", laserColor);
+            }
+            r.materials = mats;
+        }
+    }
+    void UpdateTransform(Vector3 start, Vector3 end)
+    {
+        // Position at start (prefab offset stretches away from start)
+        transform.position = start;
 
         // Calculate length and rotation
         Vector3 direction = end - start;
         float length = direction.magnitude;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-        // Scale and rotate
-        transform.localScale = new Vector3(length, width, 1f);
+        // Scale and rotate (prefab is offset to extend from start; keep prefab width)
+        var s = transform.localScale;
+        transform.localScale = new Vector3(length, s.y, s.z);
         transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 
     /// <summary>
-    /// Creates and returns a new laser beam between two points
+    /// Creates and returns a new laser beam between two points using a prefab
     /// </summary>
     public static LaserBeam Create(Vector3 start, Vector3 end, Color? color = null, float width = 0.1f, float duration = 0.2f)
     {
-        GameObject obj = new GameObject("LaserBeam");
-        LaserBeam laser = obj.AddComponent<LaserBeam>();
-
-        if (color.HasValue)
+        var gm = GameManager.Instance;
+        if (gm == null || gm.laserBeamPrefab == null)
         {
-            laser.laserColor = color.Value;
+            Debug.LogError("LaserBeam: GameManager.laserBeamPrefab is not assigned.");
+            return null;
         }
-        laser.width = width;
+
+        LaserBeam laser = Object.Instantiate(gm.laserBeamPrefab);
+        if (color.HasValue) laser.laserColor = color.Value;
         laser.duration = duration;
-
         laser.Setup(start, end);
+        return laser;
+    }
 
+    /// <summary>
+    /// Creates a laser that follows the target while alive from a fixed start.
+    /// </summary>
+    public static LaserBeam CreateTracking(Vector3 start, Enemy target, Color? color = null, float width = 0.1f, float duration = 0.2f)
+    {
+        var gm = GameManager.Instance;
+        if (gm == null || gm.laserBeamPrefab == null)
+        {
+            Debug.LogError("LaserBeam: GameManager.laserBeamPrefab is not assigned.");
+            return null;
+        }
+        LaserBeam laser = Object.Instantiate(gm.laserBeamPrefab);
+        if (color.HasValue) laser.laserColor = color.Value;
+        laser.duration = duration;
+        laser.SetupFollow(start, target);
         return laser;
     }
 }

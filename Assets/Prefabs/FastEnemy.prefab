@@ -56,12 +56,16 @@ MonoBehaviour:
   attackDamage: 20
   attackDelay: 0.5
   stopToAttack: 0
+  maxAttackTargets: 1
   separationRadius: 0.5
   separationForce: 2
   onArrived:
     m_PersistentCalls:
       m_Calls: []
   onDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  onDamaged:
     m_PersistentCalls:
       m_Calls: []
   showHealthBar: 1
@@ -146,7 +150,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7424679103065269036, guid: 8756b5986f12c3b4a808f04d8377aede, type: 3}
+  m_Sprite: {fileID: -4372590994060055384, guid: 4825cbf796fff534abe93725f81398f7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

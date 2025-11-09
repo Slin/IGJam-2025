@@ -65,6 +65,9 @@ MonoBehaviour:
   onDeath:
     m_PersistentCalls:
       m_Calls: []
+  onDamaged:
+    m_PersistentCalls:
+      m_Calls: []
   showHealthBar: 1
   healthBarOffset: {x: 0, y: 0.8, z: 0}
   healthBarSize: {x: 0.8, y: 0.12}
@@ -147,7 +150,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -4467275502600760408, guid: 71cd6b851f4b1924d9f0ff83f5ea6fe0, type: 3}
+  m_Sprite: {fileID: -7282977891540541969, guid: aee0c468a3436954fa2302e41f5eeb88, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

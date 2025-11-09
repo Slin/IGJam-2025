@@ -81,7 +81,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 8997800277748654552, guid: 71e5a0b9d6b884f288b8ad97f94bf236, type: 3}
+  m_Sprite: {fileID: 7731603841684999060, guid: ab81b4799439a964f9f4a3c9891adcf9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -107,7 +107,8 @@ MonoBehaviour:
   buildingType: 2
   maxHealth: 500
   tritiumCost: 100
-  isMultiTile: 1
+  costIncrement: 10
+  size: 1
   occupiedTiles: []
   onDestroyed:
     m_PersistentCalls:
@@ -118,6 +119,8 @@ MonoBehaviour:
   showHealthBar: 1
   healthBarOffset: {x: 0, y: 0.5, z: 0}
   healthBarSize: {x: 1, y: 0.1}
+  baseHitBlinkColor: {r: 1, g: 0, b: 0, a: 1}
+  baseHitBlinkDuration: 0.12
 --- !u!114 &6643424718684357319
 MonoBehaviour:
   m_ObjectHideFlags: 0

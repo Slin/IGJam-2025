@@ -15,6 +15,8 @@ public class BuildingManager : MonoBehaviour
     public Building laserTowerPrefab;
     public Building boostBuildingPrefab;
     public Building droneFactoryPrefab;
+    public Building freezeTowerPrefab;
+    public Building radarJammerPrefab;
 
     [Header("Placement Settings")]
     public float hexOuterRadius = 0.866025404f; // Distance between hex centers
@@ -351,6 +353,8 @@ public class BuildingManager : MonoBehaviour
             BuildingType.LaserTower => laserTowerPrefab,
             BuildingType.BoostBuilding => boostBuildingPrefab,
             BuildingType.DroneFactory => droneFactoryPrefab,
+            BuildingType.FreezeTower => freezeTowerPrefab,
+            BuildingType.RadarJammer => radarJammerPrefab,
             _ => null
         };
     }

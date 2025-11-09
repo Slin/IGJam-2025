@@ -13,11 +13,11 @@ public class HexTile : MonoBehaviour
     public Color _validPlacementColor = Color.green;
     public Color _invalidPlacementColor = Color.red;
 
-   private Renderer _renderer;
-   private int _baseSortingLayerId;
-   private int _baseSortingOrder;
-   private bool _isHighlighted;
-   private bool _isOccupied = false;
+    private Renderer _renderer;
+    private int _baseSortingLayerId;
+    private int _baseSortingOrder;
+    private bool _isHighlighted;
+    private bool _isOccupied = false;
 
     public bool IsOccupied => _isOccupied;
 
@@ -69,67 +69,67 @@ public class HexTile : MonoBehaviour
         Vector3 world = cam.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, Mathf.Abs(cam.transform.position.z - transform.position.z)));
         bool inside = IsPointInHexagon(new Vector2(world.x, world.y));
 
-		// Building placement preview + placement
-		var bm = BuildingManager.Instance;
-		if (bm != null && bm.IsPlacingBuilding)
-		{
-			if (inside)
-			{
-				// Always snap preview to this tile's center when hovering
-				bm.UpdateBuildingPreview(transform.position);
+        // Building placement preview + placement
+        var bm = BuildingManager.Instance;
+        if (bm != null && bm.IsPlacingBuilding)
+        {
+            if (inside)
+            {
+                // Always snap preview to this tile's center when hovering
+                bm.UpdateBuildingPreview(transform.position);
 
-				// Place on click (ignore clicks over UI)
-				var mouse = Mouse.current;
-				bool overUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
-				if (mouse != null && mouse.leftButton.wasPressedThisFrame && !overUI)
-				{
-					bm.TryPlaceBuilding(transform.position, this);
-				}
-			}
+                // Place on click (ignore clicks over UI)
+                var mouse = Mouse.current;
+                bool overUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+                if (mouse != null && mouse.leftButton.wasPressedThisFrame && !overUI)
+                {
+                    bm.TryPlaceBuilding(transform.position, this);
+                }
+            }
 
-			// Determine which tiles are affected by the building placement
-			bool isAffectedByBuilding = bm.IsTileAffectedByPlacement(transform.position);
-			
-			if (isAffectedByBuilding)
-			{
-				// This tile would be occupied by the building
-				// Check validity using the tile that's being hovered (which updates the preview position)
-				bool canPlace = bm.IsCurrentPlacementValid();
-				SetHighlight(true, canPlace ? _validPlacementColor : _invalidPlacementColor);
-			}
-			else if (_isOccupied)
-			{
-				// Not affected by building but this tile is blocked
-				SetHighlight(true, _invalidPlacementColor);
-			}
-			else
-			{
-				SetHighlight(false);
-			}
-		}
-		else
-		{
-			// Not placing a building - use neutral cyan color on mouseover
-			if (inside)
-			{
-				SetHighlight(true, _neutralMouseoverColor);
-			}
-			else
-			{
-				SetHighlight(false);
-			}
-		}
+            // Determine which tiles are affected by the building placement
+            bool isAffectedByBuilding = bm.IsTileAffectedByPlacement(transform.position);
+
+            if (isAffectedByBuilding)
+            {
+                // This tile would be occupied by the building
+                // Check validity using the tile that's being hovered (which updates the preview position)
+                bool canPlace = bm.IsCurrentPlacementValid();
+                SetHighlight(true, canPlace ? _validPlacementColor : _invalidPlacementColor);
+            }
+            else if (_isOccupied)
+            {
+                // Not affected by building but this tile is blocked
+                SetHighlight(true, _invalidPlacementColor);
+            }
+            else
+            {
+                SetHighlight(false);
+            }
+        }
+        else
+        {
+            // Not placing a building - use neutral cyan color on mouseover
+            if (inside)
+            {
+                SetHighlight(true, _neutralMouseoverColor);
+            }
+            else
+            {
+                SetHighlight(false);
+            }
+        }
     }
 
     void SetHighlight(bool on, Color? customColor = null)
     {
         Color targetColor = on ? (customColor ?? _highlightColor) : _baseColor;
-        
+
         if (_renderer == null) return;
-        
+
         if (_renderer.material.color != targetColor)
             _renderer.material.color = targetColor;
-        
+
         _isHighlighted = on;
     }
 }

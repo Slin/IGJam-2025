@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour
     public int roundsUntilArmoredEnemies = 4;
     public int roundsUntilBossEnemies = 7;
     public int roundsUntilAttackEnemies = 1;
+    public int roundsUntilTeleporterEnemies = 5;
+    public int roundsUntilExploderEnemies = 3;
     public int maxEnemiesPerRound = 50;
 
     [Header("Events")] public UnityEvent onGameStarted;
@@ -318,6 +320,8 @@ public class GameManager : MonoBehaviour
             EnemyType.Armored => round >= roundsUntilArmoredEnemies,
             EnemyType.Boss => round >= roundsUntilBossEnemies,
             EnemyType.Attack => round >= roundsUntilAttackEnemies,
+            EnemyType.Teleporter => round >= roundsUntilTeleporterEnemies,
+            EnemyType.Exploder => round >= roundsUntilExploderEnemies,
             _ => false
         };
     }

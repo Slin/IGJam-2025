@@ -32,6 +32,7 @@ public class Enemy : MonoBehaviour
     [Header("Events")]
     public UnityEvent onArrived;
     public UnityEvent onDeath;
+    public UnityEvent<float> onDamaged;
 
     [Header("Health Bar")]
     public bool showHealthBar = true;
@@ -91,6 +92,12 @@ public class Enemy : MonoBehaviour
         _currentHealth = Mathf.Max(0, _currentHealth);
 
         UpdateHealthBar();
+
+        try
+        {
+            onDamaged?.Invoke(_currentHealth);
+        }
+        catch (Exception) { /* ignore event exceptions */ }
 
         if (IsDead)
         {
@@ -220,7 +227,10 @@ public class Enemy : MonoBehaviour
 
         // Combine movement direction with separation smoothly
         Vector3 combinedDirection = (direction + separationOffset * 0.3f).normalized;
-        float step = moveSpeed * Time.deltaTime;
+        
+        // Calculate effective move speed (accounting for slow effects)
+        float effectiveMoveSpeed = GetEffectiveMoveSpeed();
+        float step = effectiveMoveSpeed * Time.deltaTime;
         Vector3 next = current + combinedDirection * step;
 
         transform.position = next;
@@ -240,6 +250,18 @@ public class Enemy : MonoBehaviour
             _lastSeparationFrame = frame;
         }
         return _cachedSeparation;
+    }
+
+    float GetEffectiveMoveSpeed()
+    {
+        // Check for slow effect
+        SlowEffect slowEffect = GetComponent<SlowEffect>();
+        if (slowEffect != null && slowEffect.IsActive)
+        {
+            // Apply slow reduction
+            return moveSpeed * (1f - slowEffect.SlowPercentage);
+        }
+        return moveSpeed;
     }
 
     Vector3 CalculateSeparationFast()

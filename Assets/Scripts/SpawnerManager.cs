@@ -14,6 +14,8 @@ public class SpawnerManager : MonoBehaviour
     public Enemy armoredEnemyPrefab;
     public Enemy bossEnemyPrefab;
     public Enemy attackEnemyPrefab;
+    public Enemy teleporterEnemyPrefab;
+    public Enemy exploderEnemyPrefab;
 
     [Header("Spawner Movement")]
     public float newSpawnerCircleRadius = 18.0f;
@@ -176,6 +178,12 @@ public class SpawnerManager : MonoBehaviour
 
         if (GameManager.Instance?.ShouldSpawnEnemyType(EnemyType.Attack, round) ?? false)
             types.Add(EnemyType.Attack);
+
+        if (GameManager.Instance?.ShouldSpawnEnemyType(EnemyType.Teleporter, round) ?? false)
+            types.Add(EnemyType.Teleporter);
+
+        if (GameManager.Instance?.ShouldSpawnEnemyType(EnemyType.Exploder, round) ?? false)
+            types.Add(EnemyType.Exploder);
 
         // Note: Boss is handled separately, not in the random pool
 
@@ -355,6 +363,8 @@ public class SpawnerManager : MonoBehaviour
             EnemyType.Armored => armoredEnemyPrefab,
             EnemyType.Boss => bossEnemyPrefab,
             EnemyType.Attack => attackEnemyPrefab,
+            EnemyType.Teleporter => teleporterEnemyPrefab,
+            EnemyType.Exploder => exploderEnemyPrefab,
             _ => null
         };
     }

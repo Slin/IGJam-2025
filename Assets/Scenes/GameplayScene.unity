@@ -303,6 +303,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemySpawnerManager
       objectReference: {fileID: 0}
+    - target: {fileID: 4676504926305827266, guid: 9a557ceb814264059af9331259a9793d, type: 3}
+      propertyPath: exploderEnemyPrefab
+      value: 
+      objectReference: {fileID: 4580924380053316161, guid: d99e126f6d3b8eb44aac27f0d89b2990, type: 3}
+    - target: {fileID: 4676504926305827266, guid: 9a557ceb814264059af9331259a9793d, type: 3}
+      propertyPath: teleporterEnemyPrefab
+      value: 
+      objectReference: {fileID: 4580924380053316161, guid: 4d4894ca949250f4ea2bbc74834bbe10, type: 3}
     - target: {fileID: 4897490179481173062, guid: 9a557ceb814264059af9331259a9793d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -602,6 +610,8 @@ MonoBehaviour:
   roundsUntilArmoredEnemies: 4
   roundsUntilBossEnemies: 5
   roundsUntilAttackEnemies: 11
+  roundsUntilTeleporterEnemies: 5
+  roundsUntilExploderEnemies: 3
   maxEnemiesPerRound: 50
   onGameStarted:
     m_PersistentCalls:

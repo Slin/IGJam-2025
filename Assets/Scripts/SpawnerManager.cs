@@ -83,7 +83,9 @@ public class SpawnerManager : MonoBehaviour
             return null;
         }
 
-        var spawner = Instantiate(spawnerPrefab, position, Quaternion.identity);
+        // Randomize Z rotation for visual variety
+        Quaternion rot = Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
+        var spawner = Instantiate(spawnerPrefab, position, rot);
         return spawner;
     }
 
@@ -241,6 +243,7 @@ public class SpawnerManager : MonoBehaviour
                 if (_activeSpawner != null)
                 {
                     _activeSpawner.transform.position = _currentSpawnPositions[0];
+                    _activeSpawner.transform.rotation = Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
                 }
                 else
                 {

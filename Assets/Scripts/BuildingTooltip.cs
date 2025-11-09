@@ -11,7 +11,7 @@ using UnityEngine.UI;
 public class BuildingTooltip : MonoBehaviour
 {
     [Header("Settings")]
-    public Vector3 tooltipOffset = new Vector3(0, 2.0f, 0);
+    public Vector3 tooltipOffset = new Vector3(0, 1.0f, 0);
     public Vector2 tooltipSize = new Vector2(3.0f, 1.0f);
     public Color backgroundColor = new Color(0, 0, 0, 0.85f);
     public Color textColor = Color.white;

@@ -26,6 +26,12 @@ public class HexTile : MonoBehaviour
         _isOccupied = occupied;
     }
 
+    // Touch double-tap detection
+    float _lastTapTime = -999f;
+    Vector2 _lastTapScreenPos;
+    readonly float _doubleTapMaxDelay = 0.3f; // seconds
+    readonly float _doubleTapMaxDistancePx = 80f; // pixels
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -84,6 +90,31 @@ public class HexTile : MonoBehaviour
                 if (mouse != null && mouse.leftButton.wasPressedThisFrame && !overUI)
                 {
                     bm.TryPlaceBuilding(transform.position, this);
+                }
+
+                // Place on touch double-tap (new Input System)
+                var touchscreen = Touchscreen.current;
+                if (touchscreen != null && !overUI)
+                {
+                    float now = Time.unscaledTime;
+                    float maxDistSqr = _doubleTapMaxDistancePx * _doubleTapMaxDistancePx;
+                    foreach (var touch in touchscreen.touches)
+                    {
+                        if (!touch.press.wasReleasedThisFrame) continue;
+                        Vector2 tapPos = touch.position.ReadValue();
+                        if ((now - _lastTapTime) <= _doubleTapMaxDelay &&
+                            (tapPos - _lastTapScreenPos).sqrMagnitude <= maxDistSqr)
+                        {
+                            bm.TryPlaceBuilding(transform.position, this);
+                            _lastTapTime = -999f; // reset
+                            break;
+                        }
+                        else
+                        {
+                            _lastTapTime = now;
+                            _lastTapScreenPos = tapPos;
+                        }
+                    }
                 }
             }
 
